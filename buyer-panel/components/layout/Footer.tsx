@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
         <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8">
           
           {/* Brand Info & App Downloads */}
-          <div className="lg:col-span-5 space-y-4">
+          <div className="lg:col-span-5 space-y-4 flex flex-col items-center sm:items-start text-center sm:text-left">
             <div className="flex items-center gap-2.5">
               <div className="relative h-10 w-10 rounded-full overflow-hidden border border-orange-100 bg-slate-900 shrink-0 shadow-xs">
                 <img
@@ -82,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div>
+              <div className="text-left">
                 <span className="font-semibold text-lg sm:text-xl tracking-tight text-slate-900 leading-tight">
                   Material<span className="text-[#FF6500]">Hub</span>
                 </span>
@@ -96,12 +96,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
               MaterialHub connects contractors and builders directly with local hardware merchants for factory-rate Cement, TMT Steel Rods, PVC Pipes, Paints, and Electrical supplies.
             </p>
 
-            <div className="pt-1 space-y-2">
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+            <div className="pt-1 space-y-2 w-full flex flex-col items-center sm:items-start">
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center sm:text-left">
                 Get MaterialHub Mobile App
               </span>
-              <div className="flex flex-wrap items-center gap-2">
-                <button className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 transition-colors cursor-pointer">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full">
+                <button className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 transition-colors cursor-pointer">
                   <FaDownload className="h-3 w-3 text-[#FF6500]" />
                   <div className="text-left">
                     <div className="text-[8px] text-slate-400 uppercase font-normal leading-none">Get it on</div>
@@ -109,7 +109,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                   </div>
                 </button>
 
-                <button className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 transition-colors cursor-pointer">
+                <button className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 transition-colors cursor-pointer">
                   <FaDownload className="h-3 w-3 text-slate-300" />
                   <div className="text-left">
                     <div className="text-[8px] text-slate-400 uppercase font-normal leading-none">Download on</div>
