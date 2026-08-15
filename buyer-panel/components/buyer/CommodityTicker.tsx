@@ -26,6 +26,10 @@ export const CommodityTicker: React.FC<CommodityTickerProps> = ({ rates }) => {
           <span className="uppercase tracking-wider font-semibold sm:hidden">Rates</span>
         </div>
         <div className="overflow-hidden whitespace-nowrap w-full relative flex items-center h-full">
+          {/* Smooth curved gradient edge fades at start and end of marquee */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
+
           <div className="animate-marquee flex items-center gap-4 sm:gap-6">
             {marqueeItems.map((item, index) => (
               <div
