@@ -18,12 +18,12 @@ export const CommodityTicker: React.FC<CommodityTickerProps> = ({ rates }) => {
   const marqueeItems = [...rates, ...rates, ...rates];
 
   return (
-    <div className="w-full bg-slate-900 text-white py-2 overflow-hidden border-b border-slate-800 shadow-xs flex items-center h-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 w-full h-full">
-        <div className="shrink-0 flex items-center gap-2 bg-[#FF6500] px-4 rounded-full text-white font-semibold text-xs z-10 shadow-xs h-8">
-          <FaFire className="h-3.5 w-3.5 animate-bounce text-white" />
-          <span className="uppercase tracking-wider text-xs hidden sm:inline">Wholesale Rate</span>
-          <span className="uppercase tracking-wider text-xs sm:hidden">Rates</span>
+    <div className="w-full bg-slate-900 text-white py-1.5 overflow-hidden shadow-xs flex items-center h-10 sm:h-12 border-b border-slate-800">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4 w-full h-full">
+        <div className="shrink-0 flex items-center gap-1.5 bg-[#FF6500] px-2.5 sm:px-4 rounded-full text-white font-semibold text-[10px] sm:text-xs z-10 shadow-xs h-7 sm:h-8">
+          <FaFire className="h-3 w-3 animate-bounce text-white" />
+          <span className="uppercase tracking-wider font-semibold hidden sm:inline">Wholesale Rates</span>
+          <span className="uppercase tracking-wider font-semibold sm:hidden">Rates</span>
         </div>
         <div className="overflow-hidden whitespace-nowrap w-full relative flex items-center h-full">
           <div className="animate-marquee flex items-center gap-4 sm:gap-6">

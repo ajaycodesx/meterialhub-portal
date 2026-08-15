@@ -250,12 +250,12 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
 
         {activeView === 'home' && (
           <>
-            <section className="relative py-12 sm:py-16 bg-gradient-to-b from-white via-slate-50 to-[#F8FAFC]">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-                  <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+            <section className="relative py-4 sm:py-12 bg-gradient-to-b from-white via-slate-50 to-[#F8FAFC]">
+              <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-stretch">
+                  <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6">
                     <div>
-                      <h1 className="text-3xl sm:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.15] mb-4">
+                      <h1 className="text-xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-2 sm:mb-4">
                         Direct Factory &amp; Wholesale <span className="text-[#FF6500]">Construction Materials</span>
                       </h1>
 
@@ -264,64 +264,64 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                       </p>
                     </div>
 
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        <div className="p-3.5 rounded-2xl bg-orange-50/60 flex items-center gap-3 hover:bg-orange-50 transition-all duration-300">
-                          <div className="h-9 w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
+                    <div className="space-y-4 sm:space-y-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                        <div className="p-2.5 sm:p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100/60 flex items-center gap-2.5 sm:gap-3">
+                          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
                             <FaTruckFast className="h-3.5 w-3.5" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-semibold text-slate-900">25 KM Radius</h4>
-                            <p className="text-[11px] text-slate-500 font-normal">Same-Day Delivery</p>
+                            <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900">25 KM Radius</h4>
+                            <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">Same-Day Delivery</p>
                           </div>
                         </div>
 
-                        <div className="p-3.5 rounded-2xl bg-emerald-50/60 flex items-center gap-3 hover:bg-emerald-50 transition-all duration-300">
-                          <div className="h-9 w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
+                        <div className="p-2.5 sm:p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/60 flex items-center gap-2.5 sm:gap-3">
+                          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
                             <FaShieldHalved className="h-3.5 w-3.5" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-semibold text-slate-900">GST Invoice</h4>
-                            <p className="text-[11px] text-slate-500 font-normal">100% Tax Credit</p>
+                            <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900">GST Invoice</h4>
+                            <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">100% Tax Credit</p>
                           </div>
                         </div>
 
-                        <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-slate-100/70 flex items-center gap-3 hover:bg-slate-100 transition-all duration-300">
-                          <div className="h-9 w-9 rounded-xl bg-slate-200/80 text-[#FF6500] flex items-center justify-center shrink-0">
+                        <div className="col-span-2 sm:col-span-1 p-2.5 sm:p-3.5 rounded-2xl bg-slate-100/80 border border-slate-200/60 flex items-center gap-2.5 sm:gap-3">
+                          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-200 text-[#FF6500] flex items-center justify-center shrink-0">
                             <FaStore className="h-3.5 w-3.5" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-semibold text-slate-900">Local Hardware</h4>
-                            <p className="text-[11px] text-slate-500 font-normal">Verified Stores</p>
+                            <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900">Local Hardware</h4>
+                            <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">Verified Stores</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3">
                         <Button
                           variant="primary"
-                          size="lg"
+                          size="md"
                           onClick={() => setIsLocationModalOpen(true)}
-                          icon={<FaArrowRight className="h-3.5 w-3.5" />}
-                          className="w-full justify-center"
+                          icon={<FaArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
+                          className="w-full justify-center text-xs sm:text-sm py-2.5 sm:py-3.5"
                         >
                           Check Delivery Area
                         </Button>
 
                         <Button
                           variant="secondary"
-                          size="lg"
+                          size="md"
                           onClick={() => setIsAuthModalOpen(true)}
-                          className="w-full justify-center"
+                          className="w-full justify-center text-xs sm:text-sm py-2.5 sm:py-3.5"
                         >
-                          View Wholesale Rates
+                          Wholesale Rates
                         </Button>
                       </div>
                     </div>
                   </div>
 
                   <div className="lg:col-span-5 h-full flex">
-                    <div className="relative rounded-3xl overflow-hidden shadow-sm group bg-slate-100 w-full h-full min-h-[360px] sm:min-h-[420px]">
+                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs group bg-slate-100 w-full h-full min-h-[200px] sm:min-h-[380px]">
                       <img
                         src="/images/hero_banner.png"
                         alt="MaterialHub Wholesale Delivery Truck"

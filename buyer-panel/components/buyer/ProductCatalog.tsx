@@ -276,7 +276,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          <div className="lg:col-span-3 bg-white p-5 rounded-3xl shadow-xs space-y-5">
+          <div className="lg:col-span-3 bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
             <h3 className="font-semibold text-sm text-slate-900 tracking-tight uppercase tracking-wider text-[10px] text-slate-400">
               Technical Filters
             </h3>
@@ -329,7 +329,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 <p className="text-xs text-slate-400 mt-1 font-normal">Try clearing filters or changing categories</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
                 {filteredProducts.map((product) => {
                   const qty = cartQuantities[product.id] || 0;
                   const isAdded = qty > 0;
@@ -337,7 +337,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   return (
                     <div
                       key={product.id}
-                      className="bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                      className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between"
                     >
                       <div>
                         <div className="relative h-44 w-full rounded-2xl bg-slate-100 overflow-hidden mb-4">

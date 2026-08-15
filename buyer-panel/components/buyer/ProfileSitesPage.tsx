@@ -58,23 +58,23 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] py-6 sm:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="flex-1 bg-[#F8FAFC] py-4 sm:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
         
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-            Buyer Profile &amp; Construction Sites
+          <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+            Profile &amp; Construction Sites
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
-            Manage your builder account, saved unloading site GPS locations, payment methods, and favorite merchants
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5 font-normal">
+            Manage your contractor account, saved unloading site locations, and B2B bank details
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
           
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-5 sm:space-y-6">
             
-            <div className="bg-white p-6 rounded-3xl shadow-xs space-y-5">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-14 w-14 rounded-2xl bg-slate-900 text-white font-semibold text-xl flex items-center justify-center shrink-0 shadow-xs">

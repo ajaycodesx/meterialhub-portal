@@ -114,29 +114,30 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
   const isOverload = totalWeightTons > activeVehicle.capacityTons;
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] py-6 sm:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="flex-1 bg-[#F8FAFC] py-4 sm:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <button
-              onClick={onBackToCatalog}
-              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-2 cursor-pointer"
-            >
-              <FaChevronLeft className="h-3 w-3" />
-              <span>Back to Store Catalog</span>
-            </button>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-              Store Cart &amp; Vehicle Allocation
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
-              Review supplier items and select optimal logistics vehicle based on total payload tonnage
-            </p>
-          </div>
+        <div>
+          <button
+            onClick={onBackToCatalog}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-2 cursor-pointer"
+          >
+            <FaChevronLeft className="h-3 w-3" />
+            <span>Back to Store Catalog</span>
+          </button>
+          <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+            Store Cart &amp; Vehicle Allocation
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5 font-normal">
+            Review your construction material items, calculated weight, and select delivery vehicle
+          </p>
+        </div>
 
-          <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-2xl shadow-xs border border-slate-200 shrink-0">
-            <FaWeightHanging className="h-4 w-4 text-[#FF6500]" />
-            <div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
+          
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+            
+            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4 relative">
               <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none">Total Cart Weight</div>
               <div className="text-sm font-semibold text-slate-900">
                 {totalWeightTons.toFixed(2)} Tons <span className="text-xs text-slate-500 font-normal">({totalWeightKg.toLocaleString()} kg)</span>
@@ -275,7 +276,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
 
           <div className="lg:col-span-5 space-y-6">
             
-            <div className="bg-white p-5 sm:p-6 rounded-3xl shadow-xs space-y-5">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-sm text-slate-900">Dynamic Vehicle Allocation</h3>

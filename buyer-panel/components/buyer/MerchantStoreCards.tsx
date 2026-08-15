@@ -24,9 +24,9 @@ interface MerchantStoreCardsProps {
 }
 
 const RADIUS_OPTIONS: SelectOption[] = [
-  { label: '10 KM Express Delivery', value: 10 },
-  { label: '20 KM Standard Radius', value: 20 },
-  { label: '25 KM Full Merchant Hub', value: 25 },
+  { label: '10 KM Express', value: 10 },
+  { label: '20 KM Radius', value: 20 },
+  { label: '25 KM Full Hub', value: 25 },
 ];
 
 const SORT_OPTIONS: SelectOption[] = [
@@ -65,24 +65,22 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
   };
 
   return (
-    <section className="py-12 sm:py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <section className="py-6 sm:py-12 bg-slate-100/70">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">
-              <FaCircleCheck className="h-3.5 w-3.5" />
-              <span>Verified Local Merchant Network</span>
+            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-0.5">
+              <FaCircleCheck className="h-3 w-3" />
+              <span>Verified Local Merchants</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+            <h2 className="text-lg sm:text-2xl font-semibold text-slate-900 tracking-tight">
               Nearby Hardware Suppliers
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
-              Direct wholesale price quotes and verified store stock from local suppliers
-            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <div className="min-w-[190px]">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
+            <div>
               <Select
                 icon={<FaLocationDot className="h-3 w-3 text-[#FF6500]" />}
                 options={RADIUS_OPTIONS}
@@ -91,7 +89,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
               />
             </div>
 
-            <div className="min-w-[160px]">
+            <div>
               <Select
                 icon={<FaFilter className="h-3 w-3 text-slate-500" />}
                 options={SORT_OPTIONS}
@@ -102,10 +100,10 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
 
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 border cursor-pointer ${
+              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-semibold transition-all h-9 sm:h-11 border cursor-pointer ${
                 onlyVerified
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                  : 'bg-slate-100/90 hover:bg-slate-200/80 border-slate-200 text-slate-700'
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
               }`}
             >
               {onlyVerified
@@ -118,84 +116,84 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-16 bg-slate-50 rounded-3xl p-8">
-            <FaStore className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-base font-semibold text-slate-800">No Stores Found</h3>
-            <p className="text-xs text-slate-400 mt-1 font-normal">Try expanding your delivery radius to 25 KM</p>
-            <Button onClick={() => setFilterRadius(25)} variant="primary" size="md" className="mt-4">
+          <div className="text-center py-12 bg-white rounded-2xl sm:rounded-3xl p-6 border border-slate-200/80 shadow-xs">
+            <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+            <h3 className="text-sm font-semibold text-slate-800">No Stores Found</h3>
+            <p className="text-xs text-slate-400 mt-0.5 font-normal">Try expanding your radius filter to 25 KM</p>
+            <Button onClick={() => setFilterRadius(25)} variant="primary" size="sm" className="mt-3">
               Reset Radius to 25 KM
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
             {filtered.map((merchant) => (
               <div
                 key={merchant.id}
-                className="bg-white rounded-3xl shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"
               >
-                <div className="bg-slate-50 px-5 pt-5 pb-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                <div className="bg-slate-50/80 p-3.5 sm:p-5 border-b border-slate-100">
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5">
                       <div className="relative shrink-0">
-                        <div className="h-11 w-11 rounded-2xl bg-slate-900 text-white font-semibold text-base flex items-center justify-center shadow-xs">
+                        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-slate-900 text-white font-semibold text-sm sm:text-base flex items-center justify-center shadow-xs">
                           {merchant.name.charAt(0)}
                         </div>
                         {merchant.verified && (
-                          <span className="absolute -bottom-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white">
+                          <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white">
                             <FaShieldHalved className="h-2.5 w-2.5 text-white" />
                           </span>
                         )}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-sm text-slate-900 leading-tight">
+                        <h3 className="font-semibold text-xs sm:text-sm text-slate-900 leading-tight">
                           {merchant.name}
                         </h3>
-                        <p className="text-[11px] text-slate-400 mt-1 font-normal leading-snug flex gap-1.5">
-                          <FaBuilding className="h-2.5 w-2.5 shrink-0 mt-0.5" />
-                          <span>{merchant.address}</span>
+                        <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 font-normal leading-snug flex items-center gap-1">
+                          <FaBuilding className="h-2.5 w-2.5 shrink-0 text-slate-400" />
+                          <span className="truncate max-w-[170px] sm:max-w-[200px]">{merchant.address}</span>
                         </p>
                       </div>
                     </div>
 
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 text-[11px] font-semibold shrink-0">
+                    <span className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl bg-white border border-slate-200/60 text-slate-800 text-[10px] sm:text-[11px] font-semibold shrink-0 shadow-2xs">
                       <FaStar className="h-2.5 w-2.5 text-amber-400" />
                       {merchant.rating}
-                      <span className="text-slate-400 font-normal">({merchant.reviewsCount})</span>
                     </span>
                   </div>
                 </div>
 
-                <div className="px-5 py-4 flex-1 flex flex-col gap-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2 flex-1 bg-orange-50/70 rounded-2xl px-3 py-2.5">
-                      <div className="h-7 w-7 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
+                <div className="p-3.5 sm:p-5 flex-1 flex flex-col gap-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-2 bg-orange-50/70 rounded-xl px-2.5 py-2 border border-orange-100/60">
+                      <div className="h-6 w-6 rounded-lg bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
                         <FaLocationDot className="h-3 w-3" />
                       </div>
                       <div>
-                        <div className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Distance</div>
-                        <div className="text-xs font-semibold text-slate-800">{merchant.distanceKm} KM Away</div>
+                        <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Distance</div>
+                        <div className="text-[11px] sm:text-xs font-semibold text-slate-800">{merchant.distanceKm} KM Away</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 flex-1 bg-emerald-50/70 rounded-2xl px-3 py-2.5">
-                      <div className="h-7 w-7 rounded-xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center shrink-0">
+                    
+                    <div className="flex items-center gap-2 bg-emerald-50/70 rounded-xl px-2.5 py-2 border border-emerald-100/60">
+                      <div className="h-6 w-6 rounded-lg bg-emerald-600/10 text-emerald-600 flex items-center justify-center shrink-0">
                         <FaClock className="h-3 w-3" />
                       </div>
                       <div>
-                        <div className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Delivery ETA</div>
-                        <div className="text-xs font-semibold text-slate-800">{merchant.deliveryEtaMinutes} Mins</div>
+                        <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Delivery ETA</div>
+                        <div className="text-[11px] sm:text-xs font-semibold text-slate-800">{merchant.deliveryEtaMinutes} Mins</div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                      Featured Brands Stocked
+                    <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                      Featured Stocked Brands
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1">
                       {merchant.brands.map((brand, idx) => (
                         <span
                           key={idx}
-                          className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-medium text-[11px]"
+                          className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-medium text-[10px] sm:text-[11px]"
                         >
                           {brand}
                         </span>
@@ -204,36 +202,36 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                   </div>
                 </div>
 
-                <div className="px-5 pb-5 space-y-3">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400 font-normal">Min Order Value</span>
+                <div className="p-3.5 sm:p-5 pt-0 space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] sm:text-xs border-t border-slate-100 pt-2.5">
+                    <span className="text-slate-500 font-normal">Min Order Value</span>
                     <span className="font-semibold text-slate-900">₹{merchant.minOrderValue.toLocaleString()}</span>
                   </div>
 
                   {quoteSuccessId === merchant.id ? (
-                    <div className="w-full py-3 px-4 rounded-2xl bg-emerald-50 text-emerald-700 text-xs font-semibold text-center flex items-center justify-center gap-2">
-                      <FaCircleCheck className="h-4 w-4 text-emerald-500" />
-                      <span>Quote Sent! Merchant will contact you.</span>
+                    <div className="w-full py-2.5 px-3 rounded-2xl bg-emerald-50 text-emerald-700 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                      <FaCircleCheck className="h-3.5 w-3.5 text-emerald-500" />
+                      <span>Quote Sent to Merchant!</span>
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
                       <Button
                         variant="secondary"
-                        size="md"
+                        size="sm"
                         onClick={() => handleRequestQuote(merchant.id)}
                         icon={<FaPhone className="h-3 w-3 text-[#FF6500]" />}
                         iconPosition="left"
-                        className="w-full"
+                        className="w-full text-xs"
                       >
                         Direct Quote
                       </Button>
                       <Button
                         variant="primary"
-                        size="md"
+                        size="sm"
                         onClick={() => onSelectMerchant(merchant)}
-                        icon={<FaBagShopping className="h-3.5 w-3.5" />}
+                        icon={<FaBagShopping className="h-3 w-3" />}
                         iconPosition="left"
-                        className="w-full"
+                        className="w-full text-xs"
                       >
                         View Store
                       </Button>

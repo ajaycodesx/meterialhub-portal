@@ -61,30 +61,30 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] py-6 sm:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="flex-1 bg-[#F8FAFC] py-4 sm:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
         
         <div>
           <button
             onClick={onBackToCart}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-2 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-2 cursor-pointer"
           >
             <FaChevronLeft className="h-3 w-3" />
             <span>Back to Cart &amp; Vehicle Selection</span>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
             Checkout &amp; Site Delivery Confirmation
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5 font-normal">
             Verify unloading site address, payment method, and GST tax invoice details
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
           
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
             
-            <div className="bg-white p-5 sm:p-6 rounded-3xl shadow-xs space-y-4">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
@@ -262,7 +262,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
           <div className="lg:col-span-5 space-y-6">
             
-            <div className="bg-white p-5 sm:p-6 rounded-3xl shadow-xs space-y-5">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-sm text-slate-900">Billing &amp; GST Tax Breakdown</h3>
                 <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-semibold flex items-center gap-1">
