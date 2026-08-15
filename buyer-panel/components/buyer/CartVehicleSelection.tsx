@@ -114,8 +114,8 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
   const isOverload = totalWeightTons > activeVehicle.capacityTons;
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] py-4 sm:py-10">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
+    <div className="flex-1 bg-[#F8FAFC] py-2 sm:py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-3 sm:space-y-6">
         
         <div>
           <button

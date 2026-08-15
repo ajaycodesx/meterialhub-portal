@@ -65,10 +65,10 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
   };
 
   return (
-    <section className="py-6 sm:py-12 bg-slate-100/70">
+    <section className="py-2.5 sm:py-8 bg-slate-100/70">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 sm:mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 mb-2.5 sm:mb-5">
           <div>
             <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-0.5">
               <FaCircleCheck className="h-3 w-3" />

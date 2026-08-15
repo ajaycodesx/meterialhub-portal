@@ -250,10 +250,10 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
 
         {activeView === 'home' && (
           <>
-            <section className="relative py-4 sm:py-12 bg-gradient-to-b from-white via-slate-50 to-[#F8FAFC]">
+            <section className="relative py-2 sm:py-6 bg-gradient-to-b from-white via-slate-50 to-[#F8FAFC]">
               <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-stretch">
-                  <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6">
+                <div className="bg-white p-3 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-3.5 lg:gap-10 items-stretch">
+                  <div className="lg:col-span-7 flex flex-col justify-between space-y-3 sm:space-y-6">
                     <div>
                       <h1 className="text-xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-2 sm:mb-4">
                         Direct Factory &amp; Wholesale <span className="text-[#FF6500]">Construction Materials</span>

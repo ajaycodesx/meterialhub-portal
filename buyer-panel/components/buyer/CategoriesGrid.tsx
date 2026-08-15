@@ -21,10 +21,10 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
   selectedCategory
 }) => {
   return (
-    <section className="py-6 sm:py-12 bg-[#F8FAFC]">
+    <section className="py-2.5 sm:py-8 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
-        <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+        <div className="flex items-center justify-between mb-2.5 sm:mb-5 gap-2">
           <div>
             <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#FF6500] uppercase tracking-wider mb-0.5">
               <FaBoxesStacked className="h-3 w-3" />
