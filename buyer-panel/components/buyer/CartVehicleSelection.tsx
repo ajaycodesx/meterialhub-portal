@@ -309,10 +309,10 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                     <div
                       key={vehicle.id}
                       onClick={() => setSelectedVehicleId(vehicle.id)}
-                      className={`relative rounded-2xl p-4 transition-all cursor-pointer ${
+                      className={`relative rounded-2xl p-3.5 sm:p-4 transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-orange-50/80 shadow-xs'
-                          : 'bg-slate-50/80 hover:bg-slate-100/70'
+                          ? 'bg-orange-50/80 border-2 border-[#FF6500] shadow-xs'
+                          : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                       }`}
                     >
                       {isRecommended && (

@@ -182,10 +182,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     paymentMethod === 'upi'
-                      ? 'bg-orange-50/80 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/80 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -201,10 +201,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('netbanking')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     paymentMethod === 'netbanking'
-                      ? 'bg-orange-50/80 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/80 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -220,10 +220,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('cod')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     paymentMethod === 'cod'
-                      ? 'bg-orange-50/80 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/80 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -239,10 +239,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('credit')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     paymentMethod === 'credit'
-                      ? 'bg-orange-50/80 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/80 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">

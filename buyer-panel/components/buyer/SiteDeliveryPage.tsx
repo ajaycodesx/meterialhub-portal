@@ -94,10 +94,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setAccessOption('narrow')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     accessOption === 'narrow'
-                      ? 'bg-orange-50/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
@@ -115,10 +115,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setAccessOption('no_heavy')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     accessOption === 'no_heavy'
-                      ? 'bg-orange-50/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
@@ -136,10 +136,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setAccessOption('crane')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     accessOption === 'crane'
-                      ? 'bg-orange-50/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
@@ -157,10 +157,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setAccessOption('ground')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     accessOption === 'ground'
-                      ? 'bg-orange-50/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
@@ -178,7 +178,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl shadow-xs space-y-5">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                   <FaPeopleCarryBox className="h-5 w-5" />
@@ -194,10 +194,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setLaborAssistance('two_helpers')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     laborAssistance === 'two_helpers'
-                      ? 'bg-emerald-50/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -213,10 +213,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setLaborAssistance('four_helpers')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     laborAssistance === 'four_helpers'
-                      ? 'bg-emerald-50/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -232,10 +232,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setLaborAssistance('none')}
-                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                     laborAssistance === 'none'
-                      ? 'bg-slate-200/90 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100/70'
+                      ? 'bg-slate-100 border-2 border-slate-400 shadow-xs'
+                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
