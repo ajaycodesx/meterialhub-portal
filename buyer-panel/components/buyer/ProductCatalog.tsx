@@ -329,7 +329,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 <p className="text-xs text-slate-400 mt-1 font-normal">Try clearing filters or changing categories</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-5">
                 {filteredProducts.map((product) => {
                   const qty = cartQuantities[product.id] || 0;
                   const isAdded = qty > 0;
