@@ -151,7 +151,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased flex flex-col justify-between pb-16 md:pb-0">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased flex flex-col justify-between">
       <div>
         <Header
           location={location}
