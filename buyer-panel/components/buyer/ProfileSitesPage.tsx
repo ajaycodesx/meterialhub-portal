@@ -69,9 +69,6 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           {/* Cover Banner & Contractor Profile Card */}
           <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white relative overflow-hidden shadow-xl space-y-6">
             
-            {/* Background Grid Pattern Accent */}
-            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               
               {/* Profile Identity */}
@@ -81,10 +78,13 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2.5">
                     <h1 className="text-xl sm:text-3xl font-semibold tracking-tight text-white">{userName}</h1>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-medium flex items-center gap-1.5">
-                      <FaShieldHalved className="h-3 w-3 text-emerald-400" />
+                    <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
                       Verified Class-A Contractor
                     </span>
                   </div>
@@ -167,54 +167,54 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
             )}
           </div>
 
-          {/* Segmented Floating Navigation Control */}
-          <div className="bg-slate-100/90 p-1.5 rounded-2xl flex items-center gap-1.5 border border-slate-200/80 overflow-x-auto no-scrollbar">
+          {/* Equal-Width Divided Platform Navigation Buttons Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
             <button
               onClick={() => setActiveTab('sites')}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'sites'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-slate-900 text-white border border-slate-900'
+                  : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
               }`}
             >
-              <FaBuilding className={`h-3.5 w-3.5 ${activeTab === 'sites' ? 'text-[#FF6500]' : 'text-slate-400'}`} />
-              <span>Saved Construction Sites</span>
+              <FaBuilding className={`h-3.5 w-3.5 ${activeTab === 'sites' ? 'text-[#FF6500]' : 'text-slate-500'}`} />
+              <span className="truncate">Saved Construction Sites</span>
             </button>
 
             <button
               onClick={() => setActiveTab('payments')}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'payments'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-slate-900 text-white border border-slate-900'
+                  : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
               }`}
             >
-              <FaCreditCard className={`h-3.5 w-3.5 ${activeTab === 'payments' ? 'text-[#FF6500]' : 'text-slate-400'}`} />
-              <span>B2B Banking &amp; Refund Ledger</span>
+              <FaCreditCard className={`h-3.5 w-3.5 ${activeTab === 'payments' ? 'text-[#FF6500]' : 'text-slate-500'}`} />
+              <span className="truncate">B2B Banking &amp; Refunds</span>
             </button>
 
             <button
               onClick={() => setActiveTab('wishlist')}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'wishlist'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-slate-900 text-white border border-slate-900'
+                  : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
               }`}
             >
-              <FaHeart className={`h-3.5 w-3.5 ${activeTab === 'wishlist' ? 'text-red-500' : 'text-slate-400'}`} />
-              <span>Favorite Merchants &amp; Reorder</span>
+              <FaHeart className={`h-3.5 w-3.5 ${activeTab === 'wishlist' ? 'text-red-500' : 'text-slate-500'}`} />
+              <span className="truncate">Favorite Merchants &amp; Reorder</span>
             </button>
 
             <button
               onClick={() => setActiveTab('settings')}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'settings'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-slate-900 text-white border border-slate-900'
+                  : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
               }`}
             >
-              <FaGear className={`h-3.5 w-3.5 ${activeTab === 'settings' ? 'text-slate-700' : 'text-slate-400'}`} />
-              <span>Security &amp; Preferences</span>
+              <FaGear className={`h-3.5 w-3.5 ${activeTab === 'settings' ? 'text-slate-300' : 'text-slate-500'}`} />
+              <span className="truncate">Security &amp; Preferences</span>
             </button>
           </div>
 
@@ -258,9 +258,13 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           </div>
                         </div>
 
-                        <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold flex items-center gap-1 shrink-0">
-                          <FaCircleCheck className="h-2.5 w-2.5 text-emerald-600" /> GPS Pinned
-                        </span>
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 shrink-0">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                          </span>
+                          <span>GPS Pinned</span>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600 font-normal">
@@ -377,9 +381,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           </span>
                           <p className="font-semibold text-slate-900 text-sm mt-0.5">builder.gpay@okaxis</p>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold">
-                          Verified Active
-                        </span>
+                        
+                        {/* Glowing Emerald Dot Status Indicator Only */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                          </span>
+                        </div>
                       </div>
 
                       <div className="p-4 rounded-2xl bg-white border border-slate-200/70 space-y-1 flex items-center justify-between">
@@ -389,9 +398,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           </span>
                           <p className="font-semibold text-slate-900 text-sm mt-0.5">A/C *****8491 (IFSC: HDFC0001824)</p>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold">
-                          Verified Active
-                        </span>
+                        
+                        {/* Glowing Emerald Dot Status Indicator Only */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -409,9 +423,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="font-semibold text-slate-900 text-sm">₹12,400 GST Refund Processed</p>
                           <p className="text-[10px] text-slate-500 font-normal mt-0.5">10 Bundles TMT Rods Returned &bull; Order #MH-739102</p>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold shrink-0">
-                          Credited
-                        </span>
+                        
+                        {/* Glowing Emerald Dot Status Indicator Only */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                          </span>
+                        </div>
                       </div>
 
                       <div className="p-4 rounded-2xl bg-white border border-slate-200/70 flex items-center justify-between">
@@ -419,9 +438,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="font-semibold text-slate-900 text-sm">₹2,800 Freight Adjustment Refund</p>
                           <p className="text-[10px] text-slate-500 font-normal mt-0.5">Vehicle Load Adjustment &bull; Order #MH-654891</p>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold shrink-0">
-                          Credited
-                        </span>
+                        
+                        {/* Glowing Emerald Dot Status Indicator Only */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -567,9 +591,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <p className="text-xs text-slate-500 font-normal">Instant driver location links sent to site supervisor phone</p>
                       </div>
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
-                      Active
-                    </span>
+                    
+                    {/* Glowing Emerald Dot Status Indicator Only */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                      </span>
+                    </div>
                   </div>
 
                   <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex items-center justify-between">
