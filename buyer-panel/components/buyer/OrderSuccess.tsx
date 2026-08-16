@@ -76,7 +76,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
                 
                 {/* Step 1: Order Placed */}
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center gap-3">
+                <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 flex items-center gap-3">
                   <div className="h-9 w-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
                     <FaCheck className="h-4 w-4" />
                   </div>
@@ -87,7 +87,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
                 </div>
 
                 {/* Step 2: Vendor Accepted */}
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center gap-3">
+                <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 flex items-center gap-3">
                   <div className="h-9 w-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
                     <FaCheck className="h-4 w-4" />
                   </div>
@@ -98,13 +98,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
                 </div>
 
                 {/* Step 3: Vehicle Dispatched */}
-                <div className="p-3.5 rounded-2xl bg-white border-2 border-[#FF6500] flex items-center gap-3 shadow-md ring-2 ring-[#FF6500]/10">
-                  <div className="h-9 w-9 rounded-xl bg-[#FF6500] text-white flex items-center justify-center shrink-0 shadow-2xs animate-pulse">
+                <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-[#FF6500] text-white flex items-center justify-center shrink-0 shadow-2xs">
                     <FaTruckFast className="h-4 w-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-[#FF6500]">Vehicle Dispatched</h4>
-                    <p className="text-[10px] text-slate-600 font-medium">En-Route &bull; ~45 Mins</p>
+                    <h4 className="text-xs font-semibold text-slate-900">Vehicle Dispatched</h4>
+                    <p className="text-[10px] text-slate-500 font-normal">En-Route &bull; ~45 Mins</p>
                   </div>
                 </div>
 

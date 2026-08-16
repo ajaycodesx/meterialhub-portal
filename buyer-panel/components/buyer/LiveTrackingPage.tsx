@@ -194,43 +194,43 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1">
                   
-                  <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
                     <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-emerald-900">Confirmed</h4>
-                    <p className="text-[9px] text-emerald-700 font-normal">11:50 AM</p>
+                    <h4 className="text-xs font-semibold text-slate-900">Confirmed</h4>
+                    <p className="text-[9px] text-slate-500 font-normal">11:50 AM</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
                     <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-emerald-900">Packed</h4>
-                    <p className="text-[9px] text-emerald-700 font-normal">11:52 AM</p>
+                    <h4 className="text-xs font-semibold text-slate-900">Packed</h4>
+                    <p className="text-[9px] text-slate-500 font-normal">11:52 AM</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
                     <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-emerald-900">Assigned</h4>
-                    <p className="text-[9px] text-emerald-700 font-normal">11:53 AM</p>
+                    <h4 className="text-xs font-semibold text-slate-900">Assigned</h4>
+                    <p className="text-[9px] text-slate-500 font-normal">11:53 AM</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border-2 border-[#FF6500] shadow-sm ring-2 ring-[#FF6500]/10 space-y-1">
-                    <div className="h-6 w-6 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs animate-pulse">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                    <div className="h-6 w-6 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs">
                       <FaTruckFast className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-[#FF6500]">Out for Delivery</h4>
-                    <p className="text-[9px] text-slate-500 font-medium">In Transit</p>
+                    <h4 className="text-xs font-semibold text-slate-900">Out for Delivery</h4>
+                    <p className="text-[9px] text-slate-500 font-normal">11:58 AM</p>
                   </div>
 
-                  <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-1">
-                    <div className="h-6 w-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-xs">
-                      <FaCircleCheck className="h-3 w-3" />
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1 opacity-50">
+                    <div className="h-6 w-6 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-xs">
+                      <FaLocationPin className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-600">Delivered</h4>
+                    <h4 className="text-xs font-semibold text-slate-700">Delivered</h4>
                     <p className="text-[9px] text-slate-400 font-normal">Pending</p>
                   </div>
 
