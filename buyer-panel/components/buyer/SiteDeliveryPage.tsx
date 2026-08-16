@@ -60,10 +60,10 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
           {/* Top Page Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-4 sm:pb-6">
             <div>
-              <div className="mb-2">
+              <div className="mb-2.5">
                 <button
                   onClick={onBack}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
+                  className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 shadow-2xs cursor-pointer"
                 >
                   <FaChevronLeft className="h-3 w-3" />
                   <span>Back to Previous Setup</span>
@@ -80,266 +80,271 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             
+            {/* LEFT SIDE: Options Selection Cards */}
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
               
+              {/* Site Access Constraints Card */}
               <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
-                  <FaRoad className="h-5 w-5" />
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
+                  <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
+                    <FaRoad className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-base text-slate-900">Site Access Options</h3>
+                    <p className="text-xs text-slate-500 font-normal">Select road access width and unloading vehicle constraints</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-base text-slate-900">Site Access Options</h3>
-                  <p className="text-xs text-slate-500 font-normal">Select road access width and unloading vehicle constraints</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  
+                  <button
+                    type="button"
+                    onClick={() => setAccessOption('narrow')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      accessOption === 'narrow'
+                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                        <FaRoad className="h-4 w-4 text-[#FF6500]" />
+                        Narrow Lane (&lt; 10ft)
+                      </span>
+                      {accessOption === 'narrow' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      Narrow road access. Restricted to compact pickup trucks (Tata Ace / Mahindra Bolero).
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAccessOption('no_heavy')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      accessOption === 'no_heavy'
+                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                        <FaTruckFast className="h-4 w-4 text-[#FF6500]" />
+                        No Heavy Vehicles
+                      </span>
+                      {accessOption === 'no_heavy' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      Residential neighborhood restriction. No 10-wheeler or 16-wheeler heavy trucks allowed.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAccessOption('crane')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      accessOption === 'crane'
+                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                        <FaShieldHalved className="h-4 w-4 text-emerald-600" />
+                        Crane Offloading Required
+                      </span>
+                      {accessOption === 'crane' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      Heavy structural TMT steel rods or concrete slab beams requiring hydraulic crane unloading.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAccessOption('ground')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      accessOption === 'ground'
+                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                        <FaLocationDot className="h-4 w-4 text-emerald-600" />
+                        Ground Floor Unloading
+                      </span>
+                      {accessOption === 'ground' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      Standard driveway dumping or ground floor unloading site access.
+                    </p>
+                  </button>
+
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                
-                <button
-                  type="button"
-                  onClick={() => setAccessOption('narrow')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    accessOption === 'narrow'
-                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
-                      <FaRoad className="h-4 w-4 text-orange-500" />
-                      Narrow Lane (&lt; 10ft)
-                    </span>
-                    {accessOption === 'narrow' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+              {/* Labor Assistance Options Card */}
+              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
+                  <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <FaPeopleCarryBox className="h-5 w-5" />
                   </div>
-                  <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
-                    Narrow road access. Restricted to compact pickup trucks (Tata Ace / Mahindra Bolero).
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setAccessOption('no_heavy')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    accessOption === 'no_heavy'
-                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
-                      <FaTruckFast className="h-4 w-4 text-amber-600" />
-                      No Heavy Vehicles
-                    </span>
-                    {accessOption === 'no_heavy' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                  <div>
+                    <h3 className="font-semibold text-base text-slate-900">Unloading Labor Assistance Option</h3>
+                    <p className="text-xs text-slate-500 font-normal">Option to request extra unloading labor helpers for heavy construction goods</p>
                   </div>
-                  <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
-                    Residential neighborhood restriction. No 10-wheeler or 16-wheeler heavy trucks allowed.
-                  </p>
-                </button>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => setAccessOption('crane')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    accessOption === 'crane'
-                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
-                      <FaShieldHalved className="h-4 w-4 text-emerald-600" />
-                      Crane Offloading Required
-                    </span>
-                    {accessOption === 'crane' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
-                  </div>
-                  <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
-                    Heavy structural TMT steel rods or concrete slab beams requiring hydraulic crane unloading.
-                  </p>
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  
+                  <button
+                    type="button"
+                    onClick={() => setLaborAssistance('two_helpers')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      laborAssistance === 'two_helpers'
+                        ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                        <FaPeopleCarryBox className="h-4 w-4 text-emerald-600" />
+                        2 Unloading Helpers
+                      </span>
+                      {laborAssistance === 'two_helpers' && <FaCircleCheck className="h-4 w-4 text-emerald-600" />}
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-normal mt-1">+₹400 Helper Fee (Bag &amp; Pipe Stacking)</p>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => setAccessOption('ground')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    accessOption === 'ground'
-                      ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
-                      <FaLocationDot className="h-4 w-4 text-emerald-600" />
-                      Ground Floor Unloading
-                    </span>
-                    {accessOption === 'ground' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
-                  </div>
-                  <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
-                    Standard driveway dumping or ground floor unloading site access.
-                  </p>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setLaborAssistance('four_helpers')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      laborAssistance === 'four_helpers'
+                        ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                        <FaPeopleCarryBox className="h-4 w-4 text-emerald-600" />
+                        4 Unloading Helpers
+                      </span>
+                      {laborAssistance === 'four_helpers' && <FaCircleCheck className="h-4 w-4 text-emerald-600" />}
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-normal mt-1">+₹800 Fast Offload (Heavy Steel/Bulk Cement)</p>
+                  </button>
 
+                  <button
+                    type="button"
+                    onClick={() => setLaborAssistance('none')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                      laborAssistance === 'none'
+                        ? 'bg-slate-100 border-2 border-slate-400 shadow-xs'
+                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-slate-900">No Extra Labor</span>
+                      {laborAssistance === 'none' && <FaCircleCheck className="h-4 w-4 text-slate-600" />}
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-normal mt-1">Self/Site Contractor Labor</p>
+                  </button>
+
+                </div>
               </div>
+
+              {/* Site Supervisor Contact Details Card */}
+              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
+                  <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
+                    <FaUserCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-base text-slate-900">Site Contact Person Details</h3>
+                    <p className="text-xs text-slate-500 font-normal">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  <Input
+                    label="Site Supervisor Name"
+                    icon={<FaUserCheck className="h-4 w-4 text-slate-400" />}
+                    value={supervisorName}
+                    onChange={(e) => setSupervisorName(e.target.value)}
+                    placeholder="e.g. Suresh Nair (Site Engineer)"
+                  />
+
+                  <Input
+                    label="Supervisor Mobile Number (OTP Verification)"
+                    icon={<FaPhone className="h-4 w-4 text-slate-400" />}
+                    value={supervisorPhone}
+                    onChange={(e) => setSupervisorPhone(e.target.value)}
+                    placeholder="e.g. +91 98765 43210"
+                  />
+                </div>
+              </div>
+
             </div>
 
-            <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <FaPeopleCarryBox className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-base text-slate-900">Unloading Labor Assistance Option</h3>
-                  <p className="text-xs text-slate-500 font-normal">Option to request extra unloading labor helpers for heavy construction goods</p>
-                </div>
-              </div>
+            {/* RIGHT SIDE: Summary Card */}
+            <div className="lg:col-span-4 space-y-6">
+              
+              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+                <h3 className="font-semibold text-base text-slate-900 border-b border-slate-100 pb-3.5">Delivery Instructions Summary</h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                
-                <button
-                  type="button"
-                  onClick={() => setLaborAssistance('two_helpers')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    laborAssistance === 'two_helpers'
-                      ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                      <FaPeopleCarryBox className="h-4 w-4 text-emerald-600" />
-                      2 Unloading Helpers
-                    </span>
-                    {laborAssistance === 'two_helpers' && <FaCircleCheck className="h-4 w-4 text-emerald-600" />}
+                <div className="space-y-3 text-xs text-slate-600 font-normal">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Target Site</span>
+                    <p className="font-semibold text-slate-900 flex items-center gap-1.5">
+                      <FaBuilding className="h-3 w-3 text-[#FF6500]" />
+                      {location.address || 'Site #14, Kakkanad Zone'}
+                    </p>
                   </div>
-                  <p className="text-[10px] text-slate-500 font-normal mt-1">+₹400 Helper Fee (Bag &amp; Pipe Stacking)</p>
-                </button>
 
-                <button
-                  type="button"
-                  onClick={() => setLaborAssistance('four_helpers')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    laborAssistance === 'four_helpers'
-                      ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                      <FaPeopleCarryBox className="h-4 w-4 text-emerald-600" />
-                      4 Unloading Helpers
-                    </span>
-                    {laborAssistance === 'four_helpers' && <FaCircleCheck className="h-4 w-4 text-emerald-600" />}
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Access Constraints</span>
+                    <p className="font-semibold text-slate-900">
+                      {accessOption === 'narrow' && 'Narrow Road (< 10ft Mini Truck Only)'}
+                      {accessOption === 'no_heavy' && 'No Heavy Vehicles Allowed'}
+                      {accessOption === 'crane' && 'Crane Required for Offloading'}
+                      {accessOption === 'ground' && 'Ground Floor Unloading Access'}
+                    </p>
                   </div>
-                  <p className="text-[10px] text-slate-500 font-normal mt-1">+₹800 Fast Offload (Heavy Steel/Bulk Cement)</p>
-                </button>
 
-                <button
-                  type="button"
-                  onClick={() => setLaborAssistance('none')}
-                  className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
-                    laborAssistance === 'none'
-                      ? 'bg-slate-100 border-2 border-slate-400 shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-slate-900">No Extra Labor</span>
-                    {laborAssistance === 'none' && <FaCircleCheck className="h-4 w-4 text-slate-600" />}
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Unloading Helpers</span>
+                    <p className="font-semibold text-slate-900 text-emerald-700">
+                      {laborAssistance === 'two_helpers' && '2 Unloading Helpers (+₹400)'}
+                      {laborAssistance === 'four_helpers' && '4 Unloading Helpers (+₹800)'}
+                      {laborAssistance === 'none' && 'No Extra Labor (Self Offloading)'}
+                    </p>
                   </div>
-                  <p className="text-[10px] text-slate-500 font-normal mt-1">Self/Site Contractor Labor</p>
-                </button>
 
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-3xl shadow-xs space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
-                  <FaUserCheck className="h-5 w-5" />
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Supervisor Contact</span>
+                    <p className="font-semibold text-slate-900">{supervisorName}</p>
+                    <p className="text-slate-500 font-medium">{supervisorPhone}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-base text-slate-900">Site Contact Person Details</h3>
-                  <p className="text-xs text-slate-500 font-normal">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
-                </div>
+
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={handleSave}
+                  icon={<FaArrowRight className="h-3.5 w-3.5" />}
+                  className="w-full justify-center text-sm"
+                >
+                  Save &amp; Update Site Instructions
+                </Button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                <Input
-                  label="Site Supervisor Name"
-                  icon={<FaUserCheck className="h-4 w-4 text-slate-400" />}
-                  value={supervisorName}
-                  onChange={(e) => setSupervisorName(e.target.value)}
-                  placeholder="e.g. Suresh Nair (Site Engineer)"
-                />
-
-                <Input
-                  label="Supervisor Mobile Number (OTP Verification)"
-                  icon={<FaPhone className="h-4 w-4 text-slate-400" />}
-                  value={supervisorPhone}
-                  onChange={(e) => setSupervisorPhone(e.target.value)}
-                  placeholder="e.g. +91 98765 43210"
-                />
-              </div>
             </div>
 
           </div>
-
-          <div className="lg:col-span-4 space-y-6">
-            
-            <div className="bg-white p-6 rounded-3xl shadow-xs space-y-5">
-              <h3 className="font-semibold text-sm text-slate-900">Delivery Instructions Summary</h3>
-
-              <div className="space-y-3 text-xs text-slate-600 font-normal">
-                <div className="p-3.5 rounded-2xl bg-slate-50 space-y-1">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Target Site</span>
-                  <p className="font-semibold text-slate-900 flex items-center gap-1.5">
-                    <FaBuilding className="h-3 w-3 text-orange-400" />
-                    {location.address || 'Site #14, Kakkanad Zone'}
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-slate-50 space-y-1">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Access Constraints</span>
-                  <p className="font-semibold text-slate-900">
-                    {accessOption === 'narrow' && 'Narrow Road (< 10ft Mini Truck Only)'}
-                    {accessOption === 'no_heavy' && 'No Heavy Vehicles Allowed'}
-                    {accessOption === 'crane' && 'Crane Required for Offloading'}
-                    {accessOption === 'ground' && 'Ground Floor Unloading Access'}
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-slate-50 space-y-1">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Unloading Helpers</span>
-                  <p className="font-semibold text-slate-900 text-emerald-700">
-                    {laborAssistance === 'two_helpers' && '2 Unloading Helpers (+₹400)'}
-                    {laborAssistance === 'four_helpers' && '4 Unloading Helpers (+₹800)'}
-                    {laborAssistance === 'none' && 'No Extra Labor (Self Offloading)'}
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-slate-50 space-y-1">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Supervisor Contact</span>
-                  <p className="font-semibold text-slate-900">{supervisorName}</p>
-                  <p className="text-slate-500 font-medium">{supervisorPhone}</p>
-                </div>
-              </div>
-
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={handleSave}
-                icon={<FaArrowRight className="h-3.5 w-3.5" />}
-                className="w-full py-3.5 text-sm"
-              >
-                Save &amp; Update Site Instructions
-              </Button>
-            </div>
-
-          </div>
-
         </div>
-      </div>
-    </section>
-  </div>
-);
+      </section>
+    </div>
+  );
 };
