@@ -102,7 +102,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
 
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all h-8 sm:h-11 border cursor-pointer ${
+              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-full text-xs font-semibold transition-all h-9 sm:h-9 border cursor-pointer ${
                 onlyVerified
                   ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
                   : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'

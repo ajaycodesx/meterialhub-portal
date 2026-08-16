@@ -58,9 +58,9 @@ export const Select: React.FC<SelectProps> = ({
   const selectedOption = options.find((opt) => opt.value === value);
 
   const sizeClasses = {
-    sm: 'h-8 px-3 text-xs font-semibold rounded-full',
-    md: 'h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-2xl',
-    lg: 'h-12 px-4 text-sm font-semibold rounded-2xl'
+    sm: 'h-9 px-3.5 text-xs font-semibold rounded-full',
+    md: 'h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-full',
+    lg: 'h-12 px-4 text-sm font-semibold rounded-full'
   }[size];
 
   const labelSizeClasses = {
