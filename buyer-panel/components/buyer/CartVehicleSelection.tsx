@@ -121,7 +121,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
           {/* Top Page Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-4 sm:pb-6">
             <div>
-              <div className="flex items-center gap-2.5 mb-2">
+              <div className="mb-2">
                 <button
                   onClick={onBackToCatalog}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
@@ -129,10 +129,6 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                   <FaChevronLeft className="h-3 w-3" />
                   <span>Back to Store Catalog</span>
                 </button>
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-50 text-[#FF6500] text-xs font-semibold border border-orange-100">
-                  <FaTruckFast className="h-3 w-3" />
-                  Logistics &amp; Payload Check
-                </span>
               </div>
               <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
                 Store Cart &amp; Vehicle Allocation
