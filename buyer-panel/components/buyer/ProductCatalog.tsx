@@ -528,6 +528,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
                 <Select
                   label="Filter by Brand"
+                  size="sm"
                   options={brandOptions}
                   value={selectedBrand}
                   onChange={(val) => setSelectedBrand(String(val))}
@@ -536,6 +537,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 {grades.length > 1 && (
                   <Select
                     label="Filter by Grade"
+                    size="sm"
                     options={gradeOptions}
                     value={selectedGrade}
                     onChange={(val) => setSelectedGrade(String(val))}
@@ -545,6 +547,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 {gauges.length > 1 && (
                   <Select
                     label="Steel Gauge"
+                    size="sm"
                     options={gaugeOptions}
                     value={selectedGauge}
                     onChange={(val) => setSelectedGauge(String(val))}

@@ -102,6 +102,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 shrink-0">
             <div>
               <Select
+                size="sm"
                 icon={<FaLocationDot className="h-3 w-3 text-[#FF6500]" />}
                 options={RADIUS_OPTIONS}
                 value={filterRadius}
@@ -111,6 +112,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
             <div>
               <Select
+                size="sm"
                 icon={<FaFilter className="h-3 w-3 text-slate-500" />}
                 options={SORT_OPTIONS}
                 value={sortBy}
@@ -120,7 +122,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-semibold transition-all h-9 sm:h-11 border cursor-pointer ${
+              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all h-8 sm:h-11 border cursor-pointer ${
                 onlyVerified
                   ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
                   : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
