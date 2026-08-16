@@ -681,53 +681,56 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       </section>
 
       {cartItems.length > 0 && (
-        <div className="fixed bottom-14 md:bottom-0 left-0 right-0 z-40 bg-slate-900 text-white shadow-[0_-8px_24px_rgba(0,0,0,0.15)] animate-in slide-in-from-bottom duration-300">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="fixed bottom-14 md:bottom-0 left-0 right-0 z-40 bg-slate-900 text-white shadow-[0_-8px_24px_rgba(0,0,0,0.25)] border-t border-slate-800 animate-in slide-in-from-bottom duration-300">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 sm:gap-6">
             
-            <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center shrink-0 animate-pulse">
-                  <FaTruckFast className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Unloading Weight Check</div>
-                  <div className="text-base font-semibold flex items-center gap-1.5">
-                    {totalWeightTons.toFixed(2)} Tons
-                    <span className="text-[11px] font-normal text-slate-400">({totalWeightKg.toLocaleString()} kg)</span>
-                  </div>
-                </div>
+            {/* Left: Weight & Truck Icon */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl bg-[#FF6500] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <FaTruckFast className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
-
-              <div className="flex-1 max-w-md space-y-1">
-                <div className="flex justify-between items-center text-[10px] font-semibold text-slate-400">
-                  <span>Recommended Vehicle</span>
-                  <span className="text-[#FF6500] font-semibold uppercase tracking-wider">{vehicleRecommendation.name}</span>
-                </div>
-                <div className="relative w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-[#FF6500] transition-all duration-500"
-                    style={{ width: `${Math.min(100, (totalWeightTons / vehicleRecommendation.limit) * 100)}%` }}
-                  />
+              <div className="hidden xs:block">
+                <div className="text-[9px] sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Unloading Weight Check</div>
+                <div className="text-xs sm:text-base font-semibold leading-tight text-white flex items-center gap-1">
+                  {totalWeightTons.toFixed(2)} Tons
+                  <span className="text-[9px] sm:text-[11px] font-normal text-slate-400">({totalWeightKg.toLocaleString()} kg)</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
-              <div className="text-left md:text-right">
-                <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Est. Material Total</div>
-                <div className="text-lg font-semibold text-[#FF6500]">
+            {/* Middle: Recommended Vehicle Progress Bar */}
+            <div className="flex-1 max-w-[140px] xs:max-w-xs sm:max-w-md space-y-1">
+              <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-semibold text-slate-400">
+                <span className="truncate">Recommended Vehicle</span>
+                <span className="text-[#FF6500] font-semibold uppercase tracking-wider truncate ml-1">{vehicleRecommendation.name}</span>
+              </div>
+              <div className="relative w-full h-1.5 sm:h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div 
+                  className="absolute top-0 left-0 h-full bg-[#FF6500] transition-all duration-500 rounded-full"
+                  style={{ width: `${Math.min(100, (totalWeightTons / vehicleRecommendation.limit) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Right: Est. Total Price & Checkout CTA Button */}
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+              <div className="text-right">
+                <div className="text-[8px] sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Est. Material Total</div>
+                <div className="text-xs sm:text-lg font-semibold text-[#FF6500] leading-tight">
                   ₹{totalPrice.toLocaleString()}
-                  <span className="text-[10px] text-slate-500 font-normal ml-1">Excl. GST</span>
+                  <span className="text-[8px] sm:text-[10px] text-slate-500 font-normal ml-0.5 hidden sm:inline">Excl. GST</span>
                 </div>
               </div>
 
               <Button
                 variant="primary"
+                size="sm"
                 onClick={() => onProceedToCheckout(cartItems)}
-                icon={<FaArrowRight className="h-3.5 w-3.5" />}
-                className="px-6 py-3 rounded-2xl"
+                icon={<FaArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
+                className="px-3 sm:px-6 py-1.5 sm:py-3 rounded-full sm:rounded-2xl text-xs font-semibold shrink-0"
               >
-                Checkout Supply Order
+                <span className="hidden sm:inline">Checkout Supply Order</span>
+                <span className="sm:hidden">Checkout</span>
               </Button>
             </div>
 
