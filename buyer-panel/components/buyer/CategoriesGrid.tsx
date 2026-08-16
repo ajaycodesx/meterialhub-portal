@@ -83,7 +83,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
   };
 
   return (
-    <section className="py-4 sm:py-8 bg-[#F8FAFC]">
+    <section className="py-4 sm:py-8 bg-transparent">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         
         {/* Unified Top Section Header & Filter Bar */}

@@ -20,7 +20,8 @@
   }
 
   body {
-    background-color: var(--background);
+    background: linear-gradient(180deg, #475569 0%, #94A3B8 20%, #F1F5F9 55%, #FFFFFF 100%);
+    background-attachment: fixed;
     color: #0F172A;
     font-family: var(--font-poppins), 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-tap-highlight-color: transparent;
