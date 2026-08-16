@@ -427,10 +427,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               })}
             </div>
 
-            {/* Technical Filters Dropdowns for Mobile */}
+            {/* Technical Filters Dropdowns for Mobile (Matching Tab Height & Font Size) */}
             <div className="grid grid-cols-2 gap-2 pt-1">
               <Select
                 label="Brand Filter"
+                size="sm"
                 options={brandOptions}
                 value={selectedBrand}
                 onChange={(val) => setSelectedBrand(String(val))}
@@ -438,6 +439,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               {grades.length > 1 && (
                 <Select
                   label="Grade Filter"
+                  size="sm"
                   options={gradeOptions}
                   value={selectedGrade}
                   onChange={(val) => setSelectedGrade(String(val))}

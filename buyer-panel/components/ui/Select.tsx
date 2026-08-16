@@ -24,6 +24,7 @@ export interface SelectProps {
   children?: React.ReactNode;
   popoverWidth?: string;
   align?: 'left' | 'right';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -38,7 +39,8 @@ export const Select: React.FC<SelectProps> = ({
   trigger,
   children,
   popoverWidth = 'w-full',
-  align = 'left'
+  align = 'left',
+  size = 'md'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,10 +57,22 @@ export const Select: React.FC<SelectProps> = ({
 
   const selectedOption = options.find((opt) => opt.value === value);
 
+  const sizeClasses = {
+    sm: 'h-8 px-3 text-xs font-semibold rounded-full',
+    md: 'h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-2xl',
+    lg: 'h-12 px-4 text-sm font-semibold rounded-2xl'
+  }[size];
+
+  const labelSizeClasses = {
+    sm: 'text-[10px] font-semibold text-slate-500 uppercase tracking-wider',
+    md: 'text-xs font-semibold text-slate-700',
+    lg: 'text-xs font-semibold text-slate-700'
+  }[size];
+
   return (
-    <div className={`space-y-1.5 relative ${className}`} ref={containerRef}>
+    <div className={`space-y-1 relative ${className}`} ref={containerRef}>
       {label && (
-        <label className="block text-xs font-semibold text-slate-700">
+        <label className={`block ${labelSizeClasses}`}>
           {label}
         </label>
       )}
@@ -72,7 +86,7 @@ export const Select: React.FC<SelectProps> = ({
           type="button"
           disabled={disabled}
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 transition-all flex items-center justify-between gap-2 text-left focus:outline-none cursor-pointer ${
+          className={`w-full ${sizeClasses} bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 transition-all flex items-center justify-between gap-2 text-left focus:outline-none cursor-pointer ${
             disabled ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
