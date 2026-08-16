@@ -41,6 +41,8 @@ export interface MaterialCategory {
   itemCount: number;
   trendingBadge?: string;
   image: string;
+  subcategories?: string[];
+  featuredBrands?: string[];
 }
 
 export interface HardwareMerchant {

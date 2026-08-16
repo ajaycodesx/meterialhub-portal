@@ -9,12 +9,75 @@ export const COMMODITY_RATES: CommodityRate[] = [
 ];
 
 export const MATERIAL_CATEGORIES: MaterialCategory[] = [
-  { id: 'cement', title: 'Cement & Aggregates', subtitle: '53 Grade, PPC, M-Sand, Blue Metal', iconName: 'FaBoxesStacked', colorBg: 'bg-[#FF6500]', itemCount: 140, trendingBadge: 'Best Rates', image: '/images/cement_aggregates.png' },
-  { id: 'steel', title: 'TMT Steel Rods', subtitle: 'Fe500D, Fe550D, Binding Wire', iconName: 'FaLayerGroup', colorBg: 'bg-[#FF6500]', itemCount: 95, trendingBadge: 'High Demand', image: '/images/tmt_steel_rods.png' },
-  { id: 'pvc', title: 'PVC & Plumbing', subtitle: 'CPVC, UPVC, Fittings & Valves', iconName: 'MdOutlineWaterDrop', colorBg: 'bg-[#FF6500]', itemCount: 320, image: '/images/pvc_plumbing_pipes.png' },
-  { id: 'paints', title: 'Paints & Wall Putty', subtitle: 'Emulsion, Primer, Enamel, Waterproof', iconName: 'FaPaintRoller', colorBg: 'bg-[#FF6500]', itemCount: 210, trendingBadge: 'Monsoon Deal', image: '/images/paints_wall_putty.png' },
-  { id: 'electricals', title: 'Electrical Wires & Switches', subtitle: 'Flame Retardant, MCB, DB Boxes', iconName: 'MdOutlineElectricalServices', colorBg: 'bg-[#FF6500]', itemCount: 410, image: '/images/electrical_wires_switches.png' },
-  { id: 'tools', title: 'Power Tools & Hardware', subtitle: 'Drills, Cutters, Fasteners, Safety', iconName: 'FaScrewdriverWrench', colorBg: 'bg-[#FF6500]', itemCount: 180, image: '/images/hardware_power_tools.png' },
+  { 
+    id: 'cement', 
+    title: 'Cement & Aggregates', 
+    subtitle: '53 Grade, PPC, M-Sand, Blue Metal', 
+    iconName: 'FaBoxesStacked', 
+    colorBg: 'bg-[#FF6500]', 
+    itemCount: 140, 
+    trendingBadge: 'Best Rates', 
+    image: '/images/cement_aggregates.png',
+    subcategories: ['53 Grade OPC Cement', 'PPC Water Shield Cement', 'Plastering M-Sand', 'P-Sand & Aggregates', 'White Cement & Tile Adhesive'],
+    featuredBrands: ['UltraTech', 'ACC Cement', 'Dalmia', 'Ramco', 'Chettinad']
+  },
+  { 
+    id: 'steel', 
+    title: 'TMT Steel Rods', 
+    subtitle: 'Fe500D, Fe550D, Binding Wire', 
+    iconName: 'FaLayerGroup', 
+    colorBg: 'bg-[#FF6500]', 
+    itemCount: 95, 
+    trendingBadge: 'High Demand', 
+    image: '/images/tmt_steel_rods.png',
+    subcategories: ['Fe550D TMT Rods (8mm-32mm)', 'Fe500D Seismic Grade Rods', 'Gi Binding Wire (18 Gauge)', 'MS Structural Angle & Channels', 'Stirrups & Prefab Ring Sets'],
+    featuredBrands: ['Tata Tiscon', 'JSW Neosteel', 'Vizag Steel', 'Kairali Steel', 'Indus TMT']
+  },
+  { 
+    id: 'pvc', 
+    title: 'PVC & Plumbing', 
+    subtitle: 'CPVC, UPVC, Fittings & Valves', 
+    iconName: 'MdOutlineWaterDrop', 
+    colorBg: 'bg-[#FF6500]', 
+    itemCount: 320, 
+    image: '/images/pvc_plumbing_pipes.png',
+    subcategories: ['CPVC Hot & Cold Water Pipes', 'SWR Drainage Pipes (110mm)', 'UPVC Pressure Pipes', 'Brass Threaded Elbows & Tees', 'Overhead Water Storage Tanks'],
+    featuredBrands: ['Supreme', 'Astral', 'Finolex', 'Ashirvad', 'Prince Pipes']
+  },
+  { 
+    id: 'paints', 
+    title: 'Paints & Wall Putty', 
+    subtitle: 'Emulsion, Primer, Enamel, Waterproof', 
+    iconName: 'FaPaintRoller', 
+    colorBg: 'bg-[#FF6500]', 
+    itemCount: 210, 
+    trendingBadge: 'Monsoon Deal', 
+    image: '/images/paints_wall_putty.png',
+    subcategories: ['Exterior Weatherproof Emulsion', 'Interior Premium Silk Emulsion', 'Acrylic Wall Putty (40kg)', 'Waterproofing Chemical Coatings', 'Enamel Wood & Metal Paints'],
+    featuredBrands: ['Asian Paints', 'Berger Paints', 'Nippon', 'Dulux', 'Birla White']
+  },
+  { 
+    id: 'electricals', 
+    title: 'Electrical Wires & Switches', 
+    subtitle: 'Flame Retardant, MCB, DB Boxes', 
+    iconName: 'MdOutlineElectricalServices', 
+    colorBg: 'bg-[#FF6500]', 
+    itemCount: 410, 
+    image: '/images/electrical_wires_switches.png',
+    subcategories: ['FR Multi-Strand Wires (1.5-6sqmm)', 'Modular Switch Plates & Sockets', 'Triple Pole MCB & ELCB Units', 'PVC Conduit Pipes & Junctions', 'LED Concealed Spotlights & Panels'],
+    featuredBrands: ['Finolex', 'Havells', 'Legrand', 'Polycab', 'Schneider Electric']
+  },
+  { 
+    id: 'tools', 
+    title: 'Power Tools & Hardware', 
+    subtitle: 'Drills, Cutters, Fasteners, Safety', 
+    iconName: 'FaScrewdriverWrench', 
+    colorBg: 'bg-[#FF6500]', 
+    itemCount: 180, 
+    image: '/images/hardware_power_tools.png',
+    subcategories: ['Impact Drill & Rotary Hammer Kits', '4-Inch Angle Grinders & Cutters', 'Stainless Steel Door Hinges & Locks', 'Concrete Anchor Bolts & Screws', 'Safety Helmets & Harness Sets'],
+    featuredBrands: ['Bosch', 'DeWalt', 'Stanley', 'Makita', 'Godrej']
+  },
 ];
 
 export const HARDWARE_MERCHANTS: HardwareMerchant[] = [
