@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  FaCircleCheck, 
-  FaTruckFast, 
-  FaFileInvoiceDollar, 
-  FaHouse, 
-  FaPhone, 
+import {
+  FaCircleCheck,
+  FaTruckFast,
+  FaFileInvoiceDollar,
+  FaHouse,
+  FaPhone,
   FaShieldHalved,
   FaBuilding,
   FaClock,
@@ -32,9 +32,9 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
     <div className="flex-1 bg-transparent">
       <section className="py-5 sm:py-10">
         <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
-          
-          <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md text-center space-y-6 sm:space-y-8 max-w-4xl mx-auto">
-            
+
+          <div className="text-center space-y-6 sm:space-y-8 max-w-4xl mx-auto">
+
             {/* Animated Success Check Circle */}
             <div className="relative inline-flex items-center justify-center">
               <div className="absolute inset-0 rounded-full bg-emerald-100 animate-ping opacity-30" />
@@ -48,53 +48,60 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
                 Supply Order Placed Successfully!
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 font-normal">
-                Unique Order Reference ID: <span className="font-semibold text-slate-900 bg-slate-100 border border-slate-200/80 px-3.5 py-1 rounded-full text-xs ml-1">{orderId || 'MH-839210'}</span>
+                Unique Order Reference ID: <span className="font-semibold text-slate-900 bg-white border border-slate-200/80 px-3.5 py-1 rounded-full text-xs ml-1 shadow-2xs">{orderId || 'MH-839210'}</span>
               </p>
             </div>
 
             {/* Live Order Status Timeline Card */}
-            <div className="bg-slate-50/90 border border-slate-200/60 p-5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 text-left">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-800 border-b border-slate-200/60 pb-3">
+            <div className="bg-white border border-slate-200/80 p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-md space-y-5 text-left">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-800 border-b border-slate-100 pb-3.5">
                 <span>Order Tracking Timeline</span>
-                <span className="text-[#FF6500] font-semibold flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-full text-[11px]">
+                <span className="text-[#FF6500] font-semibold flex items-center gap-1.5 bg-orange-50 px-3 py-1 rounded-full text-xs border border-orange-100">
                   <FaTruckFast className="h-3.5 w-3.5" /> Live Dispatch In-Progress
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 relative pt-3">
+              <div className="grid grid-cols-3 gap-2 relative pt-2 pb-1">
+                {/* Step 1: Order Placed */}
                 <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                  <div className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
+                  <div className="h-9 w-9 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs ring-4 ring-white">
                     <FaCheck className="h-3.5 w-3.5" />
                   </div>
                   <span className="text-xs font-semibold text-slate-900">Order Placed</span>
                   <span className="text-[10px] text-slate-400 font-normal">11:52 AM</span>
                 </div>
 
+                {/* Step 2: Vendor Accepted */}
                 <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                  <div className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
+                  <div className="h-9 w-9 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs ring-4 ring-white">
                     <FaCheck className="h-3.5 w-3.5" />
                   </div>
                   <span className="text-xs font-semibold text-slate-900">Vendor Accepted</span>
                   <span className="text-[10px] text-slate-400 font-normal">11:53 AM</span>
                 </div>
 
+                {/* Step 3: Dispatched */}
                 <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                  <div className="h-8 w-8 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs font-semibold shadow-xs animate-pulse">
+                  <div className="h-9 w-9 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs font-semibold shadow-xs animate-pulse ring-4 ring-white">
                     <FaTruckFast className="h-3.5 w-3.5" />
                   </div>
                   <span className="text-xs font-semibold text-[#FF6500]">Dispatched</span>
                   <span className="text-[10px] text-slate-500 font-medium">ETA ~45 Mins</span>
                 </div>
 
-                <div className="absolute top-7 left-1/6 right-1/6 h-0.5 bg-emerald-400 -z-0" />
+                {/* Segment 1: Completed Line (Order Placed -> Vendor Accepted) */}
+                <div className="absolute top-[26px] left-[16.66%] w-[33.33%] h-0.5 bg-emerald-500 z-0" />
+
+                {/* Segment 2: In-Progress Line (Vendor Accepted -> Dispatched) */}
+                <div className="absolute top-[26px] left-[50%] w-[33.33%] h-0.5 bg-slate-200 z-0" />
               </div>
             </div>
 
             {/* Merchant Details & Vehicle Allocation Summary */}
-            <div className="bg-slate-50/90 border border-slate-200/60 p-5 sm:p-6 rounded-2xl sm:rounded-3xl text-left space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-2xl bg-slate-900 text-white font-semibold flex items-center justify-center text-lg shrink-0 shadow-xs border border-slate-700">
+            <div className="bg-white border border-slate-200/80 p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-md text-left space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-3.5">
+                  <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold flex items-center justify-center text-xl shrink-0 shadow-xs border border-slate-700">
                     K
                   </div>
                   <div>
@@ -105,28 +112,28 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 font-normal flex items-center gap-1.5 mt-0.5">
-                      <FaBuilding className="h-3 w-3 text-orange-500" /> Kakkanad Industrial Zone, Metro Pillar #412
+                      <FaBuilding className="h-3.5 w-3.5 text-orange-500" /> Kakkanad Industrial Zone, Metro Pillar #412
                     </p>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs pt-1">
-                <div className="p-3.5 rounded-2xl bg-white border border-slate-200/60 space-y-1 shadow-2xs">
+                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1 shadow-2xs">
                   <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Allocated Vehicle</span>
                   <p className="font-semibold text-slate-900 flex items-center gap-1.5">
                     <FaTruckFast className="h-3.5 w-3.5 text-[#FF6500]" /> Bolero Pickup
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white border border-slate-200/60 space-y-1 shadow-2xs">
+                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1 shadow-2xs">
                   <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Payload Weight</span>
                   <p className="font-semibold text-slate-900 flex items-center gap-1.5">
                     <FaBoxesStacked className="h-3.5 w-3.5 text-slate-600" /> 2.50 Tons
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white border border-slate-200/60 space-y-1 shadow-2xs">
+                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1 shadow-2xs">
                   <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Est. Site Unloading</span>
                   <p className="font-semibold text-slate-900 flex items-center gap-1.5">
                     <FaClock className="h-3.5 w-3.5 text-emerald-600" /> Today in 45 Mins
