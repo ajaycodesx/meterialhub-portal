@@ -29,151 +29,153 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
   const [showLiveTrackingModal, setShowLiveTrackingModal] = useState(false);
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] py-8 sm:py-14">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        
-        <div className="bg-white p-6 sm:p-10 rounded-3xl shadow-xs text-center space-y-8">
+    <div className="flex-1 bg-transparent">
+      <section className="py-5 sm:py-10">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
           
-          <div className="relative inline-flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-emerald-100 animate-ping opacity-30" />
-            <div className="h-20 w-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-xs relative z-10">
-              <FaCircleCheck className="h-10 w-10" />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-              Supply Order Placed Successfully!
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal">
-              Unique Order Reference ID: <span className="font-semibold text-slate-900 bg-slate-100 px-3.5 py-1 rounded-full text-xs">{orderId || 'MH-839210'}</span>
-            </p>
-          </div>
-
-          <div className="bg-slate-50 p-6 rounded-3xl space-y-4 max-w-3xl mx-auto text-left">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-              <span>Order Tracking Timeline</span>
-              <span className="text-[#FF6500] font-semibold flex items-center gap-1">
-                <FaTruckFast className="h-3.5 w-3.5" /> Live Dispatch
-              </span>
+          <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md text-center space-y-6 sm:space-y-8 max-w-4xl mx-auto">
+            
+            {/* Animated Success Check Circle */}
+            <div className="relative inline-flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-emerald-100 animate-ping opacity-30" />
+              <div className="h-20 w-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-xs relative z-10 border border-emerald-200">
+                <FaCircleCheck className="h-10 w-10" />
+              </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 relative pt-2">
-              <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                <div className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
-                  <FaCheck className="h-3.5 w-3.5" />
-                </div>
-                <span className="text-xs font-semibold text-slate-900">Order Placed</span>
-                <span className="text-[10px] text-slate-400 font-normal">11:52 AM</span>
-              </div>
-
-              <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                <div className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
-                  <FaCheck className="h-3.5 w-3.5" />
-                </div>
-                <span className="text-xs font-semibold text-slate-900">Vendor Accepted</span>
-                <span className="text-[10px] text-slate-400 font-normal">11:53 AM</span>
-              </div>
-
-              <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                <div className="h-8 w-8 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs font-semibold shadow-xs animate-pulse">
-                  <FaTruckFast className="h-3.5 w-3.5" />
-                </div>
-                <span className="text-xs font-semibold text-[#FF6500]">Dispatched</span>
-                <span className="text-[10px] text-slate-500 font-medium">ETA ~45 Mins</span>
-              </div>
-
-              <div className="absolute top-6 left-1/6 right-1/6 h-0.5 bg-emerald-400 -z-0" />
+            <div className="space-y-2">
+              <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+                Supply Order Placed Successfully!
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 font-normal">
+                Unique Order Reference ID: <span className="font-semibold text-slate-900 bg-slate-100 border border-slate-200/80 px-3.5 py-1 rounded-full text-xs ml-1">{orderId || 'MH-839210'}</span>
+              </p>
             </div>
-          </div>
 
-          <div className="bg-slate-50 p-6 rounded-3xl max-w-3xl mx-auto text-left space-y-4">
-            <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-3">
-                <div className="h-11 w-11 rounded-2xl bg-slate-900 text-white font-semibold flex items-center justify-center text-lg shrink-0 shadow-xs">
-                  K
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-sm sm:text-base text-slate-900">Kakkanad Building Supplies Co.</h3>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold flex items-center gap-1">
-                      <FaShieldHalved className="h-2.5 w-2.5" /> Verified
-                    </span>
+            {/* Live Order Status Timeline Card */}
+            <div className="bg-slate-50/90 border border-slate-200/60 p-5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 text-left">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-800 border-b border-slate-200/60 pb-3">
+                <span>Order Tracking Timeline</span>
+                <span className="text-[#FF6500] font-semibold flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-full text-[11px]">
+                  <FaTruckFast className="h-3.5 w-3.5" /> Live Dispatch In-Progress
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 relative pt-3">
+                <div className="flex flex-col items-center text-center space-y-1.5 z-10">
+                  <div className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
+                    <FaCheck className="h-3.5 w-3.5" />
                   </div>
-                  <p className="text-xs text-slate-500 font-normal flex items-center gap-1.5 mt-0.5">
-                    <FaBuilding className="h-3 w-3 text-orange-400" /> Kakkanad Industrial Zone, Metro Pillar #412
+                  <span className="text-xs font-semibold text-slate-900">Order Placed</span>
+                  <span className="text-[10px] text-slate-400 font-normal">11:52 AM</span>
+                </div>
+
+                <div className="flex flex-col items-center text-center space-y-1.5 z-10">
+                  <div className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
+                    <FaCheck className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-900">Vendor Accepted</span>
+                  <span className="text-[10px] text-slate-400 font-normal">11:53 AM</span>
+                </div>
+
+                <div className="flex flex-col items-center text-center space-y-1.5 z-10">
+                  <div className="h-8 w-8 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs font-semibold shadow-xs animate-pulse">
+                    <FaTruckFast className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#FF6500]">Dispatched</span>
+                  <span className="text-[10px] text-slate-500 font-medium">ETA ~45 Mins</span>
+                </div>
+
+                <div className="absolute top-7 left-1/6 right-1/6 h-0.5 bg-emerald-400 -z-0" />
+              </div>
+            </div>
+
+            {/* Merchant Details & Vehicle Allocation Summary */}
+            <div className="bg-slate-50/90 border border-slate-200/60 p-5 sm:p-6 rounded-2xl sm:rounded-3xl text-left space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
+                <div className="flex items-center gap-3">
+                  <div className="h-11 w-11 rounded-2xl bg-slate-900 text-white font-semibold flex items-center justify-center text-lg shrink-0 shadow-xs border border-slate-700">
+                    K
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Kakkanad Building Supplies Co.</h3>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold flex items-center gap-1">
+                        <FaShieldHalved className="h-2.5 w-2.5 text-emerald-600" /> Verified Merchant
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 font-normal flex items-center gap-1.5 mt-0.5">
+                      <FaBuilding className="h-3 w-3 text-orange-500" /> Kakkanad Industrial Zone, Metro Pillar #412
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs pt-1">
+                <div className="p-3.5 rounded-2xl bg-white border border-slate-200/60 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Allocated Vehicle</span>
+                  <p className="font-semibold text-slate-900 flex items-center gap-1.5">
+                    <FaTruckFast className="h-3.5 w-3.5 text-[#FF6500]" /> Bolero Pickup
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white border border-slate-200/60 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Payload Weight</span>
+                  <p className="font-semibold text-slate-900 flex items-center gap-1.5">
+                    <FaBoxesStacked className="h-3.5 w-3.5 text-slate-600" /> 2.50 Tons
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white border border-slate-200/60 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Est. Site Unloading</span>
+                  <p className="font-semibold text-slate-900 flex items-center gap-1.5">
+                    <FaClock className="h-3.5 w-3.5 text-emerald-600" /> Today in 45 Mins
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-white space-y-1 shadow-2xs">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Allocated Vehicle</span>
-                <p className="font-semibold text-slate-900 flex items-center gap-1.5">
-                  <FaTruckFast className="h-3.5 w-3.5 text-[#FF6500]" /> Bolero Pickup
-                </p>
-              </div>
+            {/* Action Buttons Bar */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link href="/tracking" className="w-full sm:w-auto">
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={onTrackOrderLive}
+                  icon={<FaMapLocationDot className="h-4 w-4" />}
+                  className="w-full sm:w-auto px-6 py-3"
+                >
+                  Track Order (Live Page)
+                </Button>
+              </Link>
 
-              <div className="p-3.5 rounded-2xl bg-white space-y-1 shadow-2xs">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Payload Weight</span>
-                <p className="font-semibold text-slate-900 flex items-center gap-1.5">
-                  <FaBoxesStacked className="h-3.5 w-3.5 text-slate-600" /> 2.50 Tons
-                </p>
-              </div>
+              <Link href="/" className="w-full sm:w-auto">
+                <button
+                  onClick={onReturnHome}
+                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs h-11"
+                >
+                  <FaHouse className="h-3.5 w-3.5 text-slate-600" />
+                  <span>Continue Shopping</span>
+                </button>
+              </Link>
 
-              <div className="p-3.5 rounded-2xl bg-white space-y-1 shadow-2xs">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Est. Site Unloading</span>
-                <p className="font-semibold text-slate-900 flex items-center gap-1.5">
-                  <FaClock className="h-3.5 w-3.5 text-emerald-600" /> Today in 45 Mins
-                </p>
-              </div>
+              <button
+                onClick={() => alert('GST Tax Invoice PDF downloaded to device')}
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-orange-50 hover:bg-orange-100/80 border border-orange-200 text-xs font-semibold text-[#FF6500] transition-all cursor-pointer shadow-2xs h-11"
+              >
+                <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
+                <span>GST Invoice</span>
+              </button>
             </div>
-          </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/tracking" className="w-full sm:w-auto">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={onTrackOrderLive}
-                icon={<FaMapLocationDot className="h-4 w-4" />}
-                className="w-full sm:w-auto px-7"
-              >
-                Track Order (Live Page)
-              </Button>
-            </Link>
-
-            <Link href="/" className="w-full sm:w-auto">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={onReturnHome}
-                icon={<FaHouse className="h-3.5 w-3.5 text-slate-600" />}
-                className="w-full sm:w-auto px-7"
-              >
-                Continue Shopping
-              </Button>
-            </Link>
-
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => alert('GST Tax Invoice PDF downloaded to device')}
-              icon={<FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />}
-              className="w-full sm:w-auto px-5"
-            >
-              GST Invoice
-            </Button>
           </div>
 
         </div>
-
-      </div>
+      </section>
 
       {showLiveTrackingModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 relative flex flex-col space-y-5">
+          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 relative flex flex-col space-y-5 border border-slate-100">
             <button
               onClick={() => setShowLiveTrackingModal(false)}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
