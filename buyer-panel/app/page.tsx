@@ -371,10 +371,10 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                         </Button>
 
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="md"
                           onClick={() => setIsAuthModalOpen(true)}
-                          className="w-full justify-center text-sm py-3.5 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800 font-semibold"
+                          className="w-full justify-center text-sm py-3.5 font-semibold"
                         >
                           Wholesale Rates
                         </Button>
