@@ -24,7 +24,7 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLanguage }) => {
   return (
     <footer className="bg-slate-100/80 border-t border-slate-200/80 pt-5 sm:pt-8 pb-[72px] md:pb-8 text-slate-700">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 mb-1.5 sm:mb-0">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-2.5 sm:space-y-6">
         
         {/* Trust Value Propositions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
