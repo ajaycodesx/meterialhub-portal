@@ -119,20 +119,20 @@ export const Header: React.FC<HeaderProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Cement, Steel Rods, PVC Pipes..."
-                className="w-full h-full pl-9 pr-22 py-2 text-xs font-normal rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 placeholder-slate-400"
+                className="w-full h-full pl-9.5 pr-28 py-2 text-xs font-normal rounded-full bg-slate-50 border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 placeholder-slate-400 shadow-2xs"
               />
-              <FaMagnifyingGlass className="absolute left-3 top-3.5 h-3 w-3 text-slate-400" />
+              <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
               
               <button
                 onClick={handleVoiceSearch}
-                className={`absolute right-1.5 h-7.5 px-2.5 rounded-xl text-[11px] font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                className={`absolute right-1.5 h-8 px-3 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                   isListeningVoice 
-                    ? 'bg-red-500 text-white animate-pulse' 
-                    : 'bg-slate-900 text-white hover:bg-slate-800'
+                    ? 'bg-red-500 text-white shadow-xs animate-pulse' 
+                    : 'bg-slate-900 text-white hover:bg-slate-800 shadow-2xs'
                 }`}
               >
-                <FaMicrophone className="h-2.5 w-2.5 text-[#FF6500]" />
-                <span>{isListeningVoice ? 'Listening...' : 'Voice'}</span>
+                <FaMicrophone className={`h-3 w-3 ${isListeningVoice ? 'text-white' : 'text-[#FF6500]'}`} />
+                <span className="truncate">{isListeningVoice ? 'Listening...' : 'Voice'}</span>
               </button>
             </div>
           </div>
@@ -298,7 +298,7 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <button
                 onClick={onOpenAuthModal}
-                className="px-3 sm:px-4.5 py-1.5 sm:py-2 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 h-9 sm:h-11 shrink-0 cursor-pointer"
+                className="px-3 sm:px-4.5 py-1.5 sm:py-2 rounded-full bg-[#FF6500] hover:bg-[#E05800] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 h-9 sm:h-11 shrink-0 cursor-pointer"
               >
                 <FaUser className="h-3.5 w-3.5" />
                 <span>Sign In</span>
@@ -315,15 +315,17 @@ export const Header: React.FC<HeaderProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Cement, Steel, PVC Pipes..."
-              className="w-full h-full pl-8 pr-20 py-1.5 text-xs font-normal rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 text-slate-900"
+              className="w-full h-full pl-8.5 pr-26 py-1.5 text-xs font-normal rounded-full bg-slate-50 border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 text-slate-900"
             />
-            <FaMagnifyingGlass className="absolute left-2.5 top-3 h-3 w-3 text-slate-400" />
+            <FaMagnifyingGlass className="absolute left-3 top-3 h-3 w-3 text-slate-400" />
             <button
               onClick={handleVoiceSearch}
-              className="absolute right-1 h-7 px-2 rounded-xl text-[10px] font-medium bg-slate-900 text-white flex items-center gap-1 cursor-pointer"
+              className={`absolute right-1 h-7 px-2.5 rounded-full text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all ${
+                isListeningVoice ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-900 text-white'
+              }`}
             >
-              <FaMicrophone className="h-2.5 w-2.5 text-[#FF6500]" />
-              <span>Voice</span>
+              <FaMicrophone className={`h-2.5 w-2.5 ${isListeningVoice ? 'text-white' : 'text-[#FF6500]'}`} />
+              <span>{isListeningVoice ? 'Listening' : 'Voice'}</span>
             </button>
           </div>
         </div>

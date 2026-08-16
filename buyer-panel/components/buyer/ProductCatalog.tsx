@@ -394,9 +394,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products in store inventory..."
-                className="w-full h-full pl-9 pr-4 py-2 text-xs font-normal rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 shadow-sm"
+                className="w-full h-full pl-9.5 pr-4 py-2 text-xs font-normal rounded-full bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 shadow-2xs"
               />
-              <FaMagnifyingGlass className="absolute left-3 top-3.5 h-3.5 w-3.5 text-slate-400" />
+              <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
             </div>
           </div>
 
