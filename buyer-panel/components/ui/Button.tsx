@@ -46,13 +46,13 @@ export const Button: React.FC<ButtonProps> = ({
   const getSizeClasses = (s: ButtonSize): string => {
     switch (s) {
       case 'sm':
-        return 'px-3 py-1.5 text-xs rounded-xl gap-1.5 h-8';
+        return 'px-3.5 py-1.5 text-xs rounded-full gap-1.5 h-8 sm:h-9';
       case 'md':
-        return 'px-4 py-2 text-xs rounded-2xl gap-2 h-10 sm:h-11';
+        return 'px-4.5 py-2 text-xs rounded-full gap-2 h-10 sm:h-11';
       case 'lg':
-        return 'px-5 py-2 text-xs rounded-2xl gap-2 h-10 sm:h-11';
+        return 'px-6 py-2.5 text-xs rounded-full gap-2 h-11 sm:h-12';
       default:
-        return 'px-4 py-2 text-xs rounded-2xl gap-2 h-10 sm:h-11';
+        return 'px-4.5 py-2 text-xs rounded-full gap-2 h-10 sm:h-11';
     }
   };
 

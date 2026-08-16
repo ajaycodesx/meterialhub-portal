@@ -171,7 +171,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
             <button
               onClick={() => setActiveTab('sites')}
-              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'sites'
                   ? 'bg-slate-900 text-white border border-slate-900'
                   : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
@@ -183,7 +183,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('payments')}
-              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'payments'
                   ? 'bg-slate-900 text-white border border-slate-900'
                   : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
@@ -195,7 +195,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('wishlist')}
-              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'wishlist'
                   ? 'bg-slate-900 text-white border border-slate-900'
                   : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'
@@ -207,7 +207,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('settings')}
-              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
+              className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all h-10 sm:h-11 shadow-2xs cursor-pointer ${
                 activeTab === 'settings'
                   ? 'bg-slate-900 text-white border border-slate-900'
                   : 'bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800'

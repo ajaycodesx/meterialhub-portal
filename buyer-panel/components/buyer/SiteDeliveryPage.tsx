@@ -63,7 +63,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
               <div className="mb-2.5">
                 <button
                   onClick={onBack}
-                  className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 shadow-2xs cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 shadow-2xs cursor-pointer"
                 >
                   <FaChevronLeft className="h-3 w-3" />
                   <span>Back to Previous Setup</span>

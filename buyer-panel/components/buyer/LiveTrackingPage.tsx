@@ -57,7 +57,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
               <div className="mb-2">
                 <button
                   onClick={onBackToSuccess}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
                 >
                   <FaChevronLeft className="h-3 w-3" />
                   <span>Back to Order Confirmation</span>
@@ -266,14 +266,14 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 <div className="grid grid-cols-2 gap-2.5 pt-1">
                   <a
                     href="tel:+919876543210"
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaPhone className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Call Driver</span>
                   </a>
                   <button
                     onClick={() => alert('Opening live chat with driver Rajesh Kumar...')}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaCommentDots className="h-3.5 w-3.5 text-slate-500" />
                     <span>Chat</span>
@@ -314,7 +314,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 ) : (
                   <button
                     onClick={() => setReportDelaySent(true)}
-                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaTriangleExclamation className="h-3.5 w-3.5 text-amber-600" />
                     <span>Report Unloading Delay</span>
@@ -324,7 +324,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => alert('Connecting to 24x7 Site Support Helpdesk...')}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaHeadset className="h-3.5 w-3.5 text-slate-500" />
                     <span>Contact Support</span>
@@ -332,7 +332,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
                   <button
                     onClick={() => alert('GST Tax Invoice PDF Downloaded')}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
                     <span>View Invoice</span>
