@@ -337,7 +337,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   return (
                     <div
                       key={product.id}
-                      className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                      className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                     >
                       <div>
                         <div className="relative h-44 w-full rounded-2xl bg-slate-100 overflow-hidden mb-4">

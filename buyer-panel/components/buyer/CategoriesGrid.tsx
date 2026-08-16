@@ -85,8 +85,6 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
   return (
     <section className="py-4 sm:py-8 bg-transparent">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
-        
-        {/* Unified Top Section Header & Filter Bar */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-slate-200/80 pb-3.5 sm:pb-4">
           <div>
             <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-[#FF6500] uppercase tracking-wider mb-0.5">
@@ -217,8 +215,8 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                 onClick={() => handleCategoryClick('all')}
                 className={`group rounded-2xl p-3 sm:p-3.5 transition-all cursor-pointer border flex items-center justify-between ${
                   internalSelectedId === 'all'
-                    ? 'bg-white border-[#FF6500] shadow-md ring-2 ring-[#FF6500]/20'
-                    : 'bg-white hover:bg-slate-50 border-slate-200/80 shadow-2xs'
+                    ? 'bg-white border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
+                    : 'bg-white hover:bg-slate-50 border-slate-200/80 shadow-sm hover:shadow-md'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -252,8 +250,8 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                     onClick={() => handleCategoryClick(cat.id)}
                     className={`group rounded-2xl p-3 sm:p-3.5 transition-all cursor-pointer border flex items-center justify-between ${
                       isSelected
-                        ? 'bg-white border-[#FF6500] shadow-md ring-2 ring-[#FF6500]/20'
-                        : 'bg-white hover:bg-slate-50 border-slate-200/80 shadow-2xs'
+                        ? 'bg-white border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
+                        : 'bg-white hover:bg-slate-50 border-slate-200/80 shadow-sm hover:shadow-md'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -301,7 +299,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
             {/* Merchant Cards Grid */}
             {filteredMerchants.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+              <div className="text-center py-12 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md">
                 <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
                 <h3 className="text-sm font-semibold text-slate-800">No Hardware Suppliers Found</h3>
                 <p className="text-xs text-slate-400 mt-0.5 font-normal">Try clearing category selection or expanding radius to 25 KM</p>
@@ -319,7 +317,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                 {filteredMerchants.map((merchant) => (
                   <div
                     key={merchant.id}
-                    className="bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                    className="bg-white rounded-2xl border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden"
                   >
                     <div className="bg-slate-50/80 p-3.5 border-b border-slate-100">
                       <div className="flex items-start justify-between gap-2">
