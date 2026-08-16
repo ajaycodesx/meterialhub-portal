@@ -324,39 +324,41 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                       </p>
                     </div>
 
-                    <div className="space-y-4 sm:space-y-6">
+                    <div className="space-y-5">
+                      {/* Clean Inner Feature Cards */}
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100/60 flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
-                            <FaTruckFast className="h-3.5 w-3.5" />
+                        <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 shadow-2xs flex items-center gap-3 transition-all">
+                          <div className="h-9 w-9 rounded-xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0 border border-orange-100/80">
+                            <FaTruckFast className="h-4 w-4" />
                           </div>
                           <div>
                             <h4 className="text-xs font-semibold text-slate-900">25 KM Radius</h4>
-                            <p className="text-[11px] text-slate-500 font-normal">Same-Day Delivery</p>
+                            <p className="text-[10px] text-slate-500 font-normal">Same-Day Delivery</p>
                           </div>
                         </div>
 
-                        <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/60 flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
-                            <FaShieldHalved className="h-3.5 w-3.5" />
+                        <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 shadow-2xs flex items-center gap-3 transition-all">
+                          <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100/80">
+                            <FaShieldHalved className="h-4 w-4" />
                           </div>
                           <div>
                             <h4 className="text-xs font-semibold text-slate-900">GST Invoice</h4>
-                            <p className="text-[11px] text-slate-500 font-normal">100% Tax Credit</p>
+                            <p className="text-[10px] text-slate-500 font-normal">100% Tax Credit</p>
                           </div>
                         </div>
 
-                        <div className="p-3.5 rounded-2xl bg-slate-100/80 border border-slate-200/60 flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-slate-200 text-[#FF6500] flex items-center justify-center shrink-0">
-                            <FaStore className="h-3.5 w-3.5" />
+                        <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 shadow-2xs flex items-center gap-3 transition-all">
+                          <div className="h-9 w-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 border border-slate-200/80">
+                            <FaStore className="h-4 w-4 text-[#FF6500]" />
                           </div>
                           <div>
                             <h4 className="text-xs font-semibold text-slate-900">Local Hardware</h4>
-                            <p className="text-[11px] text-slate-500 font-normal">Verified Stores</p>
+                            <p className="text-[10px] text-slate-500 font-normal">Verified Stores</p>
                           </div>
                         </div>
                       </div>
 
+                      {/* Primary & Secondary Hero CTAs */}
                       <div className="grid grid-cols-2 gap-3">
                         <Button
                           variant="primary"
@@ -369,10 +371,10 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                         </Button>
 
                         <Button
-                          variant="secondary"
+                          variant="outline"
                           size="md"
                           onClick={() => setIsAuthModalOpen(true)}
-                          className="w-full justify-center text-sm py-3.5"
+                          className="w-full justify-center text-sm py-3.5 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800 font-semibold"
                         >
                           Wholesale Rates
                         </Button>
