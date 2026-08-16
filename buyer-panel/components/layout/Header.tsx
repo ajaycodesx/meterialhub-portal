@@ -118,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Cement, Steel Rods, PVC Pipes..."
+                placeholder="Search Cement, Steel Rods, PVC Pipes"
                 className="w-full h-full pl-9.5 pr-28 py-2 text-xs font-normal rounded-full bg-slate-50 border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 placeholder-slate-400 shadow-2xs"
               />
               <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
@@ -132,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 <FaMicrophone className={`h-3 w-3 ${isListeningVoice ? 'text-white' : 'text-[#FF6500]'}`} />
-                <span className="truncate">{isListeningVoice ? 'Listening...' : 'Voice'}</span>
+                <span className="truncate">{isListeningVoice ? 'Listening' : 'Voice'}</span>
               </button>
             </div>
           </div>
@@ -314,7 +314,7 @@ export const Header: React.FC<HeaderProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Cement, Steel, PVC Pipes..."
+              placeholder="Search Cement, Steel, PVC Pipes"
               className="w-full h-full pl-8.5 pr-26 py-1.5 text-xs font-normal rounded-full bg-slate-50 border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 text-slate-900"
             />
             <FaMagnifyingGlass className="absolute left-3 top-3 h-3 w-3 text-slate-400" />

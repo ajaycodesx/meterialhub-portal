@@ -333,7 +333,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   icon={<FaArrowRight className="h-3.5 w-3.5" />}
                   className="w-full mt-4 py-3 sm:py-3.5"
                 >
-                  {isPlacingOrder ? 'Processing Supply Order...' : 'Place Supply Order Now'}
+                  {isPlacingOrder ? 'Processing Supply Order' : 'Place Supply Order Now'}
                 </Button>
 
                 <div className="text-center text-[11px] text-slate-400 font-normal pt-1">
