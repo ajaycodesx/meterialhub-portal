@@ -107,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({
             {location.isServiceable && (
               <span className="hidden md:flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-semibold shrink-0">
                 <FaCircleCheck className="h-2.5 w-2.5" />
-                25km
+                20km
               </span>
             )}
           </button>

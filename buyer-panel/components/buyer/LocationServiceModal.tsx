@@ -45,7 +45,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
   onProceedNext
 }) => {
   const [pinCode, setPinCode] = useState(locationState.pinCode || '682001');
-  const [selectedRadius, setSelectedRadius] = useState<'20' | '25'>('25');
+  const [selectedRadius, setSelectedRadius] = useState<'10' | '20'>('20');
   const [isChecking, setIsChecking] = useState(false);
   const [activeStep, setActiveStep] = useState<'check' | 'constraints' | 'pindrop'>('check');
 
@@ -105,7 +105,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           </div>
           <div>
             <h4 className="font-semibold text-base text-slate-900 tracking-tight">Delivery Radius &amp; Site Check</h4>
-            <p className="text-xs text-slate-500 font-normal">20/25 KM Wholesale Supplier Radius Check</p>
+            <p className="text-xs text-slate-500 font-normal">20 KM Wholesale Supplier Radius Check</p>
           </div>
         </div>
 
@@ -115,7 +115,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
               <div className="p-4 rounded-2xl bg-orange-50/70 flex items-start gap-3">
                 <FaShieldHalved className="h-4 w-4 text-[#FF6500] shrink-0 mt-0.5" />
                 <p className="text-xs text-slate-700 leading-relaxed font-normal">
-                  Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-semibold">20-25 KM radius</strong>.
+                  Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-semibold">20 KM radius</strong>.
                 </p>
               </div>
 
@@ -138,12 +138,28 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                     icon={<FaArrowRight className="h-3 w-3" />}
                     className="shrink-0"
                   >
-                    Verify 25KM
+                    Verify 20KM
                   </Button>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRadius('10')}
+                  className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
+                    selectedRadius === '10'
+                      ? 'bg-orange-50 text-[#FF6500] shadow-xs'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-semibold">10 KM Express</span>
+                    {selectedRadius === '10' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-normal mt-0.5">Same-Day Urgent Orders</p>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setSelectedRadius('20')}
@@ -154,24 +170,8 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold">20 KM Express</span>
+                    <span className="text-xs font-semibold">20 KM Standard</span>
                     {selectedRadius === '20' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
-                  </div>
-                  <p className="text-[10px] text-slate-500 font-normal mt-0.5">Same-Day Urgent Orders</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedRadius('25')}
-                  className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
-                    selectedRadius === '25'
-                      ? 'bg-orange-50 text-[#FF6500] shadow-xs'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold">25 KM Standard</span>
-                    {selectedRadius === '25' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
                   </div>
                   <p className="text-[10px] text-slate-500 font-normal mt-0.5">Wholesale Price Direct</p>
                 </button>
@@ -247,7 +247,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
               <div className="p-3.5 rounded-2xl bg-amber-50/80 flex items-center gap-3">
                 <FaTriangleExclamation className="h-5 w-5 text-amber-600 shrink-0" />
                 <div>
-                  <h4 className="text-xs font-semibold text-amber-900">Outside Standard 25KM Radius</h4>
+                  <h4 className="text-xs font-semibold text-amber-900">Outside Standard 20KM Radius</h4>
                   <p className="text-[10px] text-amber-700 font-normal mt-0.5">Drop a pin on map to request custom logistics quote.</p>
                 </div>
               </div>

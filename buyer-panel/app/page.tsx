@@ -276,7 +276,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                     <div className="grid grid-cols-3 gap-1.5 text-[10px] font-medium w-full">
                       <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10 text-center truncate">
                         <FaTruckFast className="h-3 w-3 text-orange-400 shrink-0" />
-                        <span className="truncate">25 KM Radius</span>
+                        <span className="truncate">20 KM Radius</span>
                       </span>
                       <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md text-center truncate">
                         <FaShieldHalved className="h-3 w-3 shrink-0" />
@@ -320,7 +320,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                       </h1>
 
                       <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
-                        Order Cement, TMT Steel Rods, PVC Pipes, Paints &amp; Electricals directly from verified local hardware stores, with real-time stock availability, transparent wholesale pricing, GST tax invoice, and same-day site delivery within a 25 KM radius.
+                        Order Cement, TMT Steel Rods, PVC Pipes, Paints &amp; Electricals directly from verified local hardware stores, with real-time stock availability, transparent wholesale pricing, GST tax invoice, and same-day site delivery within a 20 KM radius.
                       </p>
                     </div>
 
@@ -332,7 +332,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                             <FaTruckFast className="h-4 w-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-semibold text-slate-900">25 KM Radius</h4>
+                            <h4 className="text-xs font-semibold text-slate-900">20 KM Radius</h4>
                             <p className="text-[10px] text-slate-500 font-normal">Same-Day Delivery</p>
                           </div>
                         </div>

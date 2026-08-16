@@ -24,9 +24,9 @@ interface MerchantStoreCardsProps {
 }
 
 const RADIUS_OPTIONS: SelectOption[] = [
+  { label: '5 KM Local', value: 5 },
   { label: '10 KM Express', value: 10 },
-  { label: '20 KM Radius', value: 20 },
-  { label: '25 KM Full Hub', value: 25 },
+  { label: '20 KM Full Hub', value: 20 },
 ];
 
 const SORT_OPTIONS: SelectOption[] = [
@@ -40,7 +40,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
   selectedCategory,
   onSelectMerchant
 }) => {
-  const [filterRadius, setFilterRadius] = useState<number>(25);
+  const [filterRadius, setFilterRadius] = useState<number>(20);
   const [onlyVerified, setOnlyVerified] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'eta'>('distance');
   const [quoteSuccessId, setQuoteSuccessId] = useState<string | null>(null);
@@ -121,9 +121,9 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
           <div className="text-center py-12 bg-white rounded-2xl sm:rounded-3xl p-6 border border-slate-200/80 shadow-xs">
             <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
             <h3 className="text-sm font-semibold text-slate-800">No Stores Found</h3>
-            <p className="text-xs text-slate-400 mt-0.5 font-normal">Try expanding your radius filter to 25 KM</p>
-            <Button onClick={() => setFilterRadius(25)} variant="primary" size="sm" className="mt-3">
-              Reset Radius to 25 KM
+            <p className="text-xs text-slate-400 mt-0.5 font-normal">Try expanding your radius filter to 20 KM</p>
+            <Button onClick={() => setFilterRadius(20)} variant="primary" size="sm" className="mt-3">
+              Reset Radius to 20 KM
             </Button>
           </div>
         ) : (

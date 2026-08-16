@@ -28,9 +28,9 @@ interface CategoriesGridProps {
 }
 
 const RADIUS_OPTIONS: SelectOption[] = [
+  { label: '5 KM Local', value: 5 },
   { label: '10 KM Express', value: 10 },
-  { label: '20 KM Radius', value: 20 },
-  { label: '25 KM Full Hub', value: 25 },
+  { label: '20 KM Full Hub', value: 20 },
 ];
 
 const SORT_OPTIONS: SelectOption[] = [
@@ -50,7 +50,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
     selectedCategory && selectedCategory !== 'all' ? selectedCategory : 'all'
   );
   const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(null);
-  const [filterRadius, setFilterRadius] = useState<number>(25);
+  const [filterRadius, setFilterRadius] = useState<number>(20);
   const [onlyVerified, setOnlyVerified] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'eta'>('distance');
   const [quoteSuccessId, setQuoteSuccessId] = useState<string | null>(null);
@@ -95,7 +95,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
               Select Category &amp; Nearby Hardware Suppliers
             </h2>
             <p className="text-xs text-slate-500 font-normal mt-0.5">
-              Choose a category on the left to filter verified local merchants and direct store stock within 25 KM
+              Choose a category on the left to filter verified local merchants and direct store stock within 20 KM
             </p>
           </div>
 
@@ -304,13 +304,13 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
               <div className="text-center py-12 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md">
                 <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
                 <h3 className="text-sm font-semibold text-slate-800">No Hardware Suppliers Found</h3>
-                <p className="text-xs text-slate-400 mt-0.5 font-normal">Try clearing category selection or expanding radius to 25 KM</p>
+                <p className="text-xs text-slate-400 mt-0.5 font-normal">Try clearing category selection or expanding radius to 20 KM</p>
                 <div className="flex items-center justify-center gap-2 mt-3">
                   <Button onClick={() => handleCategoryClick('all')} variant="secondary" size="sm">
                     Show All Categories
                   </Button>
-                  <Button onClick={() => setFilterRadius(25)} variant="primary" size="sm">
-                    Reset Radius to 25 KM
+                  <Button onClick={() => setFilterRadius(20)} variant="primary" size="sm">
+                    Reset Radius to 20 KM
                   </Button>
                 </div>
               </div>

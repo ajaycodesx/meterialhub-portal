@@ -33,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
               <FaTruckFast className="h-4 w-4" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-900 leading-tight">25 KM Radius</h4>
+              <h4 className="text-xs font-semibold text-slate-900 leading-tight">20 KM Radius</h4>
               <p className="text-[10px] text-slate-500 font-normal">Same-Day Site Unloading</p>
             </div>
           </div>
