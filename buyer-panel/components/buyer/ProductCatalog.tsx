@@ -171,66 +171,201 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   return (
     <div className="flex-1 bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="relative rounded-3xl overflow-hidden shadow-lg h-64 sm:h-72 w-full bg-slate-900 flex flex-col justify-between p-5 sm:p-7 group">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6">
+        
+        {/* Mobile App Store Hero Banner (Matching Home Page Mobile Hero Card) */}
+        <div className="sm:hidden relative rounded-2xl overflow-hidden shadow-md bg-slate-900 text-white p-4 flex flex-col justify-between group min-h-[300px]">
           <img
             src="/images/store_hero_banner.jpg"
             alt={`${merchant.name} Warehouse Yard`}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60"
           />
           
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/55 to-slate-950/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/65 to-slate-950/30" />
 
-          <div className="relative z-10">
+          <div className="relative z-10 flex items-center justify-between">
             <button 
               onClick={onBack}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-black/40 hover:bg-black/60 text-white text-xs font-semibold backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 hover:bg-black/70 text-white text-xs font-semibold backdrop-blur-md border border-white/20 transition-all cursor-pointer"
             >
               <FaChevronLeft className="h-3 w-3" />
-              <span>Back to Suppliers</span>
+              <span>Suppliers</span>
             </button>
+
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white text-[10px] font-semibold backdrop-blur-xs">
+              <FaShieldHalved className="h-3 w-3" />
+              Verified Hub
+            </span>
           </div>
 
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-3xl bg-slate-900 text-white font-semibold text-2xl sm:text-3xl flex items-center justify-center shadow-md relative shrink-0 border border-white/20">
+          <div className="relative z-10 space-y-1 my-3">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold text-xl flex items-center justify-center shadow-md shrink-0 border border-white/20">
                 {merchant.name.charAt(0)}
-                {merchant.verified && (
-                  <span className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white" title="Verified Merchant">
-                    <FaShieldHalved className="h-3.5 w-3.5 text-white" />
-                  </span>
-                )}
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl sm:text-3xl font-semibold text-white tracking-tight leading-tight">
-                    {merchant.name}
-                  </h1>
-                </div>
-                
-                <p className="text-xs sm:text-sm text-slate-200 font-normal flex items-center gap-1.5">
-                  <FaBuilding className="h-3.5 w-3.5 text-orange-400 shrink-0" />
-                  <span>{merchant.address}</span>
+              <div>
+                <h1 className="text-xl font-semibold text-white tracking-tight leading-tight">
+                  {merchant.name}
+                </h1>
+                <p className="text-xs text-slate-200 font-normal flex items-center gap-1 mt-0.5">
+                  <FaBuilding className="h-3 w-3 text-orange-400 shrink-0" />
+                  <span className="truncate max-w-[220px]">{merchant.address}</span>
                 </p>
+              </div>
+            </div>
+          </div>
 
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#FF6500] text-white text-xs font-semibold shadow-xs">
-                    <FaLocationDot className="h-3 w-3" />
-                    {merchant.distanceKm} KM Away
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/80 text-white text-xs font-semibold backdrop-blur-md">
-                    <FaShieldHalved className="h-3 w-3" />
-                    Verified Store Stock
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/15 text-white text-xs font-semibold backdrop-blur-md border border-white/10">
-                    <FaStar className="h-3 w-3 text-amber-400" />
-                    {merchant.rating} ({merchant.reviewsCount} reviews)
-                  </span>
-                </div>
+          <div className="relative z-10 space-y-3">
+            <div className="grid grid-cols-3 gap-1.5 text-[10px] font-medium w-full">
+              <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10 text-center truncate">
+                <FaLocationDot className="h-3 w-3 text-orange-400 shrink-0" />
+                <span className="truncate">{merchant.distanceKm} KM Away</span>
+              </span>
+              <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md text-center truncate">
+                <FaShieldHalved className="h-3 w-3 shrink-0" />
+                <span className="truncate">Verified Stock</span>
+              </span>
+              <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/15 text-white backdrop-blur-md border border-white/10 text-center truncate">
+                <FaStar className="h-3 w-3 text-amber-400 shrink-0" />
+                <span className="truncate">{merchant.rating} ({merchant.reviewsCount})</span>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => alert(`Direct Quote Request sent to ${merchant.name}`)}
+                className="w-full justify-center text-xs py-2 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <span>Request Quote</span>
+              </button>
+
+              <div className="w-full text-center text-[10px] py-2 rounded-xl bg-white/20 text-white font-medium border border-white/20 backdrop-blur-xs flex items-center justify-center">
+                Min Order: ₹{merchant.minOrderValue.toLocaleString()}
               </div>
             </div>
           </div>
         </div>
+
+        {/* Desktop & Tablet Store Hero Grid (Matching Home Page Hero Layout) */}
+        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-stretch bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md">
+          
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6">
+            <div>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <button
+                  onClick={onBack}
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer"
+                >
+                  <FaChevronLeft className="h-3 w-3" />
+                  <span>Back to Suppliers</span>
+                </button>
+
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+                  <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Verified Hardware Merchant</span>
+                </span>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-3xl bg-slate-900 text-white font-semibold text-2xl sm:text-3xl flex items-center justify-center shadow-md relative shrink-0 border border-slate-700">
+                  {merchant.name.charAt(0)}
+                  {merchant.verified && (
+                    <span className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white" title="Verified Merchant">
+                      <FaShieldHalved className="h-3.5 w-3.5 text-white" />
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight leading-tight">
+                    {merchant.name}
+                  </h1>
+                  
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal flex items-center gap-1.5">
+                    <FaBuilding className="h-3.5 w-3.5 text-orange-500 shrink-0" />
+                    <span>{merchant.address}</span>
+                  </p>
+
+                  <p className="text-xs text-slate-400 font-normal">
+                    Managed by <span className="font-semibold text-slate-700">{merchant.ownerName}</span> &bull; Stocking factory brands: {merchant.brands.join(', ')}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100/60 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
+                    <FaLocationDot className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-900">{merchant.distanceKm} KM Away</h4>
+                    <p className="text-[11px] text-slate-500 font-normal">ETA: ~{merchant.deliveryEtaMinutes} Mins</p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/60 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
+                    <FaShieldHalved className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-900">Verified Stock</h4>
+                    <p className="text-[11px] text-slate-500 font-normal">GST Tax Invoice</p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-100/60 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                    <FaStar className="h-3.5 w-3.5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-900">{merchant.rating} Rating</h4>
+                    <p className="text-[11px] text-slate-500 font-normal">{merchant.reviewsCount} Reviews</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <div className="text-xs font-semibold text-slate-700">
+                  Minimum Order Value: <span className="text-[#FF6500] text-sm">₹{merchant.minOrderValue.toLocaleString()}</span>
+                </div>
+
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={() => alert(`Direct Quote Request sent to ${merchant.name}`)}
+                  icon={<FaArrowRight className="h-3.5 w-3.5" />}
+                  className="px-6 py-3"
+                >
+                  Request Direct Quote
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 h-full flex">
+            <div className="relative rounded-3xl overflow-hidden shadow-md group bg-slate-900 w-full h-full min-h-[360px]">
+              <img
+                src="/images/store_hero_banner.jpg"
+                alt={`${merchant.name} Warehouse Yard`}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-85"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
+              
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-md border border-white/10">
+                  Warehouse Stock &amp; Yard
+                </span>
+                <span className="px-3 py-1 rounded-full bg-[#FF6500] text-white text-xs font-semibold shadow-xs">
+                  {merchant.brands.length} Brands Available
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
