@@ -250,12 +250,72 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
 
         {activeView === 'home' && (
           <>
-            <section className="relative py-2 sm:py-6 bg-gradient-to-b from-white via-slate-50 to-[#F8FAFC]">
+            <section className="relative py-2 sm:py-6">
               <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                <div className="bg-white p-3 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-3.5 lg:gap-10 items-stretch">
-                  <div className="lg:col-span-7 flex flex-col justify-between space-y-3 sm:space-y-6">
+                
+                {/* Mobile App Hero Banner (Matching Catalog Page Hero Card) */}
+                <div className="sm:hidden relative rounded-2xl overflow-hidden shadow-md bg-slate-900 text-white p-4 flex flex-col justify-between group min-h-[300px]">
+                  <img
+                    src="/images/hero_banner.png"
+                    alt="MaterialHub Wholesale Delivery Truck"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60"
+                  />
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/65 to-slate-950/30" />
+
+                  <div className="relative z-10 space-y-1">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FF6500] text-white text-[10px] font-semibold uppercase tracking-wider shadow-2xs">
+                      Wholesale Supply Hub
+                    </span>
+                    <h1 className="text-xl font-semibold text-white tracking-tight leading-tight">
+                      Direct Factory &amp; Wholesale <span className="text-orange-400">Construction Materials</span>
+                    </h1>
+                  </div>
+
+                  <div className="relative z-10 space-y-3 pt-4">
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-medium">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10">
+                        <FaTruckFast className="h-3 w-3 text-orange-400" />
+                        25 KM Same-Day
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md">
+                        <FaShieldHalved className="h-3 w-3" />
+                        GST Tax Credit
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/15 text-white backdrop-blur-md border border-white/10">
+                        <FaStore className="h-3 w-3 text-amber-400" />
+                        Local Hardware
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => setIsLocationModalOpen(true)}
+                        icon={<FaArrowRight className="h-3 w-3" />}
+                        className="w-full justify-center text-xs py-2"
+                      >
+                        Check Area
+                      </Button>
+
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setIsAuthModalOpen(true)}
+                        className="w-full justify-center text-xs py-2 bg-white/20 hover:bg-white/30 text-white border border-white/20"
+                      >
+                        Wholesale Rates
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop & Tablet Hero Grid */}
+                <div className="hidden sm:grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-stretch bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs">
+                  <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6">
                     <div>
-                      <h1 className="text-xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-2 sm:mb-4">
+                      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-3 sm:mb-4">
                         Direct Factory &amp; Wholesale <span className="text-[#FF6500]">Construction Materials</span>
                       </h1>
 
@@ -265,45 +325,45 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                     </div>
 
                     <div className="space-y-4 sm:space-y-6">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-                        <div className="p-2.5 sm:p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100/60 flex items-center gap-2.5 sm:gap-3">
-                          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100/60 flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
                             <FaTruckFast className="h-3.5 w-3.5" />
                           </div>
                           <div>
-                            <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900">25 KM Radius</h4>
-                            <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">Same-Day Delivery</p>
+                            <h4 className="text-xs font-semibold text-slate-900">25 KM Radius</h4>
+                            <p className="text-[11px] text-slate-500 font-normal">Same-Day Delivery</p>
                           </div>
                         </div>
 
-                        <div className="p-2.5 sm:p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/60 flex items-center gap-2.5 sm:gap-3">
-                          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
+                        <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/60 flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
                             <FaShieldHalved className="h-3.5 w-3.5" />
                           </div>
                           <div>
-                            <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900">GST Invoice</h4>
-                            <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">100% Tax Credit</p>
+                            <h4 className="text-xs font-semibold text-slate-900">GST Invoice</h4>
+                            <p className="text-[11px] text-slate-500 font-normal">100% Tax Credit</p>
                           </div>
                         </div>
 
-                        <div className="col-span-2 sm:col-span-1 p-2.5 sm:p-3.5 rounded-2xl bg-slate-100/80 border border-slate-200/60 flex items-center gap-2.5 sm:gap-3">
-                          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-200 text-[#FF6500] flex items-center justify-center shrink-0">
+                        <div className="p-3.5 rounded-2xl bg-slate-100/80 border border-slate-200/60 flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-slate-200 text-[#FF6500] flex items-center justify-center shrink-0">
                             <FaStore className="h-3.5 w-3.5" />
                           </div>
                           <div>
-                            <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900">Local Hardware</h4>
-                            <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">Verified Stores</p>
+                            <h4 className="text-xs font-semibold text-slate-900">Local Hardware</h4>
+                            <p className="text-[11px] text-slate-500 font-normal">Verified Stores</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <div className="grid grid-cols-2 gap-3">
                         <Button
                           variant="primary"
                           size="md"
                           onClick={() => setIsLocationModalOpen(true)}
-                          icon={<FaArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
-                          className="w-full justify-center text-xs sm:text-sm py-2.5 sm:py-3.5"
+                          icon={<FaArrowRight className="h-3.5 w-3.5" />}
+                          className="w-full justify-center text-sm py-3.5"
                         >
                           Check Delivery Area
                         </Button>
@@ -312,7 +372,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                           variant="secondary"
                           size="md"
                           onClick={() => setIsAuthModalOpen(true)}
-                          className="w-full justify-center text-xs sm:text-sm py-2.5 sm:py-3.5"
+                          className="w-full justify-center text-sm py-3.5"
                         >
                           Wholesale Rates
                         </Button>
@@ -321,7 +381,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                   </div>
 
                   <div className="lg:col-span-5 h-full flex">
-                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs group bg-slate-100 w-full h-full min-h-[200px] sm:min-h-[380px]">
+                    <div className="relative rounded-3xl overflow-hidden shadow-2xs group bg-slate-100 w-full h-full min-h-[380px]">
                       <img
                         src="/images/hero_banner.png"
                         alt="MaterialHub Wholesale Delivery Truck"
@@ -330,6 +390,7 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                     </div>
                   </div>
                 </div>
+
               </div>
             </section>
 
