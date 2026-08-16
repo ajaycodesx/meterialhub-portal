@@ -52,49 +52,64 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
               </p>
             </div>
 
-            {/* Live Order Status Timeline Card */}
+            {/* Modern Order Status Progress Section */}
             <div className="bg-white border border-slate-200/80 p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-md space-y-5 text-left">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-800 border-b border-slate-100 pb-3.5">
-                <span>Order Tracking Timeline</span>
-                <span className="text-[#FF6500] font-semibold flex items-center gap-1.5 bg-orange-50 px-3 py-1 rounded-full text-xs border border-orange-100">
-                  <FaTruckFast className="h-3.5 w-3.5" /> Live Dispatch In-Progress
-                </span>
+              
+              {/* Segmented Top Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-slate-800">
+                  <span>Order Fulfillment Status</span>
+                  <span className="text-[#FF6500] font-semibold flex items-center gap-1.5">
+                    <FaClock className="h-3.5 w-3.5" /> Est. Arrival: ~45 Mins
+                  </span>
+                </div>
+
+                {/* 3-Segment Progress Bar */}
+                <div className="grid grid-cols-3 gap-1.5 h-2 w-full bg-slate-100 rounded-full overflow-hidden p-0.5">
+                  <div className="bg-emerald-500 h-full rounded-l-full" />
+                  <div className="bg-emerald-500 h-full" />
+                  <div className="bg-[#FF6500] h-full rounded-r-full animate-pulse" />
+                </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 relative pt-2 pb-1">
+              {/* 3 Modern Status Step Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                
                 {/* Step 1: Order Placed */}
-                <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                  <div className="h-9 w-9 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs ring-4 ring-white">
-                    <FaCheck className="h-3.5 w-3.5" />
+                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <FaCheck className="h-4 w-4" />
                   </div>
-                  <span className="text-xs font-semibold text-slate-900">Order Placed</span>
-                  <span className="text-[10px] text-slate-400 font-normal">11:52 AM</span>
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-900">Order Placed</h4>
+                    <p className="text-[10px] text-slate-500 font-normal">11:52 AM &bull; Confirmed</p>
+                  </div>
                 </div>
 
                 {/* Step 2: Vendor Accepted */}
-                <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                  <div className="h-9 w-9 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold shadow-xs ring-4 ring-white">
-                    <FaCheck className="h-3.5 w-3.5" />
+                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <FaCheck className="h-4 w-4" />
                   </div>
-                  <span className="text-xs font-semibold text-slate-900">Vendor Accepted</span>
-                  <span className="text-[10px] text-slate-400 font-normal">11:53 AM</span>
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-900">Vendor Accepted</h4>
+                    <p className="text-[10px] text-slate-500 font-normal">11:53 AM &bull; Stock Ready</p>
+                  </div>
                 </div>
 
-                {/* Step 3: Dispatched */}
-                <div className="flex flex-col items-center text-center space-y-1.5 z-10">
-                  <div className="h-9 w-9 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs font-semibold shadow-xs animate-pulse ring-4 ring-white">
-                    <FaTruckFast className="h-3.5 w-3.5" />
+                {/* Step 3: Vehicle Dispatched */}
+                <div className="p-3.5 rounded-2xl bg-white border-2 border-[#FF6500] flex items-center gap-3 shadow-md ring-2 ring-[#FF6500]/10">
+                  <div className="h-9 w-9 rounded-xl bg-[#FF6500] text-white flex items-center justify-center shrink-0 shadow-2xs animate-pulse">
+                    <FaTruckFast className="h-4 w-4" />
                   </div>
-                  <span className="text-xs font-semibold text-[#FF6500]">Dispatched</span>
-                  <span className="text-[10px] text-slate-500 font-medium">ETA ~45 Mins</span>
+                  <div>
+                    <h4 className="text-xs font-semibold text-[#FF6500]">Vehicle Dispatched</h4>
+                    <p className="text-[10px] text-slate-600 font-medium">En-Route &bull; ~45 Mins</p>
+                  </div>
                 </div>
 
-                {/* Segment 1: Completed Line (Order Placed -> Vendor Accepted) */}
-                <div className="absolute top-[26px] left-[16.66%] w-[33.33%] h-0.5 bg-emerald-500 z-0" />
-
-                {/* Segment 2: In-Progress Line (Vendor Accepted -> Dispatched) */}
-                <div className="absolute top-[26px] left-[50%] w-[33.33%] h-0.5 bg-slate-200 z-0" />
               </div>
+
             </div>
 
             {/* Merchant Details & Vehicle Allocation Summary */}
