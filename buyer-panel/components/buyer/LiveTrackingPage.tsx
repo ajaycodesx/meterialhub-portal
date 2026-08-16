@@ -71,7 +71,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
               </p>
             </div>
 
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold shrink-0">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 shrink-0">
               <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" />
               <span>Google Maps Live Telemetry Active</span>
             </div>
@@ -96,12 +96,13 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
-                      <FaCircleCheck className="h-3 w-3 text-emerald-600" /> Live Traffic: Normal
+                  <div className="flex items-center gap-3 text-xs font-semibold text-slate-700">
+                    <span className="flex items-center gap-1.5">
+                      <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" /> Live Traffic: Normal
                     </span>
-                    <span className="text-xs font-semibold text-[#FF6500] bg-orange-50 px-3 py-1 rounded-full border border-orange-200 flex items-center gap-1">
-                      <FaClock className="h-3 w-3" /> ETA: ~12 Mins
+                    <span className="text-slate-300">&bull;</span>
+                    <span className="flex items-center gap-1.5 text-[#FF6500]">
+                      <FaClock className="h-3.5 w-3.5 text-[#FF6500]" /> ETA: ~12 Mins
                     </span>
                   </div>
                 </div>
