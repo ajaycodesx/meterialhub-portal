@@ -194,19 +194,19 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
             © 2026 MaterialHub Technologies. All rights reserved.
           </p>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={onOpenLanguageModal}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold transition-colors text-xs cursor-pointer border border-slate-200/60"
+              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold transition-colors text-xs cursor-pointer border border-slate-200/60 shrink-0"
             >
               <FaGlobe className="h-3 w-3 text-[#FF6500]" />
               <span className="uppercase">{currentLanguage}</span>
             </button>
 
-            <div className="flex items-center gap-1 text-[10px] font-medium text-slate-500">
-              <span className="px-2 py-0.5 rounded-lg bg-slate-100">UPI / BHIM</span>
-              <span className="px-2 py-0.5 rounded-lg bg-slate-100">NetBanking</span>
-              <span className="px-2 py-0.5 rounded-lg bg-slate-100">B2B Credit</span>
+            <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
+              <span className="inline-flex items-center justify-center h-7 px-2.5 rounded-xl bg-slate-100 border border-slate-200/40">UPI / BHIM</span>
+              <span className="inline-flex items-center justify-center h-7 px-2.5 rounded-xl bg-slate-100 border border-slate-200/40">NetBanking</span>
+              <span className="inline-flex items-center justify-center h-7 px-2.5 rounded-xl bg-slate-100 border border-slate-200/40">B2B Credit</span>
             </div>
           </div>
         </div>
