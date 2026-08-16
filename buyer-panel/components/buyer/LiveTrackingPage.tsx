@@ -245,8 +245,9 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
               <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <h3 className="font-semibold text-sm sm:text-base text-slate-900">Assigned Delivery Partner</h3>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold">
-                    On-Duty
+                  <span className="relative flex h-2.5 w-2.5" title="On-Duty Online Status">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                   </span>
                 </div>
 
