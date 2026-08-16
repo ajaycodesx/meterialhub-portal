@@ -106,111 +106,82 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   </div>
                 </div>
 
-                {/* Google Maps Realistic Map Canvas */}
-                <div className="relative h-80 sm:h-[440px] w-full rounded-2xl bg-[#E5E3DF] overflow-hidden shadow-inner border border-slate-200 flex flex-col justify-between p-4 sm:p-5">
+                {/* Real Google Maps Canvas Container */}
+                <div className="relative h-80 sm:h-[460px] w-full rounded-2xl overflow-hidden shadow-inner border border-slate-200 flex flex-col justify-between p-4 sm:p-5">
                   
-                  {/* Google Maps Vector Grid & Water Features */}
-                  <div className="absolute inset-0 bg-[#F4F3F0] opacity-90">
-                    {/* Simulated River / Lake */}
-                    <div className="absolute top-0 right-1/4 w-32 h-full bg-[#AADAFF] transform -rotate-12 opacity-80" />
-                    {/* Secondary Arterial Roads */}
-                    <div className="absolute top-1/3 left-0 w-full h-4 bg-white shadow-2xs transform rotate-6" />
-                    <div className="absolute top-2/3 left-0 w-full h-5 bg-white shadow-2xs transform -rotate-3" />
-                    {/* Primary Highway (Seaport-Airport Rd) */}
-                    <div className="absolute top-0 left-1/3 w-10 h-full bg-[#FEEA9A] border-y border-[#E6D485]" />
-                  </div>
+                  {/* REAL Interactive Google Maps Embed */}
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15715.922582429265!2d76.3475!3d9.9985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080c98f98a28db%3A0x6b107e3efeb1e428!2sKakkanad%2C%20Kochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                    className="absolute inset-0 w-full h-full border-0 z-0"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Real-Time Google Maps GPS Telemetry"
+                  />
 
-                  {/* SVG Navigation Route Line (Blue Google Maps Route) */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M 120 340 C 220 300, 280 220, 380 180 C 480 140, 580 100, 680 70"
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeWidth="8"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M 120 340 C 220 300, 280 220, 380 180 C 480 140, 580 100, 680 70"
-                      fill="none"
-                      stroke="#4285F4"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-
-                  {/* Google Maps Controls Overlay */}
-                  <div className="relative z-20 flex justify-between items-start">
-                    <div className="bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl text-slate-800 text-xs font-semibold shadow-md border border-slate-200 flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span>Google Maps Telemetry</span>
+                  {/* Google Maps Top Telemetry Overlay */}
+                  <div className="relative z-10 flex flex-wrap justify-between items-start gap-2.5 pointer-events-none">
+                    <div className="bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl text-white text-xs space-y-0.5 shadow-md border border-slate-700 pointer-events-auto">
+                      <div className="flex items-center gap-1.5 text-[10px] font-semibold text-orange-400 uppercase tracking-wider">
+                        <FaStore className="h-3 w-3" /> Origin Store
+                      </div>
+                      <div className="font-semibold text-slate-100 text-xs">{merchant.name}</div>
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
-                      <div className="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden flex flex-col text-slate-700">
-                        <button className="p-2 hover:bg-slate-100 text-xs font-bold border-b border-slate-100 cursor-pointer">+</button>
-                        <button className="p-2 hover:bg-slate-100 text-xs font-bold cursor-pointer">-</button>
+                    <div className="bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl text-white text-xs space-y-0.5 text-right shadow-md border border-slate-700 pointer-events-auto">
+                      <div className="flex items-center justify-end gap-1.5 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">
+                        <FaLocationPin className="h-3 w-3" /> Unloading Site
                       </div>
-                      <div className="bg-white p-2 rounded-xl shadow-md border border-slate-200 text-orange-600 flex items-center justify-center cursor-pointer">
-                        <FaCompass className="h-4 w-4" />
-                      </div>
+                      <div className="font-semibold text-slate-100 text-xs">{location.address || 'Site #14, Kakkanad Zone'}</div>
                     </div>
                   </div>
 
-                  {/* Store Origin Marker */}
-                  <div className="absolute top-[320px] left-[90px] z-20 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                    <div className="bg-white px-2.5 py-1 rounded-lg shadow-md border border-slate-200 text-[10px] font-semibold text-slate-900 mb-1 whitespace-nowrap">
-                      {merchant.name}
-                    </div>
-                    <div className="h-8 w-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md ring-4 ring-white">
-                      <FaStore className="h-4 w-4" />
-                    </div>
-                  </div>
-
-                  {/* Moving Vehicle Live Driver Marker */}
-                  <div className="absolute top-[175px] left-[375px] z-30 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                    <div className="bg-slate-900 text-white px-3 py-1.5 rounded-xl shadow-lg border border-slate-700 text-center space-y-0.5 mb-1.5">
-                      <div className="text-[10px] font-semibold text-orange-400 uppercase tracking-wider flex items-center gap-1">
-                        <FaTruckFast className="h-3 w-3" /> Rajesh Kumar (Driver)
+                  {/* Moving Vehicle Live Driver Overlay Marker */}
+                  <div className="relative z-10 my-auto flex justify-center pointer-events-none">
+                    <div className="bg-slate-900/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl max-w-xs text-center text-white space-y-2 shadow-xl border border-white/10 pointer-events-auto">
+                      <div className="relative inline-flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full bg-[#FF6500] animate-ping opacity-50" />
+                        <div className="h-10 w-10 rounded-xl bg-[#FF6500] text-white flex items-center justify-center shadow-lg relative z-10">
+                          <FaTruckFast className="h-5 w-5" />
+                        </div>
                       </div>
-                      <div className="text-[9px] text-slate-300 font-normal">KL-07-CD-8921 &bull; 38 km/h</div>
-                    </div>
-                    
-                    <div className="relative inline-flex items-center justify-center">
-                      <div className="absolute inset-0 rounded-full bg-[#FF6500] animate-ping opacity-60" />
-                      <div className="h-11 w-11 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center shadow-xl ring-4 ring-white relative z-10">
-                        <FaTruckFast className="h-5 w-5" />
+                      
+                      <div>
+                        <h4 className="text-xs font-semibold text-white">Rajesh Kumar (Delivery Partner)</h4>
+                        <p className="text-[10px] text-slate-300 font-normal mt-0.5">
+                          En-Route on Seaport-Airport Road &bull; 4.2 km away
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-center gap-2 pt-0.5 text-[9px] text-slate-300 font-medium">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-emerald-400 font-semibold border border-slate-700">
+                          GPS: 38 km/h
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-orange-400 font-semibold border border-slate-700">
+                          KL-07-CD-8921
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Destination Unloading Site Marker */}
-                  <div className="absolute top-[65px] left-[670px] z-20 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                    <div className="bg-white px-2.5 py-1 rounded-lg shadow-md border border-slate-200 text-[10px] font-semibold text-slate-900 mb-1 whitespace-nowrap">
-                      {location.address || 'Unloading Site #14'}
-                    </div>
-                    <div className="h-8 w-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md ring-4 ring-white">
-                      <FaLocationPin className="h-4 w-4" />
-                    </div>
-                  </div>
-
-                  {/* Google Maps Bottom Trip Route Card */}
-                  <div className="relative z-20 bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-lg flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                        <FaCompass className="h-5 w-5" />
+                  {/* Google Maps Bottom Trip Navigation Overlay */}
+                  <div className="relative z-10 bg-white/95 backdrop-blur-md p-3 sm:p-3.5 rounded-xl border border-slate-200 shadow-lg flex items-center justify-between gap-3 pointer-events-auto">
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-9 w-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                        <FaCompass className="h-4.5 w-4.5" />
                       </div>
                       <div>
-                        <div className="text-xs sm:text-sm font-semibold text-slate-900">
+                        <div className="text-xs font-semibold text-slate-900">
                           4.2 km &bull; 12 mins remaining
                         </div>
-                        <p className="text-[11px] text-slate-500 font-normal">
-                          Fastest route via Seaport - Airport Rd (Traffic normal)
+                        <p className="text-[10px] text-slate-500 font-normal">
+                          Google Maps fastest route via Seaport - Airport Rd
                         </p>
                       </div>
                     </div>
 
-                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-semibold shrink-0">
-                      GPS Synced
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold shrink-0">
+                      Live Telemetry Synced
                     </span>
                   </div>
 
