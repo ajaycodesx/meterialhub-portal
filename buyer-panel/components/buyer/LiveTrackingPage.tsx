@@ -106,6 +106,20 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   </div>
                 </div>
 
+                {/* Route Origin & Destination Telemetry Summary Bar */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="h-2.5 w-2.5 rounded-full bg-orange-500 shrink-0" />
+                    <span className="text-slate-500 font-normal">Origin Store:</span>
+                    <span className="text-slate-900 font-semibold truncate">{merchant.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:justify-end min-w-0">
+                    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 shrink-0" />
+                    <span className="text-slate-500 font-normal">Unloading Site:</span>
+                    <span className="text-slate-900 font-semibold truncate">{location.address || 'Site #14, Kakkanad Zone'}</span>
+                  </div>
+                </div>
+
                 {/* Real Google Maps Canvas Container */}
                 <div className="relative h-80 sm:h-[460px] w-full rounded-2xl overflow-hidden shadow-inner border border-slate-200 flex flex-col justify-between p-4 sm:p-5">
                   
@@ -118,23 +132,6 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                     referrerPolicy="no-referrer-when-downgrade"
                     title="Real-Time Google Maps GPS Telemetry"
                   />
-
-                  {/* Google Maps Top Telemetry Overlay */}
-                  <div className="relative z-10 flex flex-wrap justify-between items-start gap-2.5 pointer-events-none">
-                    <div className="bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl text-white text-xs space-y-0.5 shadow-md border border-slate-700 pointer-events-auto">
-                      <div className="flex items-center gap-1.5 text-[10px] font-semibold text-orange-400 uppercase tracking-wider">
-                        <FaStore className="h-3 w-3" /> Origin Store
-                      </div>
-                      <div className="font-semibold text-slate-100 text-xs">{merchant.name}</div>
-                    </div>
-
-                    <div className="bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl text-white text-xs space-y-0.5 text-right shadow-md border border-slate-700 pointer-events-auto">
-                      <div className="flex items-center justify-end gap-1.5 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">
-                        <FaLocationPin className="h-3 w-3" /> Unloading Site
-                      </div>
-                      <div className="font-semibold text-slate-100 text-xs">{location.address || 'Site #14, Kakkanad Zone'}</div>
-                    </div>
-                  </div>
 
                   {/* Moving Vehicle Live Driver Overlay Marker */}
                   <div className="relative z-10 my-auto flex justify-center pointer-events-none">
