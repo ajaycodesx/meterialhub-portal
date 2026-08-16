@@ -396,12 +396,8 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
 
             <CategoriesGrid
               categories={MATERIAL_CATEGORIES}
-              onSelectCategory={(catId) => setSelectedCategory(catId)}
-              selectedCategory={selectedCategory}
-            />
-
-            <MerchantStoreCards
               merchants={HARDWARE_MERCHANTS}
+              onSelectCategory={(catId) => setSelectedCategory(catId)}
               selectedCategory={selectedCategory}
               onSelectMerchant={handleOpenStore}
             />
