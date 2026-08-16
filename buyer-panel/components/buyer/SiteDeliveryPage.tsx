@@ -53,32 +53,36 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] py-6 sm:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
-        <div>
-          <Link href="/profile">
-            <button
-              onClick={onBack}
-              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-2 cursor-pointer"
-            >
-              <FaChevronLeft className="h-3 w-3" />
-              <span>Back to Previous Setup</span>
-            </button>
-          </Link>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-            Site Delivery &amp; Access Instructions
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
-            Configure site access constraints, labor assistance, and site supervisor contact details
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div className="flex-1 bg-transparent">
+      <section className="py-5 sm:py-10">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
           
-          <div className="lg:col-span-8 space-y-6">
+          {/* Top Page Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-4 sm:pb-6">
+            <div>
+              <div className="mb-2">
+                <button
+                  onClick={onBack}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
+                >
+                  <FaChevronLeft className="h-3 w-3" />
+                  <span>Back to Previous Setup</span>
+                </button>
+              </div>
+              <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+                Site Delivery &amp; Access Instructions
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1">
+                Configure site access constraints, labor assistance, and site supervisor contact details
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             
-            <div className="bg-white p-6 rounded-3xl shadow-xs space-y-5">
+            <div className="lg:col-span-8 space-y-5 sm:space-y-6">
+              
+              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                   <FaRoad className="h-5 w-5" />
@@ -334,8 +338,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
           </div>
 
         </div>
-
       </div>
-    </div>
-  );
+    </section>
+  </div>
+);
 };
