@@ -273,18 +273,18 @@ export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps
                   </div>
 
                   <div className="relative z-10 space-y-3 pt-4">
-                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-medium">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10">
-                        <FaTruckFast className="h-3 w-3 text-orange-400" />
-                        25 KM Same-Day
+                    <div className="grid grid-cols-3 gap-1.5 text-[10px] font-medium w-full">
+                      <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10 text-center truncate">
+                        <FaTruckFast className="h-3 w-3 text-orange-400 shrink-0" />
+                        <span className="truncate">25 KM Radius</span>
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md">
-                        <FaShieldHalved className="h-3 w-3" />
-                        GST Tax Credit
+                      <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md text-center truncate">
+                        <FaShieldHalved className="h-3 w-3 shrink-0" />
+                        <span className="truncate">GST Invoice</span>
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/15 text-white backdrop-blur-md border border-white/10">
-                        <FaStore className="h-3 w-3 text-amber-400" />
-                        Local Hardware
+                      <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/15 text-white backdrop-blur-md border border-white/10 text-center truncate">
+                        <FaStore className="h-3 w-3 text-amber-400 shrink-0" />
+                        <span className="truncate">Local Stores</span>
                       </span>
                     </div>
 
