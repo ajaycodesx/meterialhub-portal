@@ -73,106 +73,151 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
             <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold shrink-0">
               <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Live Telemetry Active</span>
+              <span>Google Maps Live Telemetry Active</span>
             </div>
           </div>
 
           {/* Master-Detail Split Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             
-            {/* LEFT SIDE: Interactive GPS Map View & Status Timeline */}
+            {/* LEFT SIDE: Realistic Google Maps GPS View & Status Steps */}
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
               
-              {/* Interactive Live Map View Card */}
+              {/* Google Maps View Card */}
               <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2.5">
                     <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                       <FaMapLocationDot className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Interactive Map View (GPS Tracking)</h3>
-                      <p className="text-xs text-slate-500 font-normal">Live map showing store origin, driver route, and unloading site</p>
+                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Google Maps Live GPS Navigation</h3>
+                      <p className="text-xs text-slate-500 font-normal">Real-time driver location on Seaport-Airport Road</p>
                     </div>
                   </div>
 
-                  <span className="text-xs font-semibold text-[#FF6500] bg-orange-50 px-3.5 py-1 rounded-full flex items-center gap-1 border border-orange-100">
-                    <FaClock className="h-3 w-3" />
-                    ETA: ~35 Mins
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                      <FaCircleCheck className="h-3 w-3 text-emerald-600" /> Live Traffic: Normal
+                    </span>
+                    <span className="text-xs font-semibold text-[#FF6500] bg-orange-50 px-3 py-1 rounded-full border border-orange-200 flex items-center gap-1">
+                      <FaClock className="h-3 w-3" /> ETA: ~12 Mins
+                    </span>
+                  </div>
                 </div>
 
-                {/* Dark Map Canvas Container */}
-                <div className="relative h-80 sm:h-[420px] w-full rounded-2xl bg-[#0F172A] overflow-hidden shadow-inner flex flex-col justify-between p-4 sm:p-6 border border-slate-800">
+                {/* Google Maps Realistic Map Canvas */}
+                <div className="relative h-80 sm:h-[440px] w-full rounded-2xl bg-[#E5E3DF] overflow-hidden shadow-inner border border-slate-200 flex flex-col justify-between p-4 sm:p-5">
                   
-                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#38BDF8_1px,transparent_1px)] [background-size:16px_16px]" />
+                  {/* Google Maps Vector Grid & Water Features */}
+                  <div className="absolute inset-0 bg-[#F4F3F0] opacity-90">
+                    {/* Simulated River / Lake */}
+                    <div className="absolute top-0 right-1/4 w-32 h-full bg-[#AADAFF] transform -rotate-12 opacity-80" />
+                    {/* Secondary Arterial Roads */}
+                    <div className="absolute top-1/3 left-0 w-full h-4 bg-white shadow-2xs transform rotate-6" />
+                    <div className="absolute top-2/3 left-0 w-full h-5 bg-white shadow-2xs transform -rotate-3" />
+                    {/* Primary Highway (Seaport-Airport Rd) */}
+                    <div className="absolute top-0 left-1/3 w-10 h-full bg-[#FEEA9A] border-y border-[#E6D485]" />
+                  </div>
 
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                  {/* SVG Navigation Route Line (Blue Google Maps Route) */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" xmlns="http://www.w3.org/2000/svg">
                     <path
-                      d="M 60 280 C 180 260, 240 180, 360 160 C 480 140, 560 90, 720 70"
+                      d="M 120 340 C 220 300, 280 220, 380 180 C 480 140, 580 100, 680 70"
                       fill="none"
-                      stroke="#FF6500"
-                      strokeWidth="4"
-                      strokeDasharray="8 6"
-                      className="animate-pulse"
+                      stroke="#FFFFFF"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M 120 340 C 220 300, 280 220, 380 180 C 480 140, 580 100, 680 70"
+                      fill="none"
+                      stroke="#4285F4"
+                      strokeWidth="5"
+                      strokeLinecap="round"
                     />
                   </svg>
 
-                  <div className="relative z-10 flex flex-wrap justify-between items-start gap-3">
-                    <div className="bg-slate-900/90 backdrop-blur-md px-4 py-2.5 rounded-2xl text-white text-xs space-y-0.5 shadow-md border border-slate-700">
-                      <div className="flex items-center gap-1.5 text-[10px] font-semibold text-orange-400 uppercase tracking-wider">
-                        <FaStore className="h-3 w-3" /> Store Origin
-                      </div>
-                      <div className="font-semibold text-slate-100">{merchant.name}</div>
+                  {/* Google Maps Controls Overlay */}
+                  <div className="relative z-20 flex justify-between items-start">
+                    <div className="bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl text-slate-800 text-xs font-semibold shadow-md border border-slate-200 flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Google Maps Telemetry</span>
                     </div>
 
-                    <div className="bg-slate-900/90 backdrop-blur-md px-4 py-2.5 rounded-2xl text-white text-xs space-y-0.5 text-right shadow-md border border-slate-700">
-                      <div className="flex items-center justify-end gap-1.5 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">
-                        <FaLocationPin className="h-3 w-3" /> Unloading Site
+                    <div className="flex flex-col gap-1.5">
+                      <div className="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden flex flex-col text-slate-700">
+                        <button className="p-2 hover:bg-slate-100 text-xs font-bold border-b border-slate-100 cursor-pointer">+</button>
+                        <button className="p-2 hover:bg-slate-100 text-xs font-bold cursor-pointer">-</button>
                       </div>
-                      <div className="font-semibold text-slate-100">{location.address || 'Site #14, Kakkanad'}</div>
+                      <div className="bg-white p-2 rounded-xl shadow-md border border-slate-200 text-orange-600 flex items-center justify-center cursor-pointer">
+                        <FaCompass className="h-4 w-4" />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="relative z-10 my-auto flex justify-center">
-                    <div className="bg-slate-900/95 backdrop-blur-md p-4 sm:p-5 rounded-3xl max-w-sm text-center text-white space-y-2.5 shadow-xl border border-white/10">
-                      <div className="relative inline-flex items-center justify-center">
-                        <div className="absolute inset-0 rounded-full bg-[#FF6500] animate-ping opacity-40" />
-                        <div className="h-11 w-11 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center shadow-md relative z-10">
-                          <FaTruckFast className="h-5 w-5" />
-                        </div>
+                  {/* Store Origin Marker */}
+                  <div className="absolute top-[320px] left-[90px] z-20 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                    <div className="bg-white px-2.5 py-1 rounded-lg shadow-md border border-slate-200 text-[10px] font-semibold text-slate-900 mb-1 whitespace-nowrap">
+                      {merchant.name}
+                    </div>
+                    <div className="h-8 w-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md ring-4 ring-white">
+                      <FaStore className="h-4 w-4" />
+                    </div>
+                  </div>
+
+                  {/* Moving Vehicle Live Driver Marker */}
+                  <div className="absolute top-[175px] left-[375px] z-30 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                    <div className="bg-slate-900 text-white px-3 py-1.5 rounded-xl shadow-lg border border-slate-700 text-center space-y-0.5 mb-1.5">
+                      <div className="text-[10px] font-semibold text-orange-400 uppercase tracking-wider flex items-center gap-1">
+                        <FaTruckFast className="h-3 w-3" /> Rajesh Kumar (Driver)
                       </div>
-                      
+                      <div className="text-[9px] text-slate-300 font-normal">KL-07-CD-8921 &bull; 38 km/h</div>
+                    </div>
+                    
+                    <div className="relative inline-flex items-center justify-center">
+                      <div className="absolute inset-0 rounded-full bg-[#FF6500] animate-ping opacity-60" />
+                      <div className="h-11 w-11 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center shadow-xl ring-4 ring-white relative z-10">
+                        <FaTruckFast className="h-5 w-5" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Destination Unloading Site Marker */}
+                  <div className="absolute top-[65px] left-[670px] z-20 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                    <div className="bg-white px-2.5 py-1 rounded-lg shadow-md border border-slate-200 text-[10px] font-semibold text-slate-900 mb-1 whitespace-nowrap">
+                      {location.address || 'Unloading Site #14'}
+                    </div>
+                    <div className="h-8 w-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md ring-4 ring-white">
+                      <FaLocationPin className="h-4 w-4" />
+                    </div>
+                  </div>
+
+                  {/* Google Maps Bottom Trip Route Card */}
+                  <div className="relative z-20 bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-lg flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                        <FaCompass className="h-5 w-5" />
+                      </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-white">Delivery Partner En-Route</h4>
-                        <p className="text-[11px] text-slate-300 font-normal mt-0.5">
-                          Driver is 4.2 km away from your site. Moving on Seaport-Airport Road.
+                        <div className="text-xs sm:text-sm font-semibold text-slate-900">
+                          4.2 km &bull; 12 mins remaining
+                        </div>
+                        <p className="text-[11px] text-slate-500 font-normal">
+                          Fastest route via Seaport - Airport Rd (Traffic normal)
                         </p>
                       </div>
-
-                      <div className="flex items-center justify-center gap-2 pt-1 text-[10px] text-slate-300 font-medium">
-                        <span className="px-2.5 py-1 rounded-full bg-slate-800 text-emerald-400 font-semibold border border-slate-700">
-                          GPS Active: 38 km/h
-                        </span>
-                        <span className="px-2.5 py-1 rounded-full bg-slate-800 text-orange-400 font-semibold border border-slate-700">
-                          Signal: Strong
-                        </span>
-                      </div>
                     </div>
-                  </div>
 
-                  <div className="relative z-10 flex items-center justify-between text-[11px] text-slate-400 bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-800">
-                    <span className="flex items-center gap-1.5 font-medium text-slate-300">
-                      <FaCompass className="h-3.5 w-3.5 text-[#FF6500]" />
-                      Live Telemetry Broadcast
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-semibold shrink-0">
+                      GPS Synced
                     </span>
-                    <span className="font-semibold text-emerald-400">Pincode: {location.pinCode || '682030'}</span>
                   </div>
 
                 </div>
               </div>
 
-              {/* Order & Delivery Status Cards Grid */}
+              {/* Milestone Status Step Cards */}
               <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
                 <h3 className="font-semibold text-sm sm:text-base text-slate-900 border-b border-slate-100 pb-3">
                   Order &amp; Delivery Status Milestone Steps
@@ -247,20 +292,21 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   </div>
                 </div>
 
+                {/* Standardized Platform Secondary Pill Buttons */}
                 <div className="grid grid-cols-2 gap-2.5 pt-1">
                   <a
                     href="tel:+919876543210"
-                    className="px-3 py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
-                    <FaPhone className="h-3 w-3 text-emerald-600" />
-                    Call Driver
+                    <FaPhone className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Call Driver</span>
                   </a>
                   <button
                     onClick={() => alert('Opening live chat with driver Rajesh Kumar...')}
-                    className="px-3 py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
-                    <FaCommentDots className="h-3 w-3 text-slate-500" />
-                    Chat
+                    <FaCommentDots className="h-3.5 w-3.5 text-slate-500" />
+                    <span>Chat</span>
                   </button>
                 </div>
               </div>
@@ -298,28 +344,28 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 ) : (
                   <button
                     onClick={() => setReportDelaySent(true)}
-                    className="w-full px-3.5 py-2.5 rounded-2xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-800 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaTriangleExclamation className="h-3.5 w-3.5 text-amber-600" />
-                    Report Unloading Delay
+                    <span>Report Unloading Delay</span>
                   </button>
                 )}
 
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => alert('Connecting to 24x7 Site Support Helpdesk...')}
-                    className="px-3 py-2 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
-                    <FaHeadset className="h-3 w-3 text-slate-500" />
-                    Contact Support
+                    <FaHeadset className="h-3.5 w-3.5 text-slate-500" />
+                    <span>Contact Support</span>
                   </button>
 
                   <button
                     onClick={() => alert('GST Tax Invoice PDF Downloaded')}
-                    className="px-3 py-2 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
-                    <FaFileInvoiceDollar className="h-3 w-3 text-[#FF6500]" />
-                    View Invoice
+                    <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
+                    <span>View Invoice</span>
                   </button>
                 </div>
 

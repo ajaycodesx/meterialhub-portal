@@ -183,7 +183,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
 
               <button
                 onClick={() => alert('GST Tax Invoice PDF downloaded to device')}
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-orange-50 hover:bg-orange-100/80 border border-orange-200 text-xs font-semibold text-[#FF6500] transition-all cursor-pointer shadow-2xs h-11"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs h-11"
               >
                 <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
                 <span>GST Invoice</span>
