@@ -85,7 +85,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </p>
             </div>
 
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold shrink-0">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 shrink-0">
               <FaLock className="h-3.5 w-3.5 text-emerald-600" />
               <span>256-Bit SSL Encrypted Checkout</span>
             </div>
@@ -110,9 +110,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </div>
                   </div>
 
-                  <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-semibold flex items-center gap-1 border border-emerald-200">
-                    <FaCircleCheck className="h-2.5 w-2.5 text-emerald-600" />
-                    GPS Pinned
+                  <span className="flex items-center gap-1 text-xs font-medium text-emerald-600 shrink-0">
+                    <FaCircleCheck className="h-3 w-3 text-emerald-600" />
+                    <span>GPS Pinned</span>
                   </span>
                 </div>
 

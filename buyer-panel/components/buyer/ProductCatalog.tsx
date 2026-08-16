@@ -261,7 +261,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   <span>Back to Suppliers</span>
                 </button>
 
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                   <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Verified Hardware Merchant</span>
                 </span>

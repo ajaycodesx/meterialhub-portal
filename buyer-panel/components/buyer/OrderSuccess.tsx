@@ -122,8 +122,9 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onTrackOrde
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-sm sm:text-base text-slate-900">Kakkanad Building Supplies Co.</h3>
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold flex items-center gap-1">
-                        <FaShieldHalved className="h-2.5 w-2.5 text-emerald-600" /> Verified Merchant
+                      <span className="flex items-center gap-1 text-xs font-medium text-emerald-600">
+                        <FaShieldHalved className="h-3 w-3 text-emerald-600" />
+                        <span>Verified Merchant</span>
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 font-normal flex items-center gap-1.5 mt-0.5">

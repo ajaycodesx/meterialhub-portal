@@ -168,9 +168,9 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-sm sm:text-base text-slate-900">{merchant.name}</h3>
                         {merchant.verified && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200">
-                            <FaShieldHalved className="h-2.5 w-2.5 text-emerald-600" />
-                            Verified
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
+                            <FaShieldHalved className="h-3 w-3 text-emerald-600" />
+                            <span>Verified</span>
                           </span>
                         )}
                       </div>
