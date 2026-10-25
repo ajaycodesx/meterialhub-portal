@@ -109,7 +109,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         }
         title={userName}
         subtitle={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <span>Civil Contractor</span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">32AABCU9683R1ZM</strong></span>

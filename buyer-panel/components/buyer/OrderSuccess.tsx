@@ -72,7 +72,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
         }
         title="Supply Order Confirmed"
         subtitle={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <span>Reference ID:</span>
             <button
               onClick={handleCopyOrderId}

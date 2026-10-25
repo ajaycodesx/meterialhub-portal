@@ -135,7 +135,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
         ]}
         title="Real-Time Order & Delivery Tracking"
         subtitle={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <span>Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong></span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>Live Telemetry &amp; Site Offloading Verification</span>
