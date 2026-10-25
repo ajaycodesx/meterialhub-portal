@@ -128,9 +128,9 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
       <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 sm:pb-3">
-            <div>
-              <div className="mb-2">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 sm:pb-3 text-center sm:text-left items-center sm:items-start">
+            <div className="w-full md:w-auto">
+              <div className="mb-2 flex justify-center sm:justify-start">
                 <button
                   onClick={onBackToSuccess}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
@@ -142,14 +142,14 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
               <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
                 Real-Time Order &amp; Delivery Tracking
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 flex flex-wrap items-center gap-2">
+              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 <span>Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong></span>
                 <span className="h-2.5 w-px bg-slate-300 inline-block" />
                 <span>Live Telemetry &amp; Site Offloading Verification</span>
               </p>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center justify-center sm:justify-start gap-3 shrink-0">
               <span className={`text-xs font-semibold ${isWsConnected ? 'text-emerald-700' : 'text-slate-600'}`}>
                 {isWsConnected ? 'Live WebSocket Push' : 'Telemetry Sync'}
               </span>

@@ -124,18 +124,18 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
       <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-3.5">
               <button
                 onClick={onBackToCatalog}
-                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0"
+                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 self-start sm:self-center"
                 title="Back to Store Catalog"
                 aria-label="Back to Catalog"
               >
                 <FaChevronLeft className="h-4 w-4" />
               </button>
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
+                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
                   <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBackToCatalog}>Store Catalog</span>
                   <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
                   <span className="text-slate-700 font-semibold">Cart &amp; Vehicle Allocation</span>
@@ -149,7 +149,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center self-start sm:self-center shrink-0">
+            <div className="flex items-center self-center sm:self-center shrink-0">
               <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl shadow-xs">
                 <div className="h-9 w-9 rounded-xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                   <FaWeightHanging className="h-4 w-4" />
@@ -307,7 +307,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
               </div>
 
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between border-b border-slate-100 pb-4 text-center sm:text-left gap-2 sm:gap-0">
                   <div>
                     <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Dynamic Vehicle Allocation</h2>
                     <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Select logistics vehicle based on payload weight</p>
@@ -401,7 +401,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
             <div className="lg:col-span-5 xl:col-span-4 space-y-5 lg:sticky lg:top-24 self-start">
               
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between border-b border-slate-100 pb-4 text-center sm:text-left gap-2 sm:gap-0">
                   <div>
                     <h3 className="font-semibold text-base sm:text-lg text-slate-900 tracking-tight">Order Cost Summary</h3>
                     <p className="text-xs text-slate-500 font-normal mt-0.5">Direct merchant rates + logistics</p>

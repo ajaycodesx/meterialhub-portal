@@ -99,7 +99,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           <FaXmark className="h-4 w-4" />
         </button>
 
-        <div className="mb-6 flex items-center gap-3">
+        <div className="mb-6 flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 text-center sm:text-left">
           <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0 shadow-xs">
             <FaLocationDot className="h-5 w-5" />
           </div>

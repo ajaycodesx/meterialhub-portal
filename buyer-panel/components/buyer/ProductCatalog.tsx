@@ -208,9 +208,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             </span>
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60">
-            <div className="space-y-1.5 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center gap-1.5">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60 text-center sm:text-left items-center sm:items-start">
+            <div className="space-y-1.5 min-w-0 w-full lg:w-auto">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center justify-center sm:justify-start gap-1.5">
                 <FaBoxesStacked className="h-3.5 w-3.5" />
                 Store Inventory &amp; Direct Stock
               </p>
@@ -219,7 +219,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 Explore {merchant.name} Materials
               </h1>
 
-              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-normal pt-0.5">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
                 <span>{merchant.address}</span>
                 <span className="h-2.5 w-px bg-slate-300 inline-block" />
                 <span className="flex items-center gap-1">

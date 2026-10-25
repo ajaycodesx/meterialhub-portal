@@ -100,8 +100,8 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
               </span>
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60">
-              <div className="flex items-start sm:items-center gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60 text-center sm:text-left items-center sm:items-start">
+              <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4">
                 <div className="relative shrink-0">
                   <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-[#FF6500] text-white font-semibold text-2xl sm:text-3xl flex items-center justify-center shadow-xs">
                     {userName.charAt(0)}
@@ -112,7 +112,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                 </div>
 
                 <div className="space-y-1 min-w-0">
-                  <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center gap-1.5">
+                  <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center justify-center sm:justify-start gap-1.5">
                     <FaHelmetSafety className="h-3.5 w-3.5" />
                     Contractor Account & Sites
                   </p>
@@ -121,7 +121,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                     {userName}
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-normal pt-0.5">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
                     <span>Civil Contractor</span>
                     <span className="h-2.5 w-px bg-slate-300 inline-block" />
                     <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">32AABCU9683R1ZM</strong></span>
@@ -144,7 +144,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 shrink-0">
                 <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
                   <FaIndianRupeeSign className="h-3.5 w-3.5 text-amber-500" />
                   <span>Procurement: <strong className="text-slate-900 font-semibold">₹14.80L</strong></span>

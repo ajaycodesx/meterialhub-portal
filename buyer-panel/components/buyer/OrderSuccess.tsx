@@ -68,14 +68,14 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
             </span>
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60">
-            <div className="flex items-start sm:items-center gap-3.5">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60 text-center sm:text-left items-center sm:items-start">
+            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-3.5">
               <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-xs">
                 <FaCheck className="h-6 w-6 stroke-[2]" />
               </div>
 
               <div className="space-y-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-emerald-600 flex items-center gap-1.5">
+                <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-emerald-600 flex items-center justify-center sm:justify-start gap-1.5">
                   <FaCircleCheck className="h-3.5 w-3.5" />
                   Order Placed & Confirmed
                 </p>
@@ -84,7 +84,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                   Supply Order Confirmed
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-normal pt-0.5">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
                   <span>Reference ID:</span>
                   <button
                     onClick={handleCopyOrderId}
@@ -106,7 +106,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 shrink-0">
               {onTrackOrderLive && (
                 <button
                   onClick={onTrackOrderLive}
