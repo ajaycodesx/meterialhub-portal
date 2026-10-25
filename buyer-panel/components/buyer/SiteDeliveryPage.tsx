@@ -57,29 +57,27 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
       <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-center sm:text-left">
-            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-3.5">
-              <button
-                onClick={onBack}
-                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 self-start sm:self-center"
-                title="Back to Previous Setup"
-                aria-label="Back"
-              >
-                <FaChevronLeft className="h-4 w-4" />
-              </button>
-              <div>
-                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
-                  <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBack}>Order Flow</span>
-                  <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
-                  <span className="text-slate-700 font-semibold">Site Instructions</span>
-                </div>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
-                  Site Delivery &amp; Access Instructions
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
-                  Configure site access constraints, labor assistance, and site supervisor contact details
-                </p>
+          <div className="flex items-start sm:items-center gap-3 sm:gap-3.5">
+            <button
+              onClick={onBack}
+              className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0"
+              title="Back to Previous Setup"
+              aria-label="Back"
+            >
+              <FaChevronLeft className="h-4 w-4" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
+                <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBack}>Order Flow</span>
+                <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
+                <span className="text-slate-700 font-semibold">Site Instructions</span>
               </div>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
+                Site Delivery &amp; Access Instructions
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+                Configure site access constraints, labor assistance, and site supervisor contact details
+              </p>
             </div>
           </div>
 
@@ -88,13 +86,13 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
               
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
-                <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 border-b border-slate-100 pb-3.5 text-center sm:text-left">
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                     <FaRoad className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Site Access Options</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Select road access width and unloading vehicle constraints</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5 leading-relaxed">Select road access width and unloading vehicle constraints</p>
                   </div>
                 </div>
 
@@ -258,13 +256,13 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
               </div>
 
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
-                <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 border-b border-slate-100 pb-3.5 text-center sm:text-left">
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                     <FaUserCheck className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Site Contact Person Details</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5 leading-relaxed">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
                   </div>
                 </div>
 
