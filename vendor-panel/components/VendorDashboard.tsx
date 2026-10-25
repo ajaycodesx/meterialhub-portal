@@ -1,57 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  FaStore,
-  FaBox,
-  FaTruckFast,
-  FaChartLine,
-  FaClock,
-  FaIndianRupeeSign,
-  FaExclamation,
   FaSpinner,
   FaCircleCheck,
-  FaPen,
+  FaTriangleExclamation,
   FaXmark,
-  FaCheck,
-  FaBoxesStacked
+  FaBell
 } from 'react-icons/fa6';
 import { vendorApi, authApi, apiClient } from '../lib/api';
-import { Modal } from './ui/Modal';
+import { VendorSidebar, VendorTab } from './layout/VendorSidebar';
+import { VendorHeader } from './layout/VendorHeader';
 
-interface DashboardData {
-  merchantId: string;
-  storeName: string;
-  isOnline: boolean;
-  walletBalance: number;
-  todayRevenue: number;
-  activeOrdersCount: number;
-  pendingDispatchCount: number;
-  lowStockCount: number;
-  recentOrders: any[];
-  inventoryOverview: any[];
-  quickStats: {
-    fulfillmentRate: string;
-    avgPackingMinutes: number;
-    rating: number;
-  };
-}
+import { VendorOverviewSection } from './sections/VendorOverviewSection';
+import { VendorOrdersSection } from './sections/VendorOrdersSection';
+import { VendorHandoverSection } from './sections/VendorHandoverSection';
+import { VendorProductsSection } from './sections/VendorProductsSection';
+import { VendorStockSection } from './sections/VendorStockSection';
+import { VendorBoqSection } from './sections/VendorBoqSection';
+import { VendorPricingSection } from './sections/VendorPricingSection';
+import { VendorFinanceSection } from './sections/VendorFinanceSection';
+import { VendorProfileSection } from './sections/VendorProfileSection';
 
 export function VendorDashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [activeTab, setActiveTab] = useState<VendorTab>('overview');
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [isWsConnected, setIsWsConnected] = useState(false);
-  const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [quotes, setQuotes] = useState<any[]>([]);
+  const [commodityRates, setCommodityRates] = useState<any[]>([]);
+  const [deals, setDeals] = useState<any[]>([]);
+  const [settlementData, setSettlementData] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
 
-  const [stockEditItem, setStockEditItem] = useState<any | null>(null);
-  const [editStockQty, setEditStockQty] = useState<number>(0);
-  const [editPrice, setEditPrice] = useState<number>(0);
-  const [savingStock, setSavingStock] = useState(false);
+  const [isWsConnected, setIsWsConnected] = useState(false);
   const [newOrderAlert, setNewOrderAlert] = useState<string | null>(null);
+  const [feedbackToast, setFeedbackToast] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   function playOrderChime() {
     try {
@@ -73,21 +65,51 @@ export function VendorDashboard() {
     }
   }
 
-  async function fetchDashboard() {
+  const loadAllData = useCallback(async (isSilent = false) => {
+    if (!isSilent) setIsRefreshing(true);
     try {
       if (typeof window !== 'undefined' && !localStorage.getItem('access_token')) {
         const auth: any = await authApi.login('vendor@materialhub.in', 'vendor123');
         apiClient.setToken(auth.access_token);
       }
-      const dashboardData: any = await vendorApi.getDashboard();
-      setData(dashboardData);
+
+      const [
+        dashRes,
+        ordersRes,
+        prodRes,
+        quotesRes,
+        ratesRes,
+        dealsRes,
+        settleRes,
+        profRes
+      ] = await Promise.allSettled([
+        vendorApi.getDashboard(),
+        vendorApi.getOrders(),
+        vendorApi.getProducts(),
+        vendorApi.getBoqQuotes(),
+        vendorApi.getCommodityRates(),
+        vendorApi.getDeals(),
+        vendorApi.getSettlements(),
+        vendorApi.getProfile()
+      ]);
+
+      if (dashRes.status === 'fulfilled') setDashboardData(dashRes.value);
+      if (ordersRes.status === 'fulfilled') setOrders(ordersRes.value?.items || ordersRes.value || []);
+      if (prodRes.status === 'fulfilled') setProducts(prodRes.value?.items || prodRes.value || []);
+      if (quotesRes.status === 'fulfilled') setQuotes(quotesRes.value || []);
+      if (ratesRes.status === 'fulfilled') setCommodityRates(ratesRes.value || []);
+      if (dealsRes.status === 'fulfilled') setDeals(dealsRes.value || []);
+      if (settleRes.status === 'fulfilled') setSettlementData(settleRes.value);
+      if (profRes.status === 'fulfilled') setProfile(profRes.value);
+
+      setError(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to load dashboard');
-      console.error('Dashboard error:', err);
+      setError(err.message || 'Unable to connect to depot backend');
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     let socket: WebSocket | null = null;
@@ -96,7 +118,9 @@ export function VendorDashboard() {
     function setupWs() {
       if (typeof window === 'undefined') return;
       const token = localStorage.getItem('access_token') || 'u_vendor_1';
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
+      const wsUrl =
+        process.env.NEXT_PUBLIC_WS_URL ||
+        `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
 
       try {
         socket = new WebSocket(wsUrl);
@@ -107,12 +131,13 @@ export function VendorDashboard() {
             if (['order_status_update', 'new_order', 'trip_status_update'].includes(msg.event)) {
               if (msg.event === 'new_order') {
                 playOrderChime();
-                setNewOrderAlert(`New Wholesale Material Order #${msg.order_id || 'MH-NEW'} received! Ready for packing.`);
+                setNewOrderAlert(
+                  `New Contractor Material Order #${msg.order_id || 'MH-NEW'} received! Ready for stage & packing.`
+                );
               }
-              fetchDashboard();
+              loadAllData(true);
             }
           } catch (e) {
-            console.error('Vendor WS parse error:', e);
           }
         };
         socket.onclose = () => {
@@ -125,414 +150,379 @@ export function VendorDashboard() {
       }
     }
 
-    fetchDashboard();
+    loadAllData();
     setupWs();
-    const pollInterval = setInterval(fetchDashboard, 5000);
+    const interval = setInterval(() => loadAllData(true), 6000);
 
     return () => {
       if (socket) socket.close();
       clearTimeout(reconnectTimer);
-      clearInterval(pollInterval);
+      clearInterval(interval);
     };
-  }, []);
+  }, [loadAllData]);
 
-  const handlePackOrder = async (orderId: string) => {
-    setActionLoading(orderId);
-    setActionSuccess(null);
-    setActionError(null);
+  async function handleToggleOnline() {
     try {
-      await vendorApi.updateOrderStatus({ orderId, status: 'packing' });
-      setActionSuccess(`Order ${orderId} marked as Packed & Ready for Driver Pickup.`);
-      await fetchDashboard();
-    } catch (err: any) {
-      setActionError(err.message || 'Failed to update order status');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const handleOpenStockModal = (item: any) => {
-    setStockEditItem(item);
-    setEditStockQty(item.stockQty);
-    setEditPrice(item.price);
-  };
-
-  const handleSaveStock = async () => {
-    if (!stockEditItem) return;
-    setSavingStock(true);
-    setActionError(null);
-    try {
-      await vendorApi.updateStock({
-        productId: stockEditItem.productId,
-        newStockQty: Number(editStockQty),
-        newPrice: Number(editPrice)
+      const res = await vendorApi.toggleOnline();
+      setProfile((prev: any) => ({ ...prev, isOnline: res.isOnline }));
+      setFeedbackToast({
+        type: 'success',
+        message: res.isOnline
+          ? 'Depot marked Online: Accepting contractor orders'
+          : 'Depot marked Offline: Paused incoming order flow'
       });
-      setActionSuccess(`Stock updated for ${stockEditItem.title}`);
-      setStockEditItem(null);
-      await fetchDashboard();
     } catch (err: any) {
-      setActionError(err.message || 'Failed to update stock');
-    } finally {
-      setSavingStock(false);
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to toggle depot status'
+      });
     }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex items-center gap-3 text-slate-500">
-          <FaSpinner className="h-6 w-6 animate-spin text-[#FF6500]" />
-          <span>Loading MaterialHub Vendor Portal...</span>
-        </div>
-      </div>
-    );
   }
 
-  if (error || !data) {
+  async function handlePackOrder(orderId: string) {
+    try {
+      await vendorApi.packOrder(orderId);
+      setFeedbackToast({
+        type: 'success',
+        message: `Order #${orderId.slice(0, 8).toUpperCase()} packed and marked ready for driver pickup!`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to pack order'
+      });
+      throw err;
+    }
+  }
+
+  async function handleRejectOrder(orderId: string, reason: string) {
+    try {
+      await vendorApi.rejectOrder(orderId, reason);
+      setFeedbackToast({
+        type: 'success',
+        message: `Order #${orderId.slice(0, 8).toUpperCase()} rejected. Escrow returned.`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to reject order'
+      });
+      throw err;
+    }
+  }
+
+  async function handleCreateProduct(data: any) {
+    try {
+      await vendorApi.createProduct(data);
+      setFeedbackToast({
+        type: 'success',
+        message: `Material SKU "${data.title}" successfully published to catalog.`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to create product SKU'
+      });
+      throw err;
+    }
+  }
+
+  async function handleUpdateProduct(productId: string, data: any) {
+    try {
+      await vendorApi.updateProduct(productId, data);
+      setFeedbackToast({
+        type: 'success',
+        message: `Material SKU updated successfully.`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to update product SKU'
+      });
+      throw err;
+    }
+  }
+
+  async function handleDeleteProduct(productId: string) {
+    try {
+      await vendorApi.deleteProduct(productId);
+      setFeedbackToast({
+        type: 'success',
+        message: `Material SKU removed from catalog.`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to delete product SKU'
+      });
+      throw err;
+    }
+  }
+
+  async function handleAdjustStock(productId: string, adjustmentQty: number, reason: string) {
+    try {
+      await vendorApi.adjustStock(productId, adjustmentQty, reason);
+      setFeedbackToast({
+        type: 'success',
+        message: `Stock balance adjusted by ${adjustmentQty > 0 ? `+${adjustmentQty}` : adjustmentQty} units.`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to adjust stock'
+      });
+      throw err;
+    }
+  }
+
+  async function handleSubmitBoqQuote(quoteId: string, estimatedTotal: number, notes?: string) {
+    try {
+      await vendorApi.submitBoqQuote(quoteId, estimatedTotal, notes);
+      setFeedbackToast({
+        type: 'success',
+        message: `Wholesale bid of ₹${estimatedTotal.toLocaleString('en-IN')} submitted to builder!`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to submit quote'
+      });
+      throw err;
+    }
+  }
+
+  async function handleProposeDeal(data: any) {
+    try {
+      await vendorApi.proposeDeal(data);
+      setFeedbackToast({
+        type: 'success',
+        message: `Promotional deal "${data.title}" published!`
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to publish deal'
+      });
+      throw err;
+    }
+  }
+
+  async function handleUpdateProfile(data: any) {
+    try {
+      const res = await vendorApi.updateProfile(data);
+      setProfile(res);
+      setFeedbackToast({
+        type: 'success',
+        message: 'Depot business profile and address updated successfully!'
+      });
+      await loadAllData(true);
+    } catch (err: any) {
+      setFeedbackToast({
+        type: 'error',
+        message: err.message || 'Failed to update profile'
+      });
+      throw err;
+    }
+  }
+
+  if (loading && !dashboardData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <FaExclamation className="h-12 w-12 text-red-400 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-slate-800 mb-1">Unable to Load Dashboard</h3>
-          <p className="text-sm text-slate-500">{error || 'Please try again later'}</p>
-        </div>
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
+        <FaSpinner className="h-10 w-10 animate-spin text-[#FF6500]" />
+        <p className="text-sm font-medium tracking-wide">
+          Connecting to MaterialHub Vendor Depot Network...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/60">
-      <header className="bg-white shadow-xs px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
-              <img
-                src="/images/logo_dark.png"
-                alt="MaterialHub Logo"
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-slate-900">{data.storeName}</h1>
-              <p className="text-xs text-slate-500">Verified Wholesale Depot</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <span className={`h-2 w-2 rounded-xs ${isWsConnected ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-              <span className={isWsConnected ? 'text-emerald-600' : 'text-slate-500'}>{isWsConnected ? 'Live Store Push' : 'Syncing'}</span>
-            </span>
-            <span className="h-3 w-px bg-slate-200 inline-block" />
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <span className={`h-2 w-2 rounded-xs ${data.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-              <span className={data.isOnline ? 'text-emerald-600' : 'text-slate-500'}>{data.isOnline ? 'Store Open' : 'Store Offline'}</span>
-            </span>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-slate-50 flex">
+      <VendorSidebar
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          setIsMobileOpen(false);
+        }}
+        isOpenMobile={isMobileOpen}
+        onCloseMobile={() => setIsMobileOpen(false)}
+        isWsConnected={isWsConnected}
+        storeName={profile?.name || dashboardData?.storeName || 'Kakkanad Building Supplies'}
+        isOnline={profile?.isOnline ?? dashboardData?.isOnline ?? true}
+        onToggleOnline={handleToggleOnline}
+        onLogout={() => {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('access_token');
+            window.location.reload();
+          }
+        }}
+      />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-        {newOrderAlert && (
-          <div className="p-4 rounded-3xl bg-[#FF6500] text-white text-xs sm:text-sm font-semibold flex items-center justify-between shadow-md">
-            <div className="flex items-center gap-2.5">
-              <span className="h-2.5 w-2.5 rounded-xs bg-white shrink-0" />
-              <span>{newOrderAlert}</span>
-            </div>
-            <button
-              onClick={() => setNewOrderAlert(null)}
-              className="text-white hover:text-slate-100 px-3 py-1 rounded-xl bg-orange-600 cursor-pointer text-xs"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
+      <div className="flex-1 flex flex-col min-w-0">
+        <VendorHeader
+          activeTab={activeTab}
+          onOpenMobile={() => setIsMobileOpen(true)}
+          onRefresh={() => loadAllData(false)}
+          isRefreshing={isRefreshing}
+          storeName={profile?.name || dashboardData?.storeName}
+          isOnline={profile?.isOnline ?? dashboardData?.isOnline ?? true}
+        />
 
-        {actionSuccess && (
-          <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-800 text-xs sm:text-sm font-medium flex items-center justify-between shadow-sm animate-in fade-in duration-200">
-            <div className="flex items-center gap-2">
-              <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>{actionSuccess}</span>
-            </div>
-            <button onClick={() => setActionSuccess(null)} className="text-emerald-700 hover:text-emerald-900 cursor-pointer">
-              <FaXmark className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-
-        {actionError && (
-          <div className="p-4 rounded-2xl bg-red-50 text-red-800 text-xs sm:text-sm font-medium flex items-center justify-between shadow-sm animate-in fade-in duration-200">
-            <div className="flex items-center gap-2">
-              <FaExclamation className="h-4 w-4 text-red-600 shrink-0" />
-              <span>{actionError}</span>
-            </div>
-            <button onClick={() => setActionError(null)} className="text-red-700 hover:text-red-900 cursor-pointer">
-              <FaXmark className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-500">Today Revenue</span>
-              <div className="h-9 w-9 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center">
-                <FaIndianRupeeSign className="h-4 w-4" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">₹{data.todayRevenue.toLocaleString()}</p>
-            <p className="text-xs text-emerald-600 font-medium mt-1">Real-time GMV settled</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-500">Wallet Balance</span>
-              <div className="h-9 w-9 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <FaStore className="h-4 w-4" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">₹{data.walletBalance.toLocaleString()}</p>
-            <p className="text-xs text-slate-400 mt-1">Auto-payout every Tuesday</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-500">Active Orders</span>
-              <div className="h-9 w-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <FaTruckFast className="h-4 w-4" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">{data.activeOrdersCount}</p>
-            <p className="text-xs text-blue-600 font-medium mt-1">{data.pendingDispatchCount} awaiting dispatch</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-500">Stock Alerts</span>
-              <div className="h-9 w-9 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
-                <FaBox className="h-4 w-4" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">{data.lowStockCount}</p>
-            <p className={`text-xs mt-1 ${data.lowStockCount > 0 ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
-              {data.lowStockCount > 0 ? 'Products below MOQ threshold' : 'All materials well stocked'}
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-4.5 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-              <FaChartLine className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-base font-semibold text-slate-900">{data.quickStats.fulfillmentRate}</p>
-              <p className="text-xs text-slate-500">Fulfillment Success Rate</p>
-            </div>
-          </div>
-
-          <div className="bg-white p-4.5 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-              <FaClock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-base font-semibold text-slate-900">{data.quickStats.avgPackingMinutes} min</p>
-              <p className="text-xs text-slate-500">Average Packing Duration</p>
-            </div>
-          </div>
-
-          <div className="bg-white p-4.5 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-yellow-50 text-yellow-600 flex items-center justify-center">
-              <FaStore className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-base font-semibold text-slate-900">{data.quickStats.rating} / 5.0</p>
-              <p className="text-xs text-slate-500">Merchant Store Rating</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden">
-          <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-slate-900">Recent Supply Orders</h2>
-              <p className="text-xs text-slate-500 font-normal">Fulfill incoming contractor orders and prepare loading batches</p>
-            </div>
-            <span className="text-xs font-semibold px-3 py-1 rounded-2xl bg-slate-100 text-slate-700">
-              {data.recentOrders.length} Orders
-            </span>
-          </div>
-          <div className="divide-y divide-slate-100">
-            {data.recentOrders.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm">No incoming supply orders at this moment</div>
-            ) : (
-              data.recentOrders.map((order) => {
-                const isConfirmed = order.status === 'confirmed';
-                const isPacking = order.status === 'packing';
-                const isDelivered = order.status === 'delivered';
-                const isOut = order.status === 'out_for_delivery';
-
-                return (
-                  <div key={order.orderId} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/70 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="h-11 w-11 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
-                        <FaBoxesStacked className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-slate-900">{order.invoiceNumber || order.orderId}</p>
-                          <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-2xl capitalize ${
-                            isDelivered ? 'bg-emerald-50 text-emerald-700' :
-                            isOut ? 'bg-blue-50 text-blue-700' :
-                            isPacking ? 'bg-amber-50 text-amber-700' :
-                            'bg-slate-100 text-slate-700'
-                          }`}>
-                            {order.status.replace(/_/g, ' ')}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">{order.deliveryAddress}</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">Payload Weight: {order.weightKg} kg</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 sm:text-right">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">₹{order.grandTotal.toLocaleString()}</p>
-                        <p className="text-[11px] text-slate-400">Total Invoice</p>
-                      </div>
-
-                      {isConfirmed && (
-                        <button
-                          disabled={actionLoading === order.orderId}
-                          onClick={() => handlePackOrder(order.orderId)}
-                          className="px-4.5 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-white text-xs font-semibold transition-all cursor-pointer shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 disabled:opacity-50"
-                        >
-                          {actionLoading === order.orderId ? 'Updating...' : 'Pack & Ready for Driver'}
-                        </button>
-                      )}
-
-                      {isPacking && (
-                        <span className="px-3.5 py-1.5 rounded-lg bg-amber-50 text-amber-800 text-xs font-semibold shadow-2xs">
-                          Awaiting Truck Pickup
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden">
-          <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-slate-900">Store Inventory Stock</h2>
-              <p className="text-xs text-slate-500 font-normal">Live store warehouse stock count and wholesale unit pricing</p>
-            </div>
-            <span className="text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 text-slate-700">
-              {data.inventoryOverview.length} SKUs
-            </span>
-          </div>
-          <div className="divide-y divide-slate-100">
-            {data.inventoryOverview.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm">No inventory items registered</div>
-            ) : (
-              data.inventoryOverview.map((item) => (
-                <div key={item.productId} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/70 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-                      <FaBox className="h-4.5 w-4.5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">{item.title}</p>
-                      <p className="text-xs text-slate-500 flex items-center gap-1.5">
-                        <span>{item.brand}</span>
-                        <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                        <span>{item.category}</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-5">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-900">₹{item.price.toLocaleString()} / {item.unit}</p>
-                      <p className={`text-xs font-medium ${item.isLowStock ? 'text-red-600' : 'text-slate-500'}`}>
-                        In Stock: {item.stockQty} {item.unit}s {item.isLowStock && '(Restock Needed)'}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => handleOpenStockModal(item)}
-                      className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer shadow-2xs"
-                      title="Adjust Stock or Price"
-                    >
-                      <FaPen className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
+        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+          {newOrderAlert && (
+            <div className="p-4 rounded-2xl bg-[#FF6500] text-white shadow-md flex items-center justify-between animate-in fade-in">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-white/20">
+                  <FaBell className="h-5 w-5" />
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      </main>
-
-      {stockEditItem && (
-        <Modal
-          isOpen={!!stockEditItem}
-          onClose={() => setStockEditItem(null)}
-          icon={<FaBoxesStacked className="h-5 w-5" />}
-          iconBg="bg-orange-500/15 border border-orange-500/25"
-          iconColor="text-[#FF6500]"
-          title="Adjust Inventory Stock"
-          subtitle={stockEditItem.title}
-          maxWidth="md"
-        >
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Available Warehouse Stock ({stockEditItem.unit}s)
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={editStockQty}
-                onChange={(e) => setEditStockQty(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-sm font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
-              />
+                <div>
+                  <h4 className="text-sm font-bold">New Wholesale Order Alert</h4>
+                  <p className="text-xs text-orange-100 font-medium">{newOrderAlert}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setActiveTab('orders');
+                    setNewOrderAlert(null);
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-white text-[#FF6500] text-xs font-bold hover:bg-orange-50 transition-colors cursor-pointer"
+                >
+                  View Packing Queue
+                </button>
+                <button
+                  onClick={() => setNewOrderAlert(null)}
+                  className="p-1.5 rounded-xl hover:bg-white/20 transition-colors cursor-pointer"
+                >
+                  <FaXmark className="h-4 w-4" />
+                </button>
+              </div>
             </div>
+          )}
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Wholesale Unit Price (INR ₹)
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={editPrice}
-                onChange={(e) => setEditPrice(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-sm font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-3">
+          {feedbackToast && (
+            <div
+              className={`p-4 rounded-2xl shadow-xs flex items-center justify-between border ${
+                feedbackToast.type === 'success'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  : 'bg-rose-50 border-rose-200 text-rose-900'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 text-xs font-semibold">
+                {feedbackToast.type === 'success' ? (
+                  <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                ) : (
+                  <FaTriangleExclamation className="h-4 w-4 text-rose-600 shrink-0" />
+                )}
+                <span>{feedbackToast.message}</span>
+              </div>
               <button
-                type="button"
-                onClick={() => setStockEditItem(null)}
-                className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                onClick={() => setFeedbackToast(null)}
+                className="p-1 rounded-lg hover:bg-black/5 transition-colors cursor-pointer"
               >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={savingStock}
-                onClick={handleSaveStock}
-                className="px-6 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-xs"
-              >
-                {savingStock ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaCheck className="h-3.5 w-3.5" />}
-                <span>Save Stock &amp; Pricing</span>
+                <FaXmark className="h-3.5 w-3.5" />
               </button>
             </div>
-          </div>
-        </Modal>
-      )}
+          )}
+
+          {error && (
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between">
+              <span>{error}</span>
+              <button
+                onClick={() => loadAllData(false)}
+                className="underline hover:text-amber-950 font-bold"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'overview' && (
+            <VendorOverviewSection
+              data={dashboardData}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+              onOpenPackModal={(order) => {
+                setActiveTab('orders');
+              }}
+            />
+          )}
+
+          {activeTab === 'profile' && (
+            <VendorProfileSection
+              profile={profile || dashboardData}
+              onUpdateProfile={handleUpdateProfile}
+              onToggleOnline={handleToggleOnline}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'orders' && (
+            <VendorOrdersSection
+              orders={orders}
+              onPackOrder={handlePackOrder}
+              onRejectOrder={handleRejectOrder}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'handover' && (
+            <VendorHandoverSection
+              orders={orders}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'products' && (
+            <VendorProductsSection
+              products={products}
+              onCreateProduct={handleCreateProduct}
+              onUpdateProduct={handleUpdateProduct}
+              onDeleteProduct={handleDeleteProduct}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'stock' && (
+            <VendorStockSection
+              products={products}
+              onAdjustStock={handleAdjustStock}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'boq' && (
+            <VendorBoqSection
+              quotes={quotes}
+              onSubmitQuote={handleSubmitBoqQuote}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'pricing' && (
+            <VendorPricingSection
+              commodityRates={commodityRates}
+              deals={deals}
+              onProposeDeal={handleProposeDeal}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+
+          {activeTab === 'finance' && (
+            <VendorFinanceSection
+              settlementData={settlementData}
+              onRefresh={() => loadAllData(false)}
+            />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

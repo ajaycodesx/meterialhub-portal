@@ -36,6 +36,13 @@ class ApiClient {
     }
   }
 
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && !this.token) {
+      this.token = localStorage.getItem('access_token');
+    }
+    return this.token;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -46,8 +53,9 @@ class ApiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    const token = this.getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     try {
@@ -78,17 +86,17 @@ class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  async post<T>(endpoint: string, body: any): Promise<T> {
+  async post<T>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  async put<T>(endpoint: string, body: any): Promise<T> {
+  async put<T>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
-      body: JSON.stringify(body),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -110,12 +118,66 @@ export const authApi = {
 };
 
 export const vendorApi = {
-  getDashboard: (merchantId?: string) =>
-    apiClient.get(`/vendor/dashboard${merchantId ? `?merchant_id=${merchantId}` : ''}`),
+  getDashboard: () => apiClient.get<any>('/vendor/dashboard'),
+
+  getProfile: () => apiClient.get<any>('/vendor/profile'),
+
+  updateProfile: (data: any) => apiClient.put<any>('/vendor/profile', data),
+
+  toggleOnline: () => apiClient.post<any>('/vendor/toggle-online'),
+
+  getOrders: (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/vendor/orders${qs ? `?${qs}` : ''}`);
+  },
+
+  getOrderDetail: (orderId: string) => apiClient.get<any>(`/vendor/orders/${orderId}`),
+
+  packOrder: (orderId: string) => apiClient.post<any>(`/vendor/orders/${orderId}/pack`),
+
+  rejectOrder: (orderId: string, reason: string) =>
+    apiClient.post<any>(`/vendor/orders/${orderId}/reject`, { orderId, status: 'cancelled', reason }),
+
+  getProducts: (params?: { category?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.category) query.set('category', params.category);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/vendor/products${qs ? `?${qs}` : ''}`);
+  },
+
+  createProduct: (data: any) => apiClient.post<any>('/vendor/products', data),
+
+  updateProduct: (productId: string, data: any) => apiClient.put<any>(`/vendor/products/${productId}`, data),
+
+  deleteProduct: (productId: string) => apiClient.delete<any>(`/vendor/products/${productId}`),
+
+  adjustStock: (productId: string, adjustmentQty: number, reason: string) =>
+    apiClient.post<any>(`/vendor/products/${productId}/adjust-stock`, { productId, adjustmentQty, reason }),
 
   updateStock: (data: { productId: string; newStockQty: number; newPrice?: number }) =>
     apiClient.post('/vendor/update-stock', data),
 
   updateOrderStatus: (data: { orderId: string; status: string }) =>
     apiClient.post('/vendor/update-order-status', data),
+
+  getBoqQuotes: () => apiClient.get<any[]>('/vendor/boq-quotes'),
+
+  submitBoqQuote: (quoteId: string, estimatedTotal: number, notes?: string) =>
+    apiClient.post<any>(`/vendor/boq-quotes/${quoteId}/quote`, { quoteId, estimatedTotal, notes }),
+
+  getCommodityRates: () => apiClient.get<any[]>('/vendor/commodity-rates'),
+
+  getDeals: () => apiClient.get<any[]>('/vendor/deals'),
+
+  proposeDeal: (data: any) => apiClient.post<any>('/vendor/deals/propose', data),
+
+  getSettlements: () => apiClient.get<any>('/vendor/settlements'),
 };
