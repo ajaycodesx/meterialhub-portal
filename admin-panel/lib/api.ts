@@ -36,6 +36,13 @@ class ApiClient {
     }
   }
 
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && !this.token) {
+      this.token = localStorage.getItem('access_token');
+    }
+    return this.token;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -46,8 +53,9 @@ class ApiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    const token = this.getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     try {
@@ -78,17 +86,17 @@ class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  async post<T>(endpoint: string, body: any): Promise<T> {
+  async post<T>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  async put<T>(endpoint: string, body: any): Promise<T> {
+  async put<T>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
-      body: JSON.stringify(body),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -110,11 +118,151 @@ export const authApi = {
 };
 
 export const adminApi = {
-  getOverview: () => apiClient.get('/admin/overview'),
-  updateCommodityRate: (data: { id: string; wholesale_rate: number; trend?: string; change_percent?: number }) =>
-    apiClient.post('/admin/commodity-rates', data),
+  getOverview: () => apiClient.get<any>('/admin/overview'),
+  
+  getOrders: (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/orders${qs ? `?${qs}` : ''}`);
+  },
+
+  getOrderDetail: (orderId: string) => apiClient.get<any>(`/admin/orders/${orderId}`),
+
+  updateOrderStatus: (orderId: string, status: string, reason?: string) =>
+    apiClient.post(`/admin/orders/${orderId}/status`, { status, reason }),
+
+  reassignDriver: (orderId: string, driverId: string, reason?: string) =>
+    apiClient.post(`/admin/orders/${orderId}/reassign-driver`, { driverId, reason }),
+
+  getMerchants: (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/merchants${qs ? `?${qs}` : ''}`);
+  },
+
+  getMerchantDetail: (merchantId: string) => apiClient.get<any>(`/admin/merchants/${merchantId}`),
+
+  verifyMerchant: (merchantId: string, verified: boolean, isOnline: boolean = true, reason?: string) =>
+    apiClient.post('/admin/merchants/verify', { merchantId, verified, is_online: isOnline, reason }),
+
+  updateMerchant: (merchantId: string, data: any) =>
+    apiClient.post(`/admin/merchants/${merchantId}/update`, data),
+
   toggleMerchant: (data: { merchantId: string; field?: string }) =>
     apiClient.post('/admin/merchants/toggle', data),
-  getAuditLogs: (limit: number = 25) =>
-    apiClient.get(`/admin/audit-logs?limit=${limit}`),
+
+  getProducts: (params?: { category?: string; brand?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.category) query.set('category', params.category);
+    if (params?.brand) query.set('brand', params.brand);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/products${qs ? `?${qs}` : ''}`);
+  },
+
+  createProduct: (data: any) => apiClient.post('/admin/products', data),
+
+  updateProduct: (productId: string, data: any) => apiClient.put(`/admin/products/${productId}`, data),
+
+  deleteProduct: (productId: string) => apiClient.delete(`/admin/products/${productId}`),
+
+  getCategories: () => apiClient.get<any[]>('/admin/categories'),
+
+  saveCategory: (data: any) => apiClient.post('/admin/categories', data),
+
+  getBuyers: (params?: { search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/buyers${qs ? `?${qs}` : ''}`);
+  },
+
+  toggleUserStatus: (userId: string, field: string = 'is_active') =>
+    apiClient.post('/admin/users/toggle', { userId, field }),
+
+  getDrivers: (params?: { search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/drivers${qs ? `?${qs}` : ''}`);
+  },
+
+  getTrips: (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/trips${qs ? `?${qs}` : ''}`);
+  },
+
+  updateTripStatus: (tripId: string, status: string) =>
+    apiClient.post('/admin/trips/status', { tripId, status }),
+
+  getPayments: (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/payments${qs ? `?${qs}` : ''}`);
+  },
+
+  processRefund: (orderId: string, amount: number | null, reason: string) =>
+    apiClient.post('/admin/payments/refund', { orderId, amount, reason }),
+
+  getBoqQuotes: (params?: { status?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.page) query.set('page', params.page.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
+    const qs = query.toString();
+    return apiClient.get<any>(`/admin/boq-quotes${qs ? `?${qs}` : ''}`);
+  },
+
+  updateBoqQuote: (quoteId: string, status: string, estimatedTotal?: number) =>
+    apiClient.post(`/admin/boq-quotes/${quoteId}/status`, { status, estimated_total: estimatedTotal }),
+
+  getCommodityRates: () => apiClient.get<any[]>('/admin/commodity-rates'),
+
+  updateCommodityRate: (data: { id: string; wholesale_rate: number; trend?: string; change_percent?: number }) =>
+    apiClient.post('/admin/commodity-rates', data),
+
+  getDeals: () => apiClient.get<any[]>('/admin/deals'),
+
+  saveDeal: (data: any) => apiClient.post('/admin/deals', data),
+
+  deleteDeal: (dealId: string) => apiClient.delete(`/admin/deals/${dealId}`),
+
+  getDisputes: () => apiClient.get<any[]>('/admin/disputes'),
+
+  updateDispute: (disputeId: string, status: string, resolutionNotes: string) =>
+    apiClient.post(`/admin/disputes/${disputeId}`, { status, resolutionNotes }),
+
+  getTemplates: () => apiClient.get<any[]>('/admin/templates'),
+
+  updateTemplate: (templateId: string, bodyText: string, subject?: string, isActive: boolean = true) =>
+    apiClient.post(`/admin/templates/${templateId}`, { templateId, subject, bodyText, isActive }),
+
+  getSettings: () => apiClient.get<any>('/admin/settings'),
+
+  updateSettings: (data: any) => apiClient.post('/admin/settings', data),
+
+  getAuditLogs: (limit: number = 50) => apiClient.get<any[]>(`/admin/audit-logs?limit=${limit}`),
 };
