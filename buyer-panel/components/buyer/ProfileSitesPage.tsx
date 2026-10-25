@@ -191,10 +191,10 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
               </div>
             )}
 
-          <div className="bg-white rounded-2xl p-1.5 shadow-xs flex items-center gap-1 overflow-x-auto scrollbar-none no-scrollbar">
+          <div className="bg-white rounded-2xl p-1.5 shadow-xs flex items-center gap-1.5 w-full overflow-x-auto no-scrollbar scrollbar-none">
             <button
               onClick={() => setActiveTab('sites')}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'sites'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -206,7 +206,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('orders')}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'orders'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -218,7 +218,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('payments')}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'payments'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -230,7 +230,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('wishlist')}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'wishlist'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -242,7 +242,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('settings')}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'settings'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
