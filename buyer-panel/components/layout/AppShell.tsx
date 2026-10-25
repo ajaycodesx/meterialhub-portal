@@ -9,6 +9,7 @@ import { CommodityTicker } from '../buyer/CommodityTicker';
 import { LocationServiceModal } from '../buyer/LocationServiceModal';
 import { LanguageModal } from '../buyer/LanguageModal';
 import { AuthModal } from '../buyer/AuthModal';
+import { ScrollToTopButton } from '../common/ScrollToTopButton';
 import { useAppContext } from '../../context/AppContext';
 import { COMMODITY_RATES } from '../../data/mockBuyerData';
 
@@ -101,6 +102,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={(u) => setUser(u)}
       />
+
+      <ScrollToTopButton />
     </div>
   );
 }
