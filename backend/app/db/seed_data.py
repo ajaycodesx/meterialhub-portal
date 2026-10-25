@@ -276,8 +276,11 @@ async def seed_demo_data(force: bool = False) -> bool:
 
         for u in demo_users:
             existing = await db.execute(select(User).where(User.id == u.id))
-            if not existing.scalars().first():
+            user_obj = existing.scalars().first()
+            if not user_obj:
                 db.add(u)
+            else:
+                user_obj.is_active = True
 
         for cat in CATEGORIES_SEED:
             existing = await db.execute(select(MaterialCategory).where(MaterialCategory.id == cat["id"]))

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
@@ -13,6 +13,11 @@ from app.services.otp_service import otp_service
 from app.services.audit_service import audit_service
 from app.schemas.driver import (
     DriverFeedCompositeResponse,
+    DriverProfileResponse,
+    DriverProfileUpdateRequest,
+    DriverTripHistoryItem,
+    DriverExceptionReportRequest,
+    DriverLocationUpdateRequest,
     UpdateTripStatusRequest,
     DeliveryOtpRequest,
     VerifyDeliveryOtpRequest
@@ -29,10 +34,88 @@ async def get_driver_feed(
 ):
     if current_user.role != UserRole.DRIVER:
         raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
-    
+
     driver_id = current_user.id
     data = await DriverService.get_driver_feed_composite(db, driver_id)
     return ApiResponse(data=data, message="Driver feed data retrieved successfully")
+
+
+@router.get("/profile", response_model=ApiResponse[DriverProfileResponse])
+async def get_driver_profile(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+
+    data = await DriverService.get_driver_profile(db, current_user.id)
+    return ApiResponse(data=data, message="Driver profile retrieved successfully")
+
+
+@router.put("/profile", response_model=ApiResponse[DriverProfileResponse])
+async def update_driver_profile(
+    req: DriverProfileUpdateRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+
+    data = await DriverService.update_driver_profile(db, current_user.id, req)
+    return ApiResponse(data=data, message="Driver profile updated successfully")
+
+
+@router.post("/toggle-online", response_model=ApiResponse[Dict[str, Any]])
+async def toggle_online(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+
+    res = await DriverService.toggle_online(db, current_user.id)
+    return ApiResponse(data=res, message="Driver availability updated")
+
+
+@router.get("/trips/history", response_model=ApiResponse[List[DriverTripHistoryItem]])
+async def get_trip_history(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+
+    history = await DriverService.get_trip_history(db, current_user.id)
+    return ApiResponse(data=history, message="Trip history retrieved successfully")
+
+
+@router.post("/trips/exception", response_model=ApiResponse[Dict[str, Any]])
+async def report_trip_exception(
+    req: DriverExceptionReportRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+
+    result = await DriverService.report_trip_exception(db, current_user.id, req)
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("message", "Unable to report exception"))
+
+    return ApiResponse(data=result, message="Exception reported successfully")
+
+
+@router.post("/location", response_model=ApiResponse[Dict[str, Any]])
+async def update_location_telemetry(
+    req: DriverLocationUpdateRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+
+    result = await DriverService.update_location_telemetry(db, current_user.id, req)
+    return ApiResponse(data=result, message="Driver location telemetry updated")
 
 
 @router.post("/update-trip", response_model=ApiResponse[dict])
@@ -189,4 +272,3 @@ async def verify_delivery_otp(
         data={"verified": True, "tripId": target_trip_id, "orderId": trip.order_id},
         message="OTP verified successfully. Delivery completed."
     )
-

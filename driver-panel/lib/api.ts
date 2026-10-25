@@ -36,6 +36,13 @@ class ApiClient {
     }
   }
 
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && !this.token) {
+      this.token = localStorage.getItem('access_token');
+    }
+    return this.token;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -46,8 +53,9 @@ class ApiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    const token = this.getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     try {
@@ -78,17 +86,17 @@ class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  async post<T>(endpoint: string, body: any): Promise<T> {
+  async post<T>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  async put<T>(endpoint: string, body: any): Promise<T> {
+  async put<T>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
-      body: JSON.stringify(body),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -111,7 +119,21 @@ export const authApi = {
 
 export const driverApi = {
   getFeed: (driverId?: string) =>
-    apiClient.get(`/driver/feed${driverId ? `?driver_id=${driverId}` : ''}`),
+    apiClient.get<any>(`/driver/feed${driverId ? `?driver_id=${driverId}` : ''}`),
+
+  getProfile: () => apiClient.get<any>('/driver/profile'),
+
+  updateProfile: (data: any) => apiClient.put<any>('/driver/profile', data),
+
+  toggleOnline: () => apiClient.post<any>('/driver/toggle-online'),
+
+  getTripHistory: () => apiClient.get<any[]>('/driver/trips/history'),
+
+  reportException: (data: { tripId: string; exceptionType: string; description: string; photoEvidenceUrl?: string }) =>
+    apiClient.post<any>('/driver/trips/exception', data),
+
+  updateLocation: (data: { tripId?: string; latitude: number; longitude: number; speedKmh?: number; heading?: number }) =>
+    apiClient.post<any>('/driver/location', data),
 
   updateTripStatus: (data: {
     tripId: string;

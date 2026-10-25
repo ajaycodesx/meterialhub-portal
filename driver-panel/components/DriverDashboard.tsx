@@ -1,44 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  FaTruckFast,
-  FaMapLocationDot,
-  FaClock,
-  FaIndianRupeeSign,
-  FaExclamation,
   FaSpinner,
-  FaBox,
-  FaRoute,
-  FaCheck,
-  FaKey,
-  FaShieldHalved,
+  FaCircleCheck,
+  FaTriangleExclamation,
   FaXmark,
-  FaCircleCheck
+  FaKey,
+  FaShieldHalved
 } from 'react-icons/fa6';
 import { driverApi, authApi, apiClient } from '../lib/api';
 import { Modal } from './ui/Modal';
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import { DriverHeader, DriverTab } from './layout/DriverHeader';
 
-interface DashboardData {
-  driverId: string;
-  driverName: string;
-  vehicleType: string;
-  isOnline: boolean;
-  todayEarnings: number;
-  todayTripsCount: number;
-  activeTrip: any;
-  availableTrips: any[];
-  weeklyPayoutSummary: {
-    weekTotal: number;
-    completedTrips: number;
-    payoutDay: string;
-  };
-}
+import { DriverDispatchSection } from './sections/DriverDispatchSection';
+import { DriverHistorySection } from './sections/DriverHistorySection';
+import { DriverProfileSection } from './sections/DriverProfileSection';
 
 export function DriverDashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [activeTab, setActiveTab] = useState<DriverTab>('dispatch');
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [feedData, setFeedData] = useState<any>(null);
+  const [tripHistory, setTripHistory] = useState<any[]>([]);
+  const [profile, setProfile] = useState<any>(null);
 
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
@@ -49,23 +38,72 @@ export function DriverDashboard() {
   const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [otpModalError, setOtpModalError] = useState<string | null>(null);
-  const [isWsConnected, setIsWsConnected] = useState(false);
 
-  async function fetchDashboard() {
+  const [isExceptionModalOpen, setIsExceptionModalOpen] = useState(false);
+  const [exceptionType, setExceptionType] = useState('Site Gate Locked / Narrow Road');
+  const [exceptionDescription, setExceptionDescription] = useState('');
+  const [submittingException, setSubmittingException] = useState(false);
+
+  const [isWsConnected, setIsWsConnected] = useState(false);
+  const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [gpsActive, setGpsActive] = useState(false);
+
+  function requestBrowserGps() {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      setActionError('Browser Geolocation is not supported on this device.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        setGpsCoords(coords);
+        setGpsActive(true);
+        driverApi.updateLocation({
+          latitude: coords.lat,
+          longitude: coords.lng,
+          speedKmh: position.coords.speed ? position.coords.speed * 3.6 : 30.0,
+          heading: position.coords.heading || 0
+        }).catch(() => {});
+        setActionSuccess('GPS fixed. Live carrier telemetry active.');
+      },
+      (err) => {
+        setGpsActive(false);
+        setActionError('Location permission denied or unavailable. Using simulated depot route coordinates.');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  const loadData = useCallback(async (isSilent = false) => {
+    if (!isSilent) setIsRefreshing(true);
     try {
       if (typeof window !== 'undefined' && !localStorage.getItem('access_token')) {
         const auth: any = await authApi.login('driver@materialhub.in', 'driver123');
         apiClient.setToken(auth.access_token);
       }
-      const dashboardData: any = await driverApi.getFeed();
-      setData(dashboardData);
+
+      const [feedRes, historyRes, profileRes] = await Promise.allSettled([
+        driverApi.getFeed(),
+        driverApi.getTripHistory(),
+        driverApi.getProfile()
+      ]);
+
+      if (feedRes.status === 'fulfilled') setFeedData(feedRes.value);
+      if (historyRes.status === 'fulfilled') setTripHistory(historyRes.value || []);
+      if (profileRes.status === 'fulfilled') setProfile(profileRes.value);
+
+      setError(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to load dashboard');
-      console.error('Dashboard error:', err);
+      setError(err.message || 'Unable to connect to driver dispatch server');
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     let socket: WebSocket | null = null;
@@ -74,7 +112,9 @@ export function DriverDashboard() {
     function setupWs() {
       if (typeof window === 'undefined') return;
       const token = localStorage.getItem('access_token') || 'u_driver_1';
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
+      const wsUrl =
+        process.env.NEXT_PUBLIC_WS_URL ||
+        `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
 
       try {
         socket = new WebSocket(wsUrl);
@@ -82,11 +122,18 @@ export function DriverDashboard() {
         socket.onmessage = (event) => {
           try {
             const msg = JSON.parse(event.data);
-            if (['trip_status_update', 'order_status_update', 'delivery_verification', 'notification'].includes(msg.event)) {
-              fetchDashboard();
+            if (
+              [
+                'trip_status_update',
+                'order_status_update',
+                'delivery_verification',
+                'notification',
+                'system_alert'
+              ].includes(msg.event)
+            ) {
+              loadData(true);
             }
           } catch (e) {
-            console.error('Driver WS parse error:', e);
           }
         };
         socket.onclose = () => {
@@ -99,48 +146,70 @@ export function DriverDashboard() {
       }
     }
 
-    fetchDashboard();
+    loadData();
     setupWs();
-    const pollTimer = setInterval(fetchDashboard, 5000);
+    requestBrowserGps();
+
+    const pollTimer = setInterval(() => loadData(true), 6000);
 
     return () => {
       if (socket) socket.close();
       clearTimeout(reconnectTimer);
       clearInterval(pollTimer);
     };
-  }, []);
+  }, [loadData]);
 
-  const handleAcceptTrip = async (tripId: string) => {
+  async function handleToggleOnline() {
+    try {
+      const res = await driverApi.toggleOnline();
+      setFeedData((prev: any) => ({ ...prev, isOnline: res.isOnline }));
+      setProfile((prev: any) => ({ ...prev, isOnline: res.isOnline }));
+      setActionSuccess(
+        res.isOnline
+          ? 'Driver status marked Online: Accepting nearby delivery dispatches'
+          : 'Driver status marked Offline: Availability paused'
+      );
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to toggle availability status');
+    }
+  }
+
+  async function handleAcceptTrip(tripId: string) {
     setActionLoading(`accept_${tripId}`);
     setActionError(null);
     setActionSuccess(null);
     try {
       await driverApi.updateTripStatus({ tripId, status: 'accepted' });
-      setActionSuccess('Trip accepted! Head over to the merchant store for material loading.');
-      await fetchDashboard();
+      setActionSuccess('Trip accepted! Proceed to merchant depot for material loading.');
+      await loadData(true);
     } catch (err: any) {
       setActionError(err.message || 'Failed to accept trip.');
     } finally {
       setActionLoading(null);
     }
-  };
+  }
 
-  const handleUpdateStatus = async (tripId: string, nextStatus: string, successMsg: string) => {
+  async function handleUpdateStatus(tripId: string, nextStatus: string, successMsg: string) {
     setActionLoading(nextStatus);
     setActionError(null);
     setActionSuccess(null);
     try {
-      await driverApi.updateTripStatus({ tripId, status: nextStatus });
+      await driverApi.updateTripStatus({
+        tripId,
+        status: nextStatus,
+        currentLat: gpsCoords?.lat,
+        currentLng: gpsCoords?.lng
+      });
       setActionSuccess(successMsg);
-      await fetchDashboard();
+      await loadData(true);
     } catch (err: any) {
       setActionError(err.message || 'Failed to update trip status.');
     } finally {
       setActionLoading(null);
     }
-  };
+  }
 
-  const handleRequestOtp = async (tripId: string) => {
+  async function handleRequestOtp(tripId: string) {
     setActionLoading('request_otp');
     setOtpModalError(null);
     try {
@@ -150,374 +219,174 @@ export function DriverDashboard() {
         setOtpValue(res.devOtp);
       }
       setIsOtpModalOpen(true);
-      setActionSuccess('Delivery verification OTP dispatched to customer phone.');
+      setActionSuccess('Delivery verification OTP dispatched to customer mobile.');
     } catch (err: any) {
       setActionError(err.message || 'Failed to generate delivery OTP.');
     } finally {
       setActionLoading(null);
     }
-  };
+  }
 
-  const handleVerifyOtp = async () => {
-    if (!data?.activeTrip?.tripId || !otpValue.trim()) {
+  async function handleVerifyOtp() {
+    if (!feedData?.activeTrip?.tripId || !otpValue.trim()) {
       setOtpModalError('Please enter the 6-digit OTP provided by customer.');
       return;
     }
     setVerifyingOtp(true);
     setOtpModalError(null);
     try {
-      await driverApi.verifyDeliveryOtp(data.activeTrip.tripId, otpValue.trim());
+      await driverApi.verifyDeliveryOtp(feedData.activeTrip.tripId, otpValue.trim());
       setIsOtpModalOpen(false);
       setOtpValue('');
       setDevOtpHint(null);
       setActionSuccess('Delivery verified and offloading completed successfully! Payout credited.');
-      await fetchDashboard();
+      await loadData(true);
     } catch (err: any) {
-      setOtpModalError(err.message || 'Invalid or expired OTP. Please re-check.');
+      setOtpModalError(err.message || 'Invalid or expired OTP. Please re-check with site supervisor.');
     } finally {
       setVerifyingOtp(false);
     }
-  };
+  }
 
-  if (loading) {
+  async function handleReportException() {
+    if (!feedData?.activeTrip?.tripId || !exceptionDescription.trim()) return;
+    try {
+      setSubmittingException(true);
+      await driverApi.reportException({
+        tripId: feedData.activeTrip.tripId,
+        exceptionType,
+        description: exceptionDescription.trim()
+      });
+      setIsExceptionModalOpen(false);
+      setExceptionDescription('');
+      setActionSuccess('Incident recorded and escalated to MaterialHub field dispatch operations.');
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to report exception.');
+    } finally {
+      setSubmittingException(false);
+    }
+  }
+
+  async function handleUpdateProfile(data: any) {
+    try {
+      const res = await driverApi.updateProfile(data);
+      setProfile(res);
+      setActionSuccess('Driver profile and commercial vehicle details updated successfully.');
+      await loadData(true);
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to update profile.');
+      throw err;
+    }
+  }
+
+  if (loading && !feedData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex items-center gap-3 text-slate-500">
-          <FaSpinner className="h-6 w-6 animate-spin" />
-          <span>Loading MaterialHub Driver Portal...</span>
-        </div>
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
+        <FaSpinner className="h-10 w-10 animate-spin text-[#FF6500]" />
+        <p className="text-sm font-medium tracking-wide">
+          Connecting to MaterialHub Commercial Dispatch Network...
+        </p>
       </div>
     );
   }
-
-  if (error || !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <FaExclamation className="h-12 w-12 text-red-400 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-slate-800 mb-1">Unable to Load Dashboard</h3>
-          <p className="text-sm text-slate-500">{error || 'Please try again later'}</p>
-        </div>
-      </div>
-    );
-  }
-
-  const activeStatus = data.activeTrip?.status || '';
 
   return (
-    <div className="min-h-screen bg-slate-50/60">
-      <header className="bg-white shadow-xs px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
-              <img
-                src="/images/logo_dark.png"
-                alt="MaterialHub Logo"
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-slate-900">{data.driverName}</h1>
-              <p className="text-xs text-slate-500">{data.vehicleType}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <span className={`h-2 w-2 rounded-xs ${isWsConnected ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-              <span className={isWsConnected ? 'text-emerald-600' : 'text-slate-500'}>{isWsConnected ? 'Live Dispatch' : 'Syncing'}</span>
-            </span>
-            <span className="h-3 w-px bg-slate-200 inline-block" />
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <span className={`h-2 w-2 rounded-xs ${data.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-              <span className={data.isOnline ? 'text-emerald-600' : 'text-slate-500'}>{data.isOnline ? 'Online' : 'Offline'}</span>
-            </span>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <DriverHeader
+        activeTab={activeTab}
+        onTabChange={(tab) => setActiveTab(tab)}
+        driverName={profile?.name || feedData?.driverName || 'Manoj K'}
+        vehicleType={profile?.vehicleType || feedData?.vehicleType || 'Mini Commercial Truck (3 Ton)'}
+        isOnline={profile?.isOnline ?? feedData?.isOnline ?? true}
+        onToggleOnline={handleToggleOnline}
+        isWsConnected={isWsConnected}
+        onRefresh={() => loadData(false)}
+        isRefreshing={isRefreshing}
+        gpsActive={gpsActive}
+        onRequestGps={requestBrowserGps}
+        onLogout={() => {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('access_token');
+            window.location.reload();
+          }
+        }}
+      />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
         {actionSuccess && (
-          <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-800 text-xs sm:text-sm font-medium flex items-center justify-between shadow-sm animate-in fade-in duration-200">
+          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2">
               <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>{actionSuccess}</span>
             </div>
-            <button onClick={() => setActionSuccess(null)} className="text-emerald-700 hover:text-emerald-900 cursor-pointer">
-              <FaXmark className="h-4 w-4" />
+            <button onClick={() => setActionSuccess(null)} className="p-1 hover:bg-black/5 rounded-lg cursor-pointer">
+              <FaXmark className="h-3.5 w-3.5 text-emerald-800" />
             </button>
           </div>
         )}
 
         {actionError && (
-          <div className="p-4 rounded-2xl bg-rose-50 text-rose-800 text-xs sm:text-sm font-medium flex items-center justify-between shadow-sm animate-in fade-in duration-200">
+          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-semibold flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2">
-              <FaExclamation className="h-4 w-4 text-rose-600 shrink-0" />
+              <FaTriangleExclamation className="h-4 w-4 text-rose-600 shrink-0" />
               <span>{actionError}</span>
             </div>
-            <button onClick={() => setActionError(null)} className="text-rose-700 hover:text-rose-900 cursor-pointer">
-              <FaXmark className="h-4 w-4" />
+            <button onClick={() => setActionError(null)} className="p-1 hover:bg-black/5 rounded-lg cursor-pointer">
+              <FaXmark className="h-3.5 w-3.5 text-rose-800" />
             </button>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <FaIndianRupeeSign className="h-5 w-5" />
-              </div>
-              <span className="text-xs text-emerald-600 font-semibold">Today</span>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">₹{data.todayEarnings.toLocaleString()}</p>
-            <p className="text-xs text-slate-500 mt-1">Today's Earnings</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <div className="h-10 w-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <FaRoute className="h-5 w-5" />
-              </div>
-              <span className="text-xs text-blue-600 font-semibold">Completed</span>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">{data.todayTripsCount}</p>
-            <p className="text-xs text-slate-500 mt-1">Trips Today</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3">
-              <div className="h-10 w-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                <FaTruckFast className="h-5 w-5" />
-              </div>
-              <span className="text-xs text-purple-600 font-semibold">Vehicle</span>
-            </div>
-            <p className="text-lg font-bold text-slate-900 leading-tight">{data.vehicleType}</p>
-            <p className="text-xs text-slate-500 mt-1">Assigned Commercial Unit</p>
-          </div>
-        </div>
-
-        {data.activeTrip ? (
-          <div className="bg-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden">
-            <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Current Mission</span>
-                <h2 className="text-base sm:text-lg font-semibold text-slate-900">Active Delivery Trip</h2>
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6500]">
-                <span className="h-2 w-2 rounded-xs bg-[#FF6500]" />
-                <span className="capitalize">{activeStatus.replace(/_/g, ' ')}</span>
-              </span>
-            </div>
-
-            <div className="p-6 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                    <FaBox className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium">Order Reference</p>
-                    <p className="text-sm font-semibold text-slate-900">{data.activeTrip.orderId}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                    <FaIndianRupeeSign className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium">Trip Guaranteed Payout</p>
-                    <p className="text-sm font-semibold text-slate-900">₹{data.activeTrip.tripFare.toLocaleString()}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50/80 space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                    <FaMapLocationDot className="h-4 w-4 text-slate-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-slate-500 font-medium">Pickup (Merchant Hardware Store)</p>
-                    <p className="text-sm text-slate-900 font-semibold">{data.activeTrip.pickupAddress}</p>
-                  </div>
-                </div>
-                <div className="border-l-2 border-dashed border-slate-300 h-4 ml-4" />
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                    <FaMapLocationDot className="h-4 w-4 text-[#FF6500]" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-slate-500 font-medium">Drop (Construction Unloading Site)</p>
-                    <p className="text-sm text-slate-900 font-semibold">{data.activeTrip.dropAddress}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center gap-2">
-                  <FaClock className="h-4 w-4 text-slate-400" />
-                  <span className="text-sm text-slate-600 font-medium">{data.activeTrip.distanceKm} KM Estimated Route</span>
-                </div>
-                <div className="text-xs text-slate-500">
-                  Vehicle: <strong className="text-slate-800">{data.activeTrip.vehicleRegNumber || 'KL-07-CD-8921'}</strong>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100">
-                <div className="p-4 rounded-2xl bg-orange-50/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-900">Workflow Action Step</h4>
-                    <p className="text-xs text-slate-600 mt-0.5">
-                      {activeStatus === 'accepted' && 'Travel to merchant store to collect and inspect materials.'}
-                      {activeStatus === 'arrived_at_store' && 'Verify bill, load materials securely onto truck, and begin transit.'}
-                      {activeStatus === 'in_transit' && 'Driving to destination unloading site.'}
-                      {activeStatus === 'arrived_at_site' && 'Arrived at site gate. Offload materials and verify OTP with supervisor.'}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                    {activeStatus === 'accepted' && (
-                      <button
-                        onClick={() => handleUpdateStatus(data.activeTrip.tripId, 'arrived_at_store', 'Marked arrived at merchant store.')}
-                        disabled={actionLoading !== null}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-md shadow-slate-900/10 hover:shadow-lg transition-all w-full sm:w-auto"
-                      >
-                        {actionLoading === 'arrived_at_store' ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaMapLocationDot className="h-3.5 w-3.5" />}
-                        <span>Arrived at Store</span>
-                      </button>
-                    )}
-
-                    {activeStatus === 'arrived_at_store' && (
-                      <button
-                        onClick={() => handleUpdateStatus(data.activeTrip.tripId, 'in_transit', 'Materials loaded! Trip marked in-transit.')}
-                        disabled={actionLoading !== null}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05800] text-white text-xs font-semibold shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all w-full sm:w-auto"
-                      >
-                        {actionLoading === 'in_transit' ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaTruckFast className="h-3.5 w-3.5" />}
-                        <span>Materials Loaded &amp; Start Trip</span>
-                      </button>
-                    )}
-
-                    {activeStatus === 'in_transit' && (
-                      <button
-                        onClick={() => handleUpdateStatus(data.activeTrip.tripId, 'arrived_at_site', 'Arrived at construction site. Ready for OTP verification.')}
-                        disabled={actionLoading !== null}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-md shadow-slate-900/10 hover:shadow-lg transition-all w-full sm:w-auto"
-                      >
-                        {actionLoading === 'arrived_at_site' ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaMapLocationDot className="h-3.5 w-3.5" />}
-                        <span>Arrived at Site</span>
-                      </button>
-                    )}
-
-                    {activeStatus === 'arrived_at_site' && (
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <button
-                          onClick={() => handleRequestOtp(data.activeTrip.tripId)}
-                          disabled={actionLoading !== null}
-                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 text-slate-800 text-xs font-semibold transition-all shadow-xs"
-                        >
-                          {actionLoading === 'request_otp' ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaKey className="h-3.5 w-3.5 text-[#FF6500]" />}
-                          <span>Request OTP</span>
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setOtpModalError(null);
-                            setIsOtpModalOpen(true);
-                          }}
-                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05800] text-white text-xs font-semibold shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all"
-                        >
-                          <FaShieldHalved className="h-3.5 w-3.5" />
-                          <span>Verify OTP &amp; Complete</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        ) : (
-          <div className="bg-white rounded-3xl shadow-sm p-8 sm:p-12 text-center">
-            <FaTruckFast className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-1">No Active Trip Assigned</h3>
-            <p className="text-xs sm:text-sm text-slate-500">Pick an unassigned delivery job below to start earning.</p>
+        {error && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between">
+            <span>{error}</span>
+            <button onClick={() => loadData(false)} className="underline font-bold">
+              Retry
+            </button>
           </div>
         )}
 
-        <div className="bg-white rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Available Dispatches</span>
-              <h2 className="text-base sm:text-lg font-semibold text-slate-900">Nearby Trip Pool ({data.availableTrips.length})</h2>
-            </div>
-            <span className="text-xs text-slate-500 font-medium">Instant Driver Allocation</span>
-          </div>
+        {activeTab === 'dispatch' && (
+          <DriverDispatchSection
+            activeTrip={feedData?.activeTrip}
+            availableTrips={feedData?.availableTrips || []}
+            todayEarnings={feedData?.todayEarnings || 0}
+            todayTripsCount={feedData?.todayTripsCount || 0}
+            vehicleType={profile?.vehicleType || feedData?.vehicleType || 'Mini Commercial Truck (3 Ton)'}
+            actionLoading={actionLoading}
+            onAcceptTrip={handleAcceptTrip}
+            onUpdateStatus={handleUpdateStatus}
+            onRequestOtp={handleRequestOtp}
+            onOpenOtpModal={() => {
+              setOtpModalError(null);
+              setIsOtpModalOpen(true);
+            }}
+            onOpenExceptionModal={() => setIsExceptionModalOpen(true)}
+            gpsCoords={gpsCoords}
+          />
+        )}
 
-          <div className="divide-y divide-slate-100">
-            {data.availableTrips.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm">No available unassigned trips at the moment.</div>
-            ) : (
-              data.availableTrips.map((trip) => {
-                const isAccepting = actionLoading === `accept_${trip.tripId}`;
-                return (
-                  <div key={trip.tripId} className="px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors">
-                    <div className="flex items-start gap-4">
-                      <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0 shadow-xs">
-                        <FaBox className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-slate-900">{trip.orderId}</p>
-                          <span className="px-2.5 py-0.5 rounded-2xl bg-slate-100 text-slate-700 text-[10px] font-semibold">
-                            {trip.vehicleType}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5 font-normal">
-                          {trip.pickupAddress} &rarr; {trip.dropAddress}
-                        </p>
-                      </div>
-                    </div>
+        {activeTab === 'history' && (
+          <DriverHistorySection
+            history={tripHistory}
+            weeklyPayout={
+              feedData?.weeklyPayoutSummary || {
+                weekTotal: feedData?.todayEarnings || 0,
+                completedTrips: feedData?.todayTripsCount || 0,
+                payoutDay: 'Every Tuesday Direct Bank Deposit'
+              }
+            }
+            onRefresh={() => loadData(false)}
+          />
+        )}
 
-                    <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto">
-                      <div className="text-left sm:text-right">
-                        <p className="text-base font-bold text-slate-900">₹{trip.tripFare.toLocaleString()}</p>
-                        <p className="text-[11px] text-slate-500 font-normal">{trip.distanceKm} KM Route</p>
-                      </div>
-
-                      <button
-                        onClick={() => handleAcceptTrip(trip.tripId)}
-                        disabled={actionLoading !== null || Boolean(data.activeTrip)}
-                        className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-semibold transition-all ${Boolean(data.activeTrip)
-                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                            : 'bg-[#FF6500] hover:bg-[#e05800] text-white shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30'
-                          }`}
-                        title={data.activeTrip ? 'Complete active trip first before accepting another' : 'Accept this delivery job'}
-                      >
-                        {isAccepting ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaCheck className="h-3.5 w-3.5" />}
-                        <span>{data.activeTrip ? 'Busy' : 'Accept Trip'}</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-r from-orange-50/80 via-white to-slate-50 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-xs text-slate-500 font-medium">Weekly Direct Deposit Guarantee</p>
-              <p className="text-2xl font-bold text-slate-900 mt-0.5">₹{data.weeklyPayoutSummary.weekTotal.toLocaleString()}</p>
-              <p className="text-xs text-slate-500 mt-1">{data.weeklyPayoutSummary.completedTrips} site offloading trips completed this cycle</p>
-            </div>
-            <div className="text-left sm:text-right">
-              <p className="text-xs text-slate-500 font-normal">Next Payout Cycle</p>
-              <p className="text-sm font-semibold text-[#FF6500] mt-0.5">{data.weeklyPayoutSummary.payoutDay}</p>
-            </div>
-          </div>
-        </div>
+        {activeTab === 'profile' && (
+          <DriverProfileSection
+            profile={profile || feedData}
+            onUpdateProfile={handleUpdateProfile}
+            onRefresh={() => loadData(false)}
+          />
+        )}
       </main>
 
       {isOtpModalOpen && (
@@ -527,28 +396,49 @@ export function DriverDashboard() {
             setIsOtpModalOpen(false);
             setOtpModalError(null);
           }}
-          icon={<FaKey className="h-5 w-5" />}
-          iconBg="bg-orange-500/15 border border-orange-500/25"
-          iconColor="text-[#FF6500]"
           title="Delivery OTP Verification"
-          subtitle={`Order #${data?.activeTrip?.orderId || ''} · Site Offloading Confirmation`}
+          subtitle={`Order #${feedData?.activeTrip?.orderId || ''} · Site Offloading Confirmation`}
           maxWidth="md"
+          footer={
+            <div className="flex items-center justify-end gap-2 w-full">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  setIsOtpModalOpen(false);
+                  setOtpModalError(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                loading={verifyingOtp}
+                disabled={otpValue.length < 4}
+                onClick={handleVerifyOtp}
+              >
+                <FaShieldHalved className="mr-1.5 h-3.5 w-3.5" />
+                Confirm Offloading
+              </Button>
+            </div>
+          }
         >
-          <div className="space-y-4">
-            <p className="text-xs text-slate-300 leading-relaxed font-normal text-center">
-              Ask the site supervisor or customer for the 6-digit verification code sent to their phone to confirm material offloading.
+          <div className="space-y-4 text-xs">
+            <p className="text-slate-600 leading-relaxed font-medium">
+              Obtain the 6-digit verification code sent to the site supervisor or buyer to confirm cargo offloading.
             </p>
 
             {devOtpHint && (
-              <div className="p-3.5 rounded-2xl bg-amber-950/40 border border-amber-800/60 text-amber-200 text-xs shadow-xs flex items-center justify-between">
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-between font-medium">
                 <span>Dev Simulation Code:</span>
-                <strong className="font-mono text-sm tracking-widest">{devOtpHint}</strong>
+                <span className="font-mono text-sm font-bold tracking-widest">{devOtpHint}</span>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-2 text-center uppercase tracking-wider">
-                Enter 6-Digit OTP
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                Enter 6-Digit Verification Code
               </label>
               <input
                 type="text"
@@ -556,35 +446,65 @@ export function DriverDashboard() {
                 value={otpValue}
                 onChange={(e) => setOtpValue(e.target.value)}
                 placeholder="------"
-                className="w-full text-center tracking-[0.5em] font-mono text-2xl sm:text-3xl font-bold py-3 rounded-2xl border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] text-white bg-[#162137] shadow-inner"
+                className="w-full text-center tracking-[0.5em] font-mono text-2xl font-bold py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#FF6500] text-slate-900 bg-white"
               />
               {otpModalError && (
-                <p className="text-xs text-rose-400 text-center mt-2 font-medium">{otpModalError}</p>
+                <p className="text-xs text-rose-600 mt-1 font-semibold">{otpModalError}</p>
               )}
             </div>
+          </div>
+        </Modal>
+      )}
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsOtpModalOpen(false);
-                  setOtpModalError(null);
-                }}
-                className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-xs font-semibold text-slate-300 hover:text-white transition-all shadow-xs cursor-pointer"
-              >
+      {isExceptionModalOpen && (
+        <Modal
+          isOpen={isExceptionModalOpen}
+          onClose={() => setIsExceptionModalOpen(false)}
+          title="Report Site or Transport Exception"
+          subtitle={`Trip #${feedData?.activeTrip?.tripId?.slice(0, 8).toUpperCase() || ''} Escalation`}
+          maxWidth="md"
+          footer={
+            <div className="flex items-center justify-end gap-2 w-full">
+              <Button variant="secondary" size="sm" onClick={() => setIsExceptionModalOpen(false)}>
                 Cancel
-              </button>
-
-              <button
-                type="button"
-                onClick={handleVerifyOtp}
-                disabled={verifyingOtp || otpValue.length < 4}
-                className="px-6 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05800] text-xs font-semibold text-white shadow-xs transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                loading={submittingException}
+                disabled={!exceptionDescription.trim()}
+                onClick={handleReportException}
               >
-                {verifyingOtp ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaShieldHalved className="h-3.5 w-3.5" />}
-                <span>Confirm Delivery</span>
-              </button>
+                Escalate Incident
+              </Button>
             </div>
+          }
+        >
+          <div className="space-y-4 text-xs">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Exception Classification
+              </label>
+              <select
+                value={exceptionType}
+                onChange={(e) => setExceptionType(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-800 font-medium focus:outline-none focus:border-[#FF6500]"
+              >
+                <option value="Site Gate Locked / Narrow Road">Site Gate Locked / Narrow Road Access</option>
+                <option value="Customer / Site Supervisor Unreachable">Customer / Site Supervisor Unreachable</option>
+                <option value="Damaged Material at Depot Loading">Damaged Material at Depot Loading</option>
+                <option value="Carrier Vehicle Breakdown / Flat Tyre">Carrier Vehicle Breakdown / Flat Tyre</option>
+                <option value="Site Offloading Refusal / Dispute">Site Offloading Refusal / Dispute</option>
+              </select>
+            </div>
+
+            <Input
+              label="Detailed Incident Description"
+              placeholder="Explain physical roadblock, waiting duration, or reason..."
+              value={exceptionDescription}
+              onChange={(e) => setExceptionDescription(e.target.value)}
+              required
+            />
           </div>
         </Modal>
       )}
