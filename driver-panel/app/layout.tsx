@@ -18,6 +18,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "MaterialHub Driver Dispatch | Heavy Materials Logistics",
   description: "Driver partner dispatch and route execution console for MaterialHub construction marketplace",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({

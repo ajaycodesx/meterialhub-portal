@@ -18,6 +18,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "MaterialHub Vendor Portal | Merchant Stock & Order Fulfillment",
   description: "Merchant partner dashboard for inventory management, live order packing, and sales analytics",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({

@@ -20,6 +20,10 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "MaterialHub - Wholesale Construction Materials Platform",
   description: "Direct B2B and retail marketplace for Cement, TMT Steel, PVC Pipes, Paints & Hardware.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export const viewport: Viewport = {

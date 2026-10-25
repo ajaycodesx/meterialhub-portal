@@ -18,6 +18,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "MaterialHub Admin Console | Marketplace Operations & Rates",
   description: "Executive control panel for spot commodity rates, merchant verification, and platform audit logs",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
