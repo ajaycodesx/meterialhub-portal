@@ -26,6 +26,7 @@ export interface SelectProps {
   align?: 'left' | 'right';
   size?: 'sm' | 'md' | 'lg';
   variant?: 'light' | 'dark';
+  direction?: 'auto' | 'up' | 'down';
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -42,9 +43,13 @@ export const Select: React.FC<SelectProps> = ({
   popoverWidth = 'w-full',
   align = 'left',
   size = 'md',
-  variant = 'light'
+  variant = 'light',
+  direction = 'auto'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState<'down' | 'up'>(
+    direction === 'up' ? 'up' : 'down'
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,6 +61,37 @@ export const Select: React.FC<SelectProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen || !containerRef.current) return;
+    if (direction === 'up') {
+      setDropdownPosition('up');
+      return;
+    }
+    if (direction === 'down') {
+      setDropdownPosition('down');
+      return;
+    }
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const dialog = containerRef.current.closest('[role="dialog"]');
+    if (dialog) {
+      const dialogRect = dialog.getBoundingClientRect();
+      const spaceBelowInDialog = dialogRect.bottom - rect.bottom - 75;
+      if (spaceBelowInDialog < 200 && rect.top - dialogRect.top > 180) {
+        setDropdownPosition('up');
+        return;
+      }
+    }
+
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    if (spaceBelow < 240 && spaceAbove > spaceBelow) {
+      setDropdownPosition('up');
+    } else {
+      setDropdownPosition('down');
+    }
+  }, [isOpen, direction]);
 
   const selectedOption = options.find((opt) => opt.value === value);
 
@@ -118,7 +154,7 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <div className={`space-y-1.5 relative ${className}`} ref={containerRef}>
+    <div className={`space-y-1.5 ${isOpen ? 'z-40 relative' : 'z-10 relative'} ${className}`} ref={containerRef}>
       {label && (
         <label className={`block ${getLabelClasses(size, variant)}`}>
           {label}
@@ -157,7 +193,9 @@ export const Select: React.FC<SelectProps> = ({
         <div
           className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} ${
             popoverWidth === 'w-full' && !trigger ? 'left-0 right-0' : popoverWidth
-          } mt-1.5 rounded-2xl z-50 animate-in fade-in duration-150 overflow-hidden ${getPopoverVariantClasses(variant)}`}
+          } ${
+            dropdownPosition === 'up' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+          } rounded-2xl z-50 animate-in fade-in duration-150 overflow-hidden ${getPopoverVariantClasses(variant)}`}
         >
           <div className="max-h-60 overflow-y-auto py-1.5 p-1 space-y-0.5 scrollbar-none">
             {children ? (

@@ -288,6 +288,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 onChange={(val) => setUnloadingTimeSlot(String(val))}
                 icon={<FaClock className="h-3 w-3 text-[#FF6500]" />}
                 variant="dark"
+                direction="up"
                 size="md"
               />
             </div>
