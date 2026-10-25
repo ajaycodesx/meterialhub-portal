@@ -478,8 +478,8 @@ export function VendorDashboard() {
         <Modal
           isOpen={!!stockEditItem}
           onClose={() => setStockEditItem(null)}
-          icon={<FaBoxesStacked className="h-6 w-6" />}
-          iconBg="bg-orange-50"
+          icon={<FaBoxesStacked className="h-5 w-5" />}
+          iconBg="bg-orange-500/15 border border-orange-500/25"
           iconColor="text-[#FF6500]"
           title="Adjust Inventory Stock"
           subtitle={stockEditItem.title}
@@ -487,7 +487,7 @@ export function VendorDashboard() {
         >
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Available Warehouse Stock ({stockEditItem.unit}s)
               </label>
               <input
@@ -495,12 +495,12 @@ export function VendorDashboard() {
                 min="0"
                 value={editStockQty}
                 onChange={(e) => setEditStockQty(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-sm font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Wholesale Unit Price (INR ₹)
               </label>
               <input
@@ -508,15 +508,15 @@ export function VendorDashboard() {
                 min="1"
                 value={editPrice}
                 onChange={(e) => setEditPrice(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-sm font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
               />
             </div>
 
-            <div className="flex items-center gap-3 pt-3">
+            <div className="flex items-center justify-end gap-3 pt-3">
               <button
                 type="button"
                 onClick={() => setStockEditItem(null)}
-                className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -524,7 +524,7 @@ export function VendorDashboard() {
                 type="button"
                 disabled={savingStock}
                 onClick={handleSaveStock}
-                className="flex-1 py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05900] text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-xs"
+                className="px-6 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-xs"
               >
                 {savingStock ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaCheck className="h-3.5 w-3.5" />}
                 <span>Save Stock &amp; Pricing</span>

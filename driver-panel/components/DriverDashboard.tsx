@@ -527,27 +527,27 @@ export function DriverDashboard() {
             setIsOtpModalOpen(false);
             setOtpModalError(null);
           }}
-          icon={<FaKey className="h-6 w-6" />}
-          iconBg="bg-orange-50"
+          icon={<FaKey className="h-5 w-5" />}
+          iconBg="bg-orange-500/15 border border-orange-500/25"
           iconColor="text-[#FF6500]"
           title="Delivery OTP Verification"
           subtitle={`Order #${data?.activeTrip?.orderId || ''} · Site Offloading Confirmation`}
           maxWidth="md"
         >
           <div className="space-y-4">
-            <p className="text-xs text-slate-600 leading-relaxed font-normal text-center">
+            <p className="text-xs text-slate-300 leading-relaxed font-normal text-center">
               Ask the site supervisor or customer for the 6-digit verification code sent to their phone to confirm material offloading.
             </p>
 
             {devOtpHint && (
-              <div className="p-3.5 rounded-2xl bg-amber-50/90 text-amber-900 text-xs shadow-xs flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-amber-950/40 border border-amber-800/60 text-amber-200 text-xs shadow-xs flex items-center justify-between">
                 <span>Dev Simulation Code:</span>
                 <strong className="font-mono text-sm tracking-widest">{devOtpHint}</strong>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-2 text-center uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-300 mb-2 text-center uppercase tracking-wider">
                 Enter 6-Digit OTP
               </label>
               <input
@@ -556,21 +556,21 @@ export function DriverDashboard() {
                 value={otpValue}
                 onChange={(e) => setOtpValue(e.target.value)}
                 placeholder="------"
-                className="w-full text-center tracking-[0.5em] font-mono text-2xl sm:text-3xl font-bold py-3 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/30 focus:border-[#FF6500] text-slate-900 bg-slate-50 shadow-inner"
+                className="w-full text-center tracking-[0.5em] font-mono text-2xl sm:text-3xl font-bold py-3 rounded-2xl border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] text-white bg-[#162137] shadow-inner"
               />
               {otpModalError && (
-                <p className="text-xs text-rose-600 text-center mt-2 font-medium">{otpModalError}</p>
+                <p className="text-xs text-rose-400 text-center mt-2 font-medium">{otpModalError}</p>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => {
                   setIsOtpModalOpen(false);
                   setOtpModalError(null);
                 }}
-                className="w-full py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold text-slate-700 transition-all shadow-xs cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-xs font-semibold text-slate-300 hover:text-white transition-all shadow-xs cursor-pointer"
               >
                 Cancel
               </button>
@@ -579,7 +579,7 @@ export function DriverDashboard() {
                 type="button"
                 onClick={handleVerifyOtp}
                 disabled={verifyingOtp || otpValue.length < 4}
-                className="w-full py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05800] text-xs font-semibold text-white shadow-xs transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+                className="px-6 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05800] text-xs font-semibold text-white shadow-xs transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 {verifyingOtp ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaShieldHalved className="h-3.5 w-3.5" />}
                 <span>Confirm Delivery</span>

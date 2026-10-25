@@ -36,22 +36,21 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
   };
 
   const footerContent = (
-    <div className="flex items-center justify-between gap-3 w-full">
-      <Button
-        variant="outline"
-        size="md"
+    <div className="flex items-center justify-end gap-3 w-full">
+      <button
+        type="button"
         onClick={onClose}
-        className="px-5 sm:px-6 rounded-2xl"
+        className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
       >
         Cancel
-      </Button>
+      </button>
 
       <Button
         variant="primary"
         size="md"
         onClick={handleSave}
         icon={<FaArrowRight className="h-3.5 w-3.5" />}
-        className="px-6 sm:px-7 rounded-2xl"
+        className="px-6 rounded-xl text-xs font-semibold"
       >
         Save Language
       </Button>
@@ -62,8 +61,8 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<FaGlobe className="h-6 w-6" />}
-      iconBg="bg-orange-50"
+      icon={<FaGlobe className="h-5 w-5" />}
+      iconBg="bg-orange-500/15 border border-orange-500/25"
       iconColor="text-[#FF6500]"
       title="Select Preferred Language"
       subtitle="Regional language for pricing, support, and tax invoices"
@@ -78,14 +77,14 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
               key={lang.code}
               type="button"
               onClick={() => setCurrent(lang.code)}
-              className={`p-3.5 sm:p-4 rounded-2xl text-left flex flex-col justify-between transition-all duration-300 relative cursor-pointer ${
+              className={`p-3.5 sm:p-4 rounded-2xl text-left flex flex-col justify-between transition-all duration-200 relative cursor-pointer border ${
                 isSelected
-                  ? 'bg-orange-50/90 text-[#FF6500] shadow-xs ring-1 ring-orange-200'
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-2xs'
+                  ? 'border-[#FF6500] bg-orange-500/10 text-white shadow-xs ring-1 ring-[#FF6500]/30'
+                  : 'border-slate-700/60 bg-[#162137] hover:bg-[#1c2842] text-slate-300'
               }`}
             >
               <div className="flex items-center justify-between w-full mb-2.5">
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-200/70 text-slate-700">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-[#1c2638] border border-slate-700/50 text-slate-300">
                   {lang.flag}
                 </span>
                 {isSelected && (
@@ -93,8 +92,8 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
                 )}
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-900">{lang.nativeName}</h4>
-                <p className="text-[11px] text-slate-500 font-normal mt-0.5">{lang.name}</p>
+                <h4 className="text-xs font-semibold text-white">{lang.nativeName}</h4>
+                <p className="text-[11px] text-slate-400 font-normal mt-0.5">{lang.name}</p>
               </div>
             </button>
           );

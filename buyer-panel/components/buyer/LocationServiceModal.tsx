@@ -88,18 +88,17 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
   };
 
   const footerContent = (
-    <div className="flex items-center justify-between gap-3 w-full">
-      <Button
-        variant="outline"
-        size="md"
+    <div className="flex items-center justify-end gap-3 w-full">
+      <button
+        type="button"
         onClick={() => {
           if (activeStep !== 'check') setActiveStep('check');
           else onClose();
         }}
-        className="px-5 sm:px-6 rounded-2xl"
+        className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
       >
         {activeStep === 'check' ? 'Skip for Now' : 'Back'}
-      </Button>
+      </button>
 
       {activeStep === 'check' ? (
         <Button
@@ -107,7 +106,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           size="md"
           onClick={handleCheckAvailability}
           icon={<FaArrowRight className="h-3.5 w-3.5" />}
-          className="px-6 sm:px-7 rounded-2xl"
+          className="px-6 rounded-xl text-xs font-semibold"
         >
           Next
         </Button>
@@ -117,7 +116,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           size="md"
           onClick={handleSaveConstraints}
           icon={<FaArrowRight className="h-3.5 w-3.5" />}
-          className="px-6 sm:px-7 rounded-2xl"
+          className="px-6 rounded-xl text-xs font-semibold"
         >
           Save &amp; Continue
         </Button>
@@ -129,8 +128,8 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<FaLocationDot className="h-6 w-6" />}
-      iconBg="bg-orange-50"
+      icon={<FaLocationDot className="h-5 w-5" />}
+      iconBg="bg-orange-500/15 border border-orange-500/25"
       iconColor="text-[#FF6500]"
       title="Delivery Radius & Site Check"
       subtitle="20 KM Wholesale Supplier Radius Check"
@@ -140,23 +139,24 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
       <div className="space-y-4">
         {activeStep === 'check' && (
           <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-[#FFF9F5] border border-orange-100/80 flex items-start gap-3 shadow-2xs">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-[#141d33] border border-slate-700/60 flex items-start gap-3 shadow-2xs">
               <FaShieldHalved className="h-4.5 w-4.5 text-[#FF6500] shrink-0 mt-0.5" />
-              <p className="text-xs text-slate-700 leading-relaxed font-normal">
-                Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-semibold text-slate-900">20 KM radius</strong>.
+              <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-semibold text-white">20 KM radius</strong>.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Enter Pincode or Delivery City
               </label>
               <div className="flex gap-2 items-center">
-                <Input
+                <input
+                  type="text"
                   value={pinCode}
                   onChange={(e) => setPinCode(e.target.value)}
                   placeholder="e.g. 682030"
-                  className="font-semibold text-slate-900 rounded-2xl"
+                  className="w-full px-4 py-2.5 text-xs font-semibold rounded-xl bg-[#162137] border border-slate-700/80 text-white placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] transition-all"
                 />
                 <Button
                   onClick={handleCheckAvailability}
@@ -164,129 +164,153 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                   variant="primary"
                   size="md"
                   icon={<FaArrowRight className="h-3 w-3" />}
-                  className="shrink-0 rounded-2xl px-4.5"
+                  className="shrink-0 rounded-xl px-4 text-xs font-semibold"
                 >
                   Verify 20KM
                 </Button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-2 gap-3 pt-0.5">
               <button
                 type="button"
                 onClick={() => setSelectedRadius('10')}
-                className={`p-3.5 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                className={`p-3.5 rounded-2xl text-left transition-all duration-200 cursor-pointer border ${
                   selectedRadius === '10'
-                    ? 'bg-orange-50/90 text-[#FF6500] shadow-xs ring-1 ring-orange-200'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-2xs'
+                    ? 'border-[#FF6500] bg-orange-500/10 text-white shadow-xs ring-1 ring-[#FF6500]/30'
+                    : 'border-slate-700/60 bg-[#162137] hover:bg-[#1c2842] text-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold">10 KM Express</span>
-                  {selectedRadius === '10' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                  <span className="text-xs font-semibold text-white">10 KM Express</span>
+                  {selectedRadius === '10' && <FaCircleCheck className="h-3.5 w-3.5 text-[#FF6500]" />}
                 </div>
-                <p className="text-[11px] text-slate-500 font-normal mt-0.5">Same-Day Urgent Orders</p>
+                <p className="text-[11px] text-slate-400 font-normal">Same-Day Urgent Orders</p>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSelectedRadius('20')}
-                className={`p-3.5 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
+                className={`p-3.5 rounded-2xl text-left transition-all duration-200 cursor-pointer border ${
                   selectedRadius === '20'
-                    ? 'bg-orange-50/90 text-[#FF6500] shadow-xs ring-1 ring-orange-200'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-2xs'
+                    ? 'border-[#FF6500] bg-orange-500/10 text-white shadow-xs ring-1 ring-[#FF6500]/30'
+                    : 'border-slate-700/60 bg-[#162137] hover:bg-[#1c2842] text-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold">20 KM Standard</span>
-                  {selectedRadius === '20' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                  <span className="text-xs font-semibold text-white">20 KM Standard</span>
+                  {selectedRadius === '20' && <FaCircleCheck className="h-3.5 w-3.5 text-[#FF6500]" />}
                 </div>
-                <p className="text-[11px] text-slate-500 font-normal mt-0.5">Wholesale Price Direct</p>
+                <p className="text-[11px] text-slate-400 font-normal">Wholesale Price Direct</p>
               </button>
             </div>
 
-            <Button
-              variant="outline"
-              size="md"
+            <button
+              type="button"
               onClick={() => {
                 setPinCode('682024');
                 handleCheckAvailability();
               }}
-              icon={<FaCompass className="h-4 w-4 text-[#FF6500]" />}
-              iconPosition="left"
-              className="w-full rounded-2xl text-xs font-semibold text-slate-700 hover:text-slate-900 border-slate-200 shadow-2xs"
+              className="w-full py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/80 text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
             >
-              Use GPS Location Pinning
-            </Button>
+              <FaCompass className="h-3.5 w-3.5 text-[#FF6500]" />
+              <span>Use GPS Location Pinning</span>
+            </button>
           </div>
         )}
 
         {activeStep === 'constraints' && (
           <div className="space-y-4">
-            <div className="p-3.5 rounded-2xl bg-emerald-50/80 flex items-center gap-3">
-              <FaCircleCheck className="h-5 w-5 text-emerald-600 shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 flex items-center gap-3">
+              <FaCircleCheck className="h-5 w-5 text-emerald-400 shrink-0" />
               <div>
-                <h4 className="text-xs font-semibold text-emerald-900">Service Available in Your Area</h4>
-                <p className="text-[11px] text-emerald-700 font-normal mt-0.5">14 Verified Hardware Merchants within 8.5 km</p>
+                <h4 className="text-xs font-semibold text-emerald-200">Service Available in Your Area</h4>
+                <p className="text-[11px] text-emerald-400 font-normal mt-0.5">14 Verified Hardware Merchants within 8.5 km</p>
               </div>
             </div>
 
             <div className="space-y-3.5">
-              <h4 className="text-xs font-semibold text-slate-800 uppercase tracking-wider">
+              <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Capture Unloading Site Constraints
               </h4>
 
-              <Select
-                label="Unloading Site Road Access Width"
-                options={ROAD_WIDTH_OPTIONS}
-                value={roadWidth}
-                onChange={(val) => setRoadWidth(String(val))}
-              />
-
-              <div className="grid grid-cols-2 gap-3">
-                <Checkbox
-                  label="Heavy Truck OK"
-                  description="10T/16T Access"
-                  checked={heavyVehicleAccess}
-                  onChange={(checked) => setHeavyVehicleAccess(checked)}
-                />
-
-                <Checkbox
-                  label="Crane Required"
-                  description="Heavy Offloading"
-                  checked={craneNeeded}
-                  onChange={(checked) => setCraneNeeded(checked)}
-                />
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Unloading Site Road Access Width
+                </label>
+                <select
+                  value={roadWidth}
+                  onChange={(e) => setRoadWidth(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-xs font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
+                >
+                  {ROAD_WIDTH_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-[#0d1527] text-white">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <Select
-                label="Preferred Delivery Slot"
-                icon={<FaClock className="h-3 w-3 text-slate-400" />}
-                options={TIME_SLOT_OPTIONS}
-                value={unloadingTimeSlot}
-                onChange={(val) => setUnloadingTimeSlot(String(val))}
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <label className="flex items-center gap-2.5 p-3 rounded-xl bg-[#162137] border border-slate-700/60 cursor-pointer text-xs font-medium text-slate-300">
+                  <input
+                    type="checkbox"
+                    checked={heavyVehicleAccess}
+                    onChange={(e) => setHeavyVehicleAccess(e.target.checked)}
+                    className="h-4 w-4 rounded-md accent-[#FF6500]"
+                  />
+                  <span>Heavy Truck OK (10T/16T)</span>
+                </label>
+
+                <label className="flex items-center gap-2.5 p-3 rounded-xl bg-[#162137] border border-slate-700/60 cursor-pointer text-xs font-medium text-slate-300">
+                  <input
+                    type="checkbox"
+                    checked={craneNeeded}
+                    onChange={(e) => setCraneNeeded(e.target.checked)}
+                    className="h-4 w-4 rounded-md accent-[#FF6500]"
+                  />
+                  <span>Crane Required (Heavy)</span>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <FaClock className="h-3 w-3 text-[#FF6500]" />
+                  <span>Preferred Delivery Slot</span>
+                </label>
+                <select
+                  value={unloadingTimeSlot}
+                  onChange={(e) => setUnloadingTimeSlot(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-xs font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
+                >
+                  {TIME_SLOT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-[#0d1527] text-white">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         )}
 
         {activeStep === 'pindrop' && (
           <div className="space-y-4">
-            <div className="p-3.5 rounded-2xl bg-amber-50/80 flex items-center gap-3">
-              <FaTriangleExclamation className="h-5 w-5 text-amber-600 shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-amber-950/40 border border-amber-800/60 flex items-center gap-3">
+              <FaTriangleExclamation className="h-5 w-5 text-amber-400 shrink-0" />
               <div>
-                <h4 className="text-xs font-semibold text-amber-900">Outside Standard 20KM Radius</h4>
-                <p className="text-[11px] text-amber-700 font-normal mt-0.5">Drop a pin on map to request custom logistics quote.</p>
+                <h4 className="text-xs font-semibold text-amber-200">Outside Standard 20KM Radius</h4>
+                <p className="text-[11px] text-amber-400 font-normal mt-0.5">Drop a pin on map to request custom logistics quote.</p>
               </div>
             </div>
 
-            <div className="relative h-44 rounded-2xl bg-slate-100/70 overflow-hidden flex items-center justify-center">
-              <div className="relative text-center p-4 bg-white rounded-2xl max-w-xs shadow-sm">
+            <div className="relative h-44 rounded-2xl bg-[#162137] border border-slate-700/60 overflow-hidden flex items-center justify-center">
+              <div className="relative text-center p-4 bg-[#141d33] border border-slate-700 rounded-2xl max-w-xs shadow-sm">
                 <div className="h-10 w-10 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center mx-auto mb-2 shadow-xs">
                   <FaLocationDot className="h-4 w-4" />
                 </div>
-                <h4 className="text-xs font-semibold text-slate-900">Pin Dropped: Site #402</h4>
-                <p className="text-[11px] text-slate-500 font-normal mt-0.5">Lat: 10.0124 | Lng: 76.3150</p>
+                <h4 className="text-xs font-semibold text-white">Pin Dropped: Site #402</h4>
+                <p className="text-[11px] text-slate-400 font-normal mt-0.5">Lat: 10.0124 | Lng: 76.3150</p>
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   icon,
-  iconBg = 'bg-orange-50',
+  iconBg = 'bg-orange-500/15 border border-orange-500/20',
   iconColor = 'text-[#FF6500]',
   title,
   subtitle,
@@ -67,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/45 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
       <div 
         className="fixed inset-0"
         onClick={onClose}
@@ -77,12 +77,12 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative z-10 bg-white rounded-3xl shadow-xl shadow-slate-950/10 ring-1 ring-slate-900/5 flex flex-col w-full max-h-[90vh] overflow-hidden transition-all duration-300 ${getMaxWidthClass(
+        className={`relative z-10 bg-[#0d1527] border border-slate-800/90 text-white rounded-3xl shadow-2xl shadow-black/50 flex flex-col w-full max-h-[90vh] overflow-hidden transition-all duration-300 ${getMaxWidthClass(
           maxWidth
         )} ${className}`}
       >
         {(icon || title) && (
-          <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 flex items-center justify-between gap-3 shrink-0">
+          <div className="p-5 sm:p-6 pb-4 border-b border-slate-800/80 flex items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
               {icon && (
                 <div
@@ -93,12 +93,12 @@ export const Modal: React.FC<ModalProps> = ({
               )}
               <div className="min-w-0 flex-1">
                 {title && (
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight leading-snug truncate">
+                  <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight leading-snug truncate">
                     {title}
                   </h3>
                 )}
                 {subtitle && (
-                  <p className="text-xs text-slate-500 font-normal mt-0.5 truncate leading-relaxed">
+                  <p className="text-xs text-slate-400 font-normal mt-0.5 truncate leading-relaxed">
                     {subtitle}
                   </p>
                 )}
@@ -108,7 +108,7 @@ export const Modal: React.FC<ModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="h-8.5 w-8.5 rounded-xl bg-slate-100/90 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-2xs shrink-0"
+              className="h-8.5 w-8.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/60 text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs shrink-0"
               title="Close dialog"
               aria-label="Close"
             >
@@ -122,7 +122,7 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {footer && (
-          <div className="p-4 sm:p-5 px-5 sm:px-6 border-t border-slate-100 bg-slate-50/50 shrink-0 flex items-center justify-between gap-3">
+          <div className="p-4 sm:p-5 px-5 sm:px-6 border-t border-slate-800/80 bg-[#090f1d] shrink-0 flex items-center justify-end gap-3">
             {footer}
           </div>
         )}
