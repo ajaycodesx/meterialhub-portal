@@ -87,14 +87,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
 
           <div className="space-y-3 sm:space-y-3.5">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-center sm:text-left">
+              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-slate-500">
                 <span>Buyer Account</span>
                 <FaChevronRight className="h-2.5 w-2.5 text-slate-400" />
-                <span className="text-slate-800 font-semibold">Profile & Sites Management</span>
+                <span className="text-slate-800 font-semibold">Profile &amp; Sites Management</span>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+              <span className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-600">
                 <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
                 <span>Verified Class-A Contractor</span>
               </span>

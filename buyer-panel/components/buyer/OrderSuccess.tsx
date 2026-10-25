@@ -53,18 +53,18 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
     <div className="flex-1 bg-[#F8FAFC] pt-4 sm:pt-5 lg:pt-6 pb-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
         <div className="space-y-4 sm:space-y-5">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-center sm:text-left">
             <button
               onClick={onReturnHome}
-              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 shrink-0"
             >
               <FaChevronLeft className="h-3 w-3" />
               <span>Back to Dashboard</span>
             </button>
 
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+            <span className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-600">
               <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Payment Verified & Order Locked</span>
+              <span>Payment Verified &amp; Order Locked</span>
             </span>
           </div>
 
