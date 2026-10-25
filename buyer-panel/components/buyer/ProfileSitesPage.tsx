@@ -89,7 +89,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           <div className="space-y-3 sm:space-y-3.5">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-slate-500">
-                <span>Buyer Account</span>
+                <Link href="/" className="hover:text-[#FF6500] transition-colors cursor-pointer">Buyer Account</Link>
                 <FaChevronRight className="h-2.5 w-2.5 text-slate-400" />
                 <span className="text-slate-800 font-semibold">Profile &amp; Sites Management</span>
               </div>

@@ -418,15 +418,14 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   </button>
                 </div>
 
-                <Link href="/">
-                  <Button
-                    variant="primary"
-                    size="md"
-                    className="w-full justify-center text-xs py-3 mt-1"
-                  >
-                    Order More Materials
-                  </Button>
-                </Link>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={onReturnHome}
+                  className="w-full justify-center text-xs py-3 mt-1"
+                >
+                  Order More Materials
+                </Button>
               </div>
 
             </div>
