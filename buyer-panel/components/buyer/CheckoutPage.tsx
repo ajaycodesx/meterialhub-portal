@@ -24,6 +24,7 @@ import {
 import { HardwareMerchant, CartItem, LocationState } from '../../types/buyer';
 import { VehicleOption } from './CartVehicleSelection';
 import { Button } from '../ui/Button';
+import { Modal } from '../ui/Modal';
 import { buyerApi, authApi, apiClient, paymentApi } from '../../lib/api';
 
 interface CheckoutPageProps {
@@ -554,98 +555,76 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       </section>
 
       {showRazorpayModal && razorpayOrderData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all">
-            
-            <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-5 sm:p-6 text-white relative">
-              <button
-                onClick={() => {
-                  if (!isVerifyingPayment) setShowRazorpayModal(false);
-                }}
-                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <FaXmark className="h-5 w-5" />
-              </button>
-
-              <div className="flex items-center gap-2.5 mb-2 text-[11px]">
-                <span className="font-semibold text-orange-400">
-                  Razorpay Secure Gateway
-                </span>
-                <span className="h-3 w-px bg-slate-600 inline-block" />
-                <span className="flex items-center gap-1 text-slate-300">
-                  <FaShieldHalved className="h-3 w-3 text-emerald-400" />
-                  256-Bit SSL
+        <Modal
+          isOpen={showRazorpayModal}
+          onClose={() => {
+            if (!isVerifyingPayment) setShowRazorpayModal(false);
+          }}
+          icon={<FaCreditCard className="h-6 w-6" />}
+          iconBg="bg-orange-50"
+          iconColor="text-[#FF6500]"
+          title="Complete Online Payment"
+          subtitle={`Merchant: ${merchant.name} · Razorpay Secure 256-Bit SSL`}
+          maxWidth="md"
+        >
+          <div className="space-y-4">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+              <div className="flex justify-between items-center text-xs text-slate-500">
+                <span>Order Reference</span>
+                <span className="font-semibold text-slate-700">{razorpayOrderData.orderId}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs text-slate-500">
+                <span>Gateway Transaction Ref</span>
+                <span className="font-mono text-[11px] text-slate-600">{razorpayOrderData.razorpayOrderId}</span>
+              </div>
+              <div className="pt-2 border-t border-slate-200/60 flex justify-between items-center">
+                <span className="text-sm font-semibold text-slate-800">Total Payable</span>
+                <span className="text-xl font-semibold text-[#FF6500]">
+                  ₹{razorpayOrderData.amount.toLocaleString()}
                 </span>
               </div>
+            </div>
 
-              <h3 className="text-lg font-semibold tracking-tight text-white">
-                Complete Online Payment
-              </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Merchant: {merchant.name}
+            <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/70 text-xs text-blue-900 space-y-1">
+              <div className="flex items-center gap-2 font-semibold">
+                <FaBolt className="h-3.5 w-3.5 text-blue-600" />
+                <span>Payment Channel: {razorpayOrderData.method.toUpperCase()}</span>
+              </div>
+              <p className="text-[11px] text-blue-700 font-normal leading-relaxed">
+                Development Simulation Mode is enabled. Confirming below will trigger real-time cryptographic webhook verification with the backend.
               </p>
             </div>
 
-            <div className="p-6 space-y-5">
-              <div className="p-4 rounded-2xl bg-slate-50 space-y-2">
-                <div className="flex justify-between items-center text-xs text-slate-500">
-                  <span>Order Reference</span>
-                  <span className="font-semibold text-slate-700">{razorpayOrderData.orderId}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs text-slate-500">
-                  <span>Gateway Transaction Ref</span>
-                  <span className="font-mono text-[11px] text-slate-600">{razorpayOrderData.razorpayOrderId}</span>
-                </div>
-                <div className="pt-2 border-t border-slate-200/60 flex justify-between items-center">
-                  <span className="text-sm font-semibold text-slate-800">Total Payable</span>
-                  <span className="text-xl font-semibold text-[#FF6500]">
-                    ₹{razorpayOrderData.amount.toLocaleString()}
-                  </span>
-                </div>
+            {paymentVerifiedSuccess ? (
+              <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center gap-2 text-sm font-semibold border border-emerald-200">
+                <FaCircleCheck className="h-5 w-5 text-emerald-600" />
+                <span>Payment Verified Successfully! Redirecting...</span>
               </div>
+            ) : (
+              <div className="space-y-3 pt-2">
+                <Button
+                  variant="primary"
+                  size="md"
+                  disabled={isVerifyingPayment}
+                  onClick={handleVerifySimulatedPayment}
+                  icon={isVerifyingPayment ? <FaSpinner className="h-4 w-4 animate-spin" /> : <FaCheck className="h-4 w-4" />}
+                  className="w-full py-3.5 rounded-2xl"
+                >
+                  {isVerifyingPayment ? 'Verifying with Gateway...' : `Confirm & Authorize ₹${razorpayOrderData.amount.toLocaleString()}`}
+                </Button>
 
-              <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/70 text-xs text-blue-900 space-y-1">
-                <div className="flex items-center gap-2 font-semibold">
-                  <FaBolt className="h-3.5 w-3.5 text-blue-600" />
-                  Payment Channel: {razorpayOrderData.method.toUpperCase()}
-                </div>
-                <p className="text-[11px] text-blue-700 font-normal leading-relaxed">
-                  Development Simulation Mode is enabled. Confirming below will trigger real-time cryptographic webhook verification with the backend.
-                </p>
+                <button
+                  type="button"
+                  disabled={isVerifyingPayment}
+                  onClick={() => setShowRazorpayModal(false)}
+                  className="w-full text-center text-xs text-slate-500 hover:text-slate-800 py-2 transition-colors cursor-pointer"
+                >
+                  Cancel and Return to Payment Selection
+                </button>
               </div>
-
-              {paymentVerifiedSuccess ? (
-                <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center gap-2 text-sm font-semibold border border-emerald-200">
-                  <FaCircleCheck className="h-5 w-5 text-emerald-600" />
-                  <span>Payment Verified Successfully! Redirecting...</span>
-                </div>
-              ) : (
-                <div className="space-y-3 pt-2">
-                  <Button
-                    variant="primary"
-                    size="md"
-                    disabled={isVerifyingPayment}
-                    onClick={handleVerifySimulatedPayment}
-                    icon={isVerifyingPayment ? <FaSpinner className="h-4 w-4 animate-spin" /> : <FaCheck className="h-4 w-4" />}
-                    className="w-full py-3.5"
-                  >
-                    {isVerifyingPayment ? 'Verifying with Gateway...' : `Confirm & Authorize ₹${razorpayOrderData.amount.toLocaleString()}`}
-                  </Button>
-
-                  <button
-                    type="button"
-                    disabled={isVerifyingPayment}
-                    onClick={() => setShowRazorpayModal(false)}
-                    className="w-full text-center text-xs text-slate-500 hover:text-slate-800 py-2 transition-colors cursor-pointer"
-                  >
-                    Cancel and Return to Payment Selection
-                  </button>
-                </div>
-              )}
-            </div>
-
+            )}
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

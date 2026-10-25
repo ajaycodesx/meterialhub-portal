@@ -19,6 +19,7 @@ import {
   FaClockRotateLeft
 } from 'react-icons/fa6';
 import { adminApi, authApi, apiClient } from '../lib/api';
+import { Modal } from './ui/Modal';
 
 interface DashboardData {
   totalGmv: number;
@@ -485,83 +486,80 @@ export function AdminDashboard() {
       </main>
 
       {rateEditItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-base font-semibold text-slate-900">Update Commodity Spot Rate</h3>
-                <p className="text-xs text-slate-500 mt-0.5 truncate max-w-xs">{rateEditItem.material}</p>
-              </div>
-              <button onClick={() => setRateEditItem(null)} className="text-slate-400 hover:text-slate-700 cursor-pointer">
-                <FaXmark className="h-5 w-5" />
-              </button>
+        <Modal
+          isOpen={!!rateEditItem}
+          onClose={() => setRateEditItem(null)}
+          icon={<FaChartLine className="h-6 w-6" />}
+          iconBg="bg-orange-50"
+          iconColor="text-[#FF6500]"
+          title="Update Commodity Spot Rate"
+          subtitle={rateEditItem.material}
+          maxWidth="md"
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                New Wholesale Rate (INR ₹)
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={editRateValue}
+                onChange={(e) => setEditRateValue(Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
+              />
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  New Wholesale Rate (INR ₹)
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Market Trend
+                </label>
+                <select
+                  value={editTrend}
+                  onChange={(e) => setEditTrend(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
+                >
+                  <option value="up">Upward (Bullish)</option>
+                  <option value="down">Downward (Bearish)</option>
+                  <option value="stable">Stable</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Change %
                 </label>
                 <input
                   type="number"
-                  min="1"
-                  value={editRateValue}
-                  onChange={(e) => setEditRateValue(Number(e.target.value))}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
+                  step="0.1"
+                  value={editChangePct}
+                  onChange={(e) => setEditChangePct(Number(e.target.value))}
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
                 />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Market Trend
-                  </label>
-                  <select
-                    value={editTrend}
-                    onChange={(e) => setEditTrend(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
-                  >
-                    <option value="up">Upward (Bullish)</option>
-                    <option value="down">Downward (Bearish)</option>
-                    <option value="stable">Stable</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Change %
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={editChangePct}
-                    onChange={(e) => setEditChangePct(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500]"
-                  />
-                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setRateEditItem(null)}
+                className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
               <button
                 type="button"
                 disabled={savingRate}
                 onClick={handleSaveRate}
-                className="flex-1 py-3 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30"
+                className="flex-1 py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05900] text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-xs"
               >
                 {savingRate ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaCheck className="h-3.5 w-3.5" />}
-                <span>Publish Updated Spot Rate</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setRateEditItem(null)}
-                className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Cancel
+                <span>Publish Spot Rate</span>
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

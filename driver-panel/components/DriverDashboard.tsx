@@ -17,6 +17,7 @@ import {
   FaCircleCheck
 } from 'react-icons/fa6';
 import { driverApi, authApi, apiClient } from '../lib/api';
+import { Modal } from './ui/Modal';
 
 interface DashboardData {
   driverId: string;
@@ -520,30 +521,21 @@ export function DriverDashboard() {
       </main>
 
       {isOtpModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="h-9 w-9 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shadow-xs">
-                  <FaKey className="h-4 w-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Delivery Verification</h3>
-                  <p className="text-[11px] text-slate-500">Order #{data?.activeTrip?.orderId}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  setIsOtpModalOpen(false);
-                  setOtpModalError(null);
-                }}
-                className="text-slate-400 hover:text-slate-600 p-1"
-              >
-                <FaXmark className="h-5 w-5" />
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+        <Modal
+          isOpen={isOtpModalOpen}
+          onClose={() => {
+            setIsOtpModalOpen(false);
+            setOtpModalError(null);
+          }}
+          icon={<FaKey className="h-6 w-6" />}
+          iconBg="bg-orange-50"
+          iconColor="text-[#FF6500]"
+          title="Delivery OTP Verification"
+          subtitle={`Order #${data?.activeTrip?.orderId || ''} · Site Offloading Confirmation`}
+          maxWidth="md"
+        >
+          <div className="space-y-4">
+            <p className="text-xs text-slate-600 leading-relaxed font-normal text-center">
               Ask the site supervisor or customer for the 6-digit verification code sent to their phone to confirm material offloading.
             </p>
 
@@ -573,26 +565,28 @@ export function DriverDashboard() {
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               <button
+                type="button"
                 onClick={() => {
                   setIsOtpModalOpen(false);
                   setOtpModalError(null);
                 }}
-                className="w-full py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold text-slate-700 transition-all shadow-xs"
+                className="w-full py-2.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold text-slate-700 transition-all shadow-xs cursor-pointer"
               >
                 Cancel
               </button>
 
               <button
+                type="button"
                 onClick={handleVerifyOtp}
                 disabled={verifyingOtp || otpValue.length < 4}
-                className="w-full py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05800] text-xs font-semibold text-white shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#e05800] text-xs font-semibold text-white shadow-xs transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 {verifyingOtp ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaShieldHalved className="h-3.5 w-3.5" />}
                 <span>Confirm Delivery</span>
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
