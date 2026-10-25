@@ -12,11 +12,29 @@ if (typeof window !== 'undefined') {
 export const GsapScrollTriggerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const ctx = gsap.context(() => {
+      if (progressBarRef.current) {
+        gsap.fromTo(
+          progressBarRef.current,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: document.documentElement,
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: 0.15
+            }
+          }
+        );
+      }
+
       const revealSections = gsap.utils.toArray<HTMLElement>('.gsap-reveal-section, [data-gsap="reveal"]');
       revealSections.forEach((section) => {
         gsap.fromTo(
@@ -80,6 +98,12 @@ export const GsapScrollTriggerProvider: React.FC<{ children: React.ReactNode }> 
 
   return (
     <div ref={containerRef} className="contents">
+      <div className="fixed top-0 left-0 right-0 z-[100] h-1 sm:h-1.5 pointer-events-none overflow-hidden bg-transparent">
+        <div
+          ref={progressBarRef}
+          className="h-full w-full bg-gradient-to-r from-[#FF6500] via-[#FF8A00] to-[#FF5100] origin-left scale-x-0 shadow-xs"
+        />
+      </div>
       {children}
     </div>
   );
