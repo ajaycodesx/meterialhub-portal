@@ -20,14 +20,14 @@ export const HeroSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-center">
           
           <div className="order-2 lg:order-1 lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-6">
-            <div>
+            <div className="text-center sm:text-left">
               <p className="font-heading text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1.5 sm:mb-2">
                 Wholesale Material Hub
               </p>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-2.5 sm:mb-4">
                 Direct Factory &amp; Wholesale <span className="text-[#FF6500]">Construction Materials</span>
               </h1>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-2xl">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-2xl mx-auto sm:mx-0">
                 Order Cement, TMT Steel Rods, Aggregates, PVC Pipes &amp; Electricals directly from verified local merchant depots with real-time stock availability, transparent wholesale spot pricing, GST tax invoice, and same-day site transit within a 20 KM radius.
               </p>
             </div>

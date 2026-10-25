@@ -191,9 +191,9 @@ export function TrendingDealsStrip({ deals = DEFAULT_DEALS }: { deals?: Deal[] }
     <section className="w-full bg-transparent">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 mb-3 sm:mb-4">
-          <div>
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center gap-1.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-3.5 mb-3 sm:mb-4 text-center sm:text-left items-center sm:items-start">
+          <div className="w-full sm:w-auto">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
               <FaFire className="h-3.5 w-3.5" />
               Live Flash Pricing
             </p>
@@ -207,7 +207,7 @@ export function TrendingDealsStrip({ deals = DEFAULT_DEALS }: { deals?: Deal[] }
 
           <button
             onClick={() => router.push('/catalog')}
-            className="self-start sm:self-auto text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+            className="self-center sm:self-auto text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
           >
             <span>View More</span>
             <FaChevronRight className="h-3 w-3" />

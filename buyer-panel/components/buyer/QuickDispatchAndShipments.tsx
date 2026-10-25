@@ -24,7 +24,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
 
           <div className="bg-[#1E293B] text-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
             <div className="space-y-4">
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
                   Site Shortage Dispatch
                 </p>
@@ -72,7 +72,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
           </div>
 
           <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-center sm:text-left">
               <div>
                 <h3 className="text-xl font-semibold text-slate-900 leading-tight">
                   Recent Shipments Arrival
@@ -83,7 +83,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
               </div>
               <button
                 onClick={() => router.push('/tracking')}
-                className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                className="self-center sm:self-auto text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
               >
                 <span>View More</span>
                 <FaChevronRight className="h-3 w-3" />

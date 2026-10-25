@@ -86,9 +86,9 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
   return (
     <section className="w-full bg-transparent">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
-          <div>
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center gap-1.5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 text-center sm:text-left items-center sm:items-start">
+          <div className="w-full md:w-auto">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
               <FaBoxesStacked className="h-3.5 w-3.5" />
               Wholesale Material Marketplace
             </p>
@@ -100,7 +100,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 shrink-0">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center sm:justify-start gap-2 shrink-0 w-full sm:w-auto">
             <div>
               <Select
                 size="sm"
