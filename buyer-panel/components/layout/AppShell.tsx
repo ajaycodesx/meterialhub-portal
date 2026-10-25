@@ -62,7 +62,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <CommodityTicker rates={COMMODITY_RATES} />
         </div>
 
-        <main className="flex-1 pt-[140px] sm:pt-[152px] lg:pt-[104px]">
+        <main className="flex-1 pt-[130px] sm:pt-[152px] lg:pt-[104px]">
           {children}
         </main>
       </div>

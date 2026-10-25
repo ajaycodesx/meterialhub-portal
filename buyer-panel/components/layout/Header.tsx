@@ -61,16 +61,16 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="relative z-30 w-full bg-[#0d1527] text-white">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
         
-        <div className="flex items-center justify-between gap-3 lg:gap-6 w-full">
+        <div className="flex items-center justify-between gap-1.5 sm:gap-3 lg:gap-6 w-full">
           
           <Link 
             href="/"
             onClick={() => onNavigate?.('home')}
-            className="flex items-center gap-2.5 shrink-0 cursor-pointer group"
+            className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 cursor-pointer group"
           >
-            <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
+            <div className="relative h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center shrink-0">
               <img
                 src="/images/logo.png"
                 alt="MaterialHub Logo"
@@ -81,7 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             <div className="leading-tight">
-              <div className="text-lg sm:text-xl font-semibold tracking-tight text-white leading-none">
+              <div className="text-base sm:text-xl font-semibold tracking-tight text-white leading-none">
                 Material<span className="text-[#FF6500]">Hub</span>
               </div>
               <p className="text-xs text-slate-400 font-normal leading-tight mt-1 hidden sm:block">
@@ -135,14 +135,14 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </form>
 
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-3.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-3.5 shrink-0">
             
             <button
               onClick={onOpenLocationModal}
-              className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#1c2638] border border-slate-700/60 text-white text-xs font-semibold max-w-[120px] shrink-0 cursor-pointer"
+              className="sm:hidden flex items-center gap-1 px-2 py-1 rounded-xl bg-[#1c2638] border border-slate-700/60 text-white text-[11px] font-semibold max-w-[90px] shrink-0 cursor-pointer"
             >
-              <FaLocationDot className="h-3 w-3 text-[#FF6500] shrink-0" />
-              <span className="truncate text-[11px] font-semibold">{location.address.split(',')[0]}</span>
+              <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500] shrink-0" />
+              <span className="truncate">{location.address.split(',')[0]}</span>
               <FaChevronDown className="h-2 w-2 text-slate-400 shrink-0" />
             </button>
 
@@ -150,8 +150,8 @@ export const Header: React.FC<HeaderProps> = ({
               align="right"
               popoverWidth="w-60 sm:w-64"
               trigger={
-                <div className="flex items-center gap-2.5 hover:opacity-95 transition-opacity cursor-pointer">
-                  <div className="h-10 w-10 rounded-2xl overflow-hidden bg-slate-700 shrink-0 ring-1 ring-slate-600/60">
+                <div className="flex items-center gap-2 hover:opacity-95 transition-opacity cursor-pointer">
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-700 shrink-0 ring-1 ring-slate-600/60">
                     <img
                       src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
                       alt={user.isLoggedIn ? user.name : 'Ajay Kumar'}
@@ -235,22 +235,22 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={() => router.push('/tracking')}
-              className="relative p-1.5 text-slate-200 hover:text-white transition-colors cursor-pointer shrink-0"
+              className="relative p-1 sm:p-1.5 text-slate-200 hover:text-white transition-colors cursor-pointer shrink-0"
               title="Notifications"
             >
-              <FiBell className="h-6 w-6 text-slate-200" />
-              <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-xs bg-[#FF6500]" />
+              <FiBell className="h-5 w-5 sm:h-6 sm:w-6 text-slate-200" />
+              <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 h-2 w-2 rounded-xs bg-[#FF6500]" />
             </button>
 
             <Link 
               href="/cart"
               onClick={() => onNavigate?.('cart_vehicle')}
-              className="flex items-center gap-2 text-white hover:opacity-90 transition-opacity cursor-pointer shrink-0 ml-0.5 sm:ml-1"
+              className="flex items-center gap-1 sm:gap-2 text-white hover:opacity-90 transition-opacity cursor-pointer shrink-0"
               title="View Cart & Truck Allocation"
             >
-              <FiShoppingCart className="h-6 w-6 text-white shrink-0" />
+              <FiShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-white shrink-0" />
               <span className="text-base font-semibold text-white hidden sm:inline tracking-tight">Cart</span>
-              <span className="h-6 w-6 rounded-xl bg-[#FF6500] text-white text-xs font-bold flex items-center justify-center shadow-xs shrink-0">
+              <span className="h-5 w-5 sm:h-6 sm:w-6 rounded-lg sm:rounded-xl bg-[#FF6500] text-white text-[10px] sm:text-xs font-bold flex items-center justify-center shadow-xs shrink-0">
                 {cartCount > 0 ? cartCount : 1}
               </span>
             </Link>
@@ -258,9 +258,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        <div className="lg:hidden pt-2.5 pb-0.5">
-          <form onSubmit={handleSearchSubmit} className="relative flex items-center h-9 bg-white rounded-xl shadow-xs px-2">
-            <FaMagnifyingGlass className="h-3 w-3 text-slate-400 mr-2 shrink-0" />
+        <div className="lg:hidden pt-2 pb-0.5">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center h-9 bg-white rounded-xl shadow-xs px-2.5">
+            <FaMagnifyingGlass className="h-3.5 w-3.5 text-slate-400 mr-2 shrink-0" />
             <input
               type="text"
               value={searchQuery}
@@ -271,7 +271,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={handleVoiceSearch}
-              className={`h-7 px-2 rounded-lg text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all ${
+              className={`h-7 px-2.5 rounded-lg text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all shrink-0 ${
                 isListeningVoice ? 'bg-red-500 text-white animate-pulse' : 'bg-[#0d1527] text-white'
               }`}
             >

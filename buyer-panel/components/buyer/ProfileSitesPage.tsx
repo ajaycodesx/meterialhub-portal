@@ -204,7 +204,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
             )}
           </div>
 
-          <div className="bg-white rounded-2xl p-1.5 shadow-xs flex items-center gap-1 overflow-x-auto">
+          <div className="bg-white rounded-2xl p-1.5 shadow-xs flex items-center gap-1 overflow-x-auto scrollbar-none no-scrollbar">
             <button
               onClick={() => setActiveTab('sites')}
               className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${

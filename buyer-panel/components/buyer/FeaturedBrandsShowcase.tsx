@@ -225,7 +225,7 @@ export function FeaturedBrandsShowcase() {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-2 mb-2">
           {FILTER_CATEGORIES.map((cat) => {
             const isSelected = activeCategory === cat.id;
             return (
