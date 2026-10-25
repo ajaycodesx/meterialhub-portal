@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import { FaChevronRight } from 'react-icons/fa6';
 
 export interface BreadcrumbItem {
   label: string;
@@ -40,27 +40,6 @@ export const PageBanner: React.FC<PageBannerProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
-            {backHref ? (
-              <Link
-                href={backHref}
-                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0"
-                title={backTitle}
-                aria-label={backTitle}
-              >
-                <FaChevronLeft className="h-4 w-4" />
-              </Link>
-            ) : onBack ? (
-              <button
-                type="button"
-                onClick={onBack}
-                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0"
-                title={backTitle}
-                aria-label={backTitle}
-              >
-                <FaChevronLeft className="h-4 w-4" />
-              </button>
-            ) : null}
-
             {icon && (
               <div className="shrink-0 mt-0.5 sm:mt-0">
                 {icon}
