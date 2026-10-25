@@ -251,7 +251,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
         )}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 gsap-reveal-section">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
 
             <div className="lg:col-span-7 space-y-5 sm:space-y-6">

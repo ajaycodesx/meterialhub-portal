@@ -434,7 +434,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 gsap-stagger-group">
                   {filteredProducts.map((product) => {
                     const qty = cartQuantities[product.id] || 0;
                     const isAdded = qty > 0;
@@ -442,7 +442,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     return (
                       <div
                         key={product.id}
-                        className="bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden p-4"
+                        className="bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden p-4 gsap-card"
                       >
                         <div>
                           <div className="relative h-40 w-full rounded-2xl bg-slate-100 overflow-hidden mb-3">

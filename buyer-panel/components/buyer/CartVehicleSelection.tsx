@@ -146,7 +146,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
         )}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 gsap-reveal-section">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
             
             <div className="lg:col-span-7 xl:col-span-8 space-y-5 sm:space-y-6">
@@ -312,7 +312,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                   </div>
                 )}
 
-                <div className="space-y-3.5">
+                <div className="space-y-3.5 gsap-stagger-group">
                   {VEHICLES.map((vehicle) => {
                     const isSelected = vehicle.id === activeVehicle.id;
                     const isRecommended = vehicle.id === recommendedVehicle.id;
@@ -327,7 +327,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                           setSelectedVehicleId(vehicle.id);
                           showToast(`Selected ${vehicle.name} (${vehicle.capacityTons}T Payload)`, 'info');
                         }}
-                        className={`relative rounded-3xl p-4 transition-all cursor-pointer ${
+                        className={`relative rounded-3xl p-4 transition-all cursor-pointer gsap-card ${
                           isSelected
                             ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
                             : 'bg-slate-50/60 hover:bg-slate-100/70 shadow-2xs hover:shadow-xs'

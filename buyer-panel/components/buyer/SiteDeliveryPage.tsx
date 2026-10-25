@@ -66,7 +66,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
         subtitle="Configure site access constraints, labor assistance, and site supervisor contact details"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 gsap-reveal-section">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">

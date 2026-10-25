@@ -36,7 +36,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   icon
 }) => {
   return (
-    <section className={`pt-4 sm:pt-5 lg:pt-6 pb-0 ${className}`}>
+    <section className={`pt-4 sm:pt-5 lg:pt-6 pb-0 gsap-reveal-section ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">

@@ -155,7 +155,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         }
       />
 
-      <section className="pt-4 sm:pt-6 pb-12 sm:pb-16">
+      <section className="pt-4 sm:pt-6 pb-12 sm:pb-16 gsap-reveal-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
 
             {isEditingUser && (
