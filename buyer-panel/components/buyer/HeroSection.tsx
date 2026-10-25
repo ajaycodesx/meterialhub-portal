@@ -33,8 +33,8 @@ export const HeroSection: React.FC = () => {
             </div>
 
             <div className="space-y-4 sm:space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
-                <div className="p-3 sm:p-3.5 rounded-2xl bg-white shadow-xs flex items-center gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 gsap-stagger-group">
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white shadow-xs flex items-center gap-2.5 gsap-card">
                   <div className="h-9 w-9 rounded-xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                     <FaTruckFast className="h-4 w-4" />
                   </div>
@@ -44,7 +44,7 @@ export const HeroSection: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-3 sm:p-3.5 rounded-2xl bg-white shadow-xs flex items-center gap-2.5">
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white shadow-xs flex items-center gap-2.5 gsap-card">
                   <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                     <FaShieldHalved className="h-4 w-4" />
                   </div>
@@ -54,7 +54,7 @@ export const HeroSection: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-3 sm:p-3.5 rounded-2xl bg-white shadow-xs flex items-center gap-2.5">
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white shadow-xs flex items-center gap-2.5 gsap-card">
                   <div className="h-9 w-9 rounded-xl bg-slate-100 text-[#FF6500] flex items-center justify-center shrink-0">
                     <FaStore className="h-4 w-4" />
                   </div>

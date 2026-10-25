@@ -4,6 +4,7 @@ import { Urbanist, Manrope } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "../context/AppContext";
 import { AppShell } from "../components/layout/AppShell";
+import { GsapScrollTriggerProvider } from "../components/common/GsapScrollTriggerProvider";
 
 const urbanist = Urbanist({
   variable: "--font-urbanist",
@@ -43,7 +44,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <AppProvider>
-          <AppShell>{children}</AppShell>
+          <GsapScrollTriggerProvider>
+            <AppShell>{children}</AppShell>
+          </GsapScrollTriggerProvider>
         </AppProvider>
       </body>
     </html>

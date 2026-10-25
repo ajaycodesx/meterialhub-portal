@@ -244,12 +244,12 @@ export function FeaturedBrandsShowcase() {
           })}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 gsap-stagger-group">
           {filteredBrands.map((brand) => (
             <div
               key={brand.name}
               onClick={() => router.push('/catalog')}
-              className="bg-white rounded-3xl p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
+              className="bg-white rounded-3xl p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group gsap-card"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">

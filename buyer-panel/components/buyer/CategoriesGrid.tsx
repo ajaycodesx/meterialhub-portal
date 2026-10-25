@@ -308,11 +308,11 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 gsap-stagger-group">
                 {filteredMerchants.map((merchant) => (
                   <div
                     key={merchant.id}
-                    className="bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                    className="bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden gsap-card"
                   >
                     <div className="bg-slate-50/80 p-3.5 border-b border-slate-100">
                       <div className="flex items-start justify-between gap-2">

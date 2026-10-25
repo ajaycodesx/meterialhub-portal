@@ -20,9 +20,9 @@ export const QuickDispatchAndShipments: React.FC = () => {
   return (
     <section className="w-full bg-transparent">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 items-stretch gsap-stagger-group">
 
-          <div className="bg-[#1E293B] text-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+          <div className="bg-[#1E293B] text-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between gsap-card">
             <div className="space-y-4">
               <div className="text-center sm:text-left">
                 <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
@@ -71,7 +71,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
             </button>
           </div>
 
-          <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-4">
+          <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-4 gsap-card">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-center sm:text-left">
               <div>
                 <h3 className="text-xl font-semibold text-slate-900 leading-tight">

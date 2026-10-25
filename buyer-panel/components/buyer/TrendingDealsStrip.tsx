@@ -112,7 +112,7 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-3xl p-3.5 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between group"
+      className="bg-white rounded-3xl p-3.5 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between group gsap-card"
     >
       <div>
         <div className="relative h-36 w-full rounded-2xl overflow-hidden bg-slate-50 mb-3 flex items-center justify-center">
@@ -214,7 +214,7 @@ export function TrendingDealsStrip({ deals = DEFAULT_DEALS }: { deals?: Deal[] }
           </button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5 gsap-stagger-group">
           {deals.map((deal) => (
             <DealCard
               key={deal.id}

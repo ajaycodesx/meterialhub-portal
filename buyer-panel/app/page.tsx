@@ -105,27 +105,39 @@ export default function HomePage() {
 
   return (
     <div className="w-full flex flex-col pt-3 sm:pt-5 lg:pt-6 space-y-8 sm:space-y-12 lg:space-y-16 pb-0">
-      <HeroSection />
+      <div className="gsap-reveal-section">
+        <HeroSection />
+      </div>
 
-      <QuickDispatchAndShipments />
+      <div className="gsap-reveal-section">
+        <QuickDispatchAndShipments />
+      </div>
 
-      <TrendingDealsStrip />
+      <div className="gsap-reveal-section">
+        <TrendingDealsStrip />
+      </div>
 
-      <div id="wholesale-rates" className="w-full">
+      <div id="wholesale-rates" className="w-full gsap-reveal-section">
         <WholesaleRateIndex />
       </div>
 
-      <FeaturedBrandsShowcase />
+      <div className="gsap-reveal-section">
+        <FeaturedBrandsShowcase />
+      </div>
 
-      <CategoriesGrid
-        categories={categories}
-        merchants={merchants}
-        onSelectCategory={(catId) => setSelectedCategory(catId)}
-        selectedCategory={selectedCategory}
-        onSelectMerchant={handleOpenStore}
-      />
+      <div className="gsap-reveal-section">
+        <CategoriesGrid
+          categories={categories}
+          merchants={merchants}
+          onSelectCategory={(catId) => setSelectedCategory(catId)}
+          selectedCategory={selectedCategory}
+          onSelectMerchant={handleOpenStore}
+        />
+      </div>
 
-      <ContractorTestimonials />
+      <div className="gsap-reveal-section">
+        <ContractorTestimonials />
+      </div>
     </div>
   );
 }

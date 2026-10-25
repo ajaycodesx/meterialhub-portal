@@ -61,9 +61,9 @@ export function ContractorTestimonials() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 gsap-stagger-group">
           {TESTIMONIALS.map((t, i) => (
-            <div key={i} className="bg-white rounded-3xl p-5 flex flex-col gap-3 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-slate-100/80">
+            <div key={i} className="bg-white rounded-3xl p-5 flex flex-col gap-3 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-slate-100/80 gsap-card">
               <FaQuoteLeft className="h-5 w-5 text-slate-300" />
 
               <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed flex-1">
