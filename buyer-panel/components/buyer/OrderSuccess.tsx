@@ -72,7 +72,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
         }
         title="Supply Order Confirmed"
         subtitle={
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <span>Reference ID:</span>
             <button
               onClick={handleCopyOrderId}
@@ -93,7 +93,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
           </div>
         }
         rightContent={
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
             {onTrackOrderLive && (
               <button
                 onClick={onTrackOrderLive}

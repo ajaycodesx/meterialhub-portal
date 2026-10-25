@@ -208,7 +208,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         )}
         title={`Explore ${merchant.name} Materials`}
         subtitle={(
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 font-normal pt-0.5">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
             <span>{merchant.address}</span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span className="flex items-center gap-1">

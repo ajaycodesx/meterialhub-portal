@@ -109,7 +109,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         }
         title={userName}
         subtitle={
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <span>Civil Contractor</span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">32AABCU9683R1ZM</strong></span>
@@ -131,7 +131,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           </div>
         }
         rightContent={
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
             <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
               <FaIndianRupeeSign className="h-3.5 w-3.5 text-amber-500" />
               <span>Procurement: <strong className="text-slate-900 font-semibold">₹14.80L</strong></span>
