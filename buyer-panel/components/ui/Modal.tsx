@@ -67,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/45 backdrop-blur-md animate-in fade-in duration-200">
       <div 
         className="fixed inset-0"
         onClick={onClose}
@@ -77,50 +77,52 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative z-10 bg-white rounded-3xl sm:rounded-[32px] shadow-2xl flex flex-col w-full max-h-[92vh] overflow-hidden transition-all duration-300 ${getMaxWidthClass(
+        className={`relative z-10 bg-white rounded-3xl shadow-xl shadow-slate-950/10 ring-1 ring-slate-900/5 flex flex-col w-full max-h-[90vh] overflow-hidden transition-all duration-300 ${getMaxWidthClass(
           maxWidth
         )} ${className}`}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 h-8.5 w-8.5 sm:h-9 sm:w-9 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shadow-2xs z-20"
-          title="Close dialog"
-          aria-label="Close"
-        >
-          <FaXmark className="h-4 w-4" />
-        </button>
-
-        <div className="p-5 sm:p-7 pb-0 shrink-0">
-          {(icon || title) && (
-            <div className="text-center">
+        {(icon || title) && (
+          <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 flex items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
               {icon && (
                 <div
-                  className={`h-12 w-12 sm:h-14 sm:w-14 rounded-2xl ${iconBg} ${iconColor} flex items-center justify-center mx-auto mb-2.5 sm:mb-3 shadow-xs shrink-0`}
+                  className={`h-10 w-10 sm:h-11 sm:w-11 rounded-2xl ${iconBg} ${iconColor} flex items-center justify-center shrink-0 shadow-xs`}
                 >
                   {icon}
                 </div>
               )}
-              {title && (
-                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 tracking-tight leading-snug">
-                  {title}
-                </h3>
-              )}
-              {subtitle && (
-                <p className="text-xs text-slate-500 font-normal mt-1 leading-relaxed max-w-sm mx-auto">
-                  {subtitle}
-                </p>
-              )}
+              <div className="min-w-0 flex-1">
+                {title && (
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight leading-snug truncate">
+                    {title}
+                  </h3>
+                )}
+                {subtitle && (
+                  <p className="text-xs text-slate-500 font-normal mt-0.5 truncate leading-relaxed">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className={`p-5 sm:p-7 pt-4 sm:pt-5 overflow-y-auto flex-1 scrollbar-none ${bodyClassName}`}>
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-8.5 w-8.5 rounded-xl bg-slate-100/90 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-2xs shrink-0"
+              title="Close dialog"
+              aria-label="Close"
+            >
+              <FaXmark className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
+        <div className={`p-5 sm:p-6 overflow-y-auto flex-1 scrollbar-none ${bodyClassName}`}>
           {children}
         </div>
 
         {footer && (
-          <div className="p-5 sm:p-7 pt-3.5 sm:pt-4 border-t border-slate-100 bg-white shrink-0 flex items-center justify-between gap-3">
+          <div className="p-4 sm:p-5 px-5 sm:px-6 border-t border-slate-100 bg-slate-50/50 shrink-0 flex items-center justify-between gap-3">
             {footer}
           </div>
         )}
