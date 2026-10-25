@@ -256,6 +256,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 value={roadWidth}
                 onChange={(val) => setRoadWidth(String(val))}
                 variant="dark"
+                direction="down"
                 size="md"
               />
 

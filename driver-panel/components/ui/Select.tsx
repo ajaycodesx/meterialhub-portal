@@ -78,15 +78,17 @@ export const Select: React.FC<SelectProps> = ({
     if (dialog) {
       const dialogRect = dialog.getBoundingClientRect();
       const spaceBelowInDialog = dialogRect.bottom - rect.bottom - 75;
-      if (spaceBelowInDialog < 200 && rect.top - dialogRect.top > 180) {
+      if (spaceBelowInDialog < 120 && rect.top - dialogRect.top > 160) {
         setDropdownPosition('up');
         return;
       }
+      setDropdownPosition('down');
+      return;
     }
 
     const spaceBelow = window.innerHeight - rect.bottom;
     const spaceAbove = rect.top;
-    if (spaceBelow < 240 && spaceAbove > spaceBelow) {
+    if (spaceBelow < 180 && spaceAbove > spaceBelow) {
       setDropdownPosition('up');
     } else {
       setDropdownPosition('down');
@@ -161,85 +163,87 @@ export const Select: React.FC<SelectProps> = ({
         </label>
       )}
 
-      {trigger ? (
-        <div onClick={() => !disabled && setIsOpen(!isOpen)} className="cursor-pointer">
-          {trigger}
-        </div>
-      ) : (
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => setIsOpen(!isOpen)}
-          className={`w-full ${getSizeClasses(size)} ${getTriggerVariantClasses(variant)} transition-all flex items-center justify-between gap-2 text-left focus:outline-hidden cursor-pointer shadow-2xs ${
-            disabled ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          <div className="flex items-center gap-2 truncate">
-            {icon && <span className="shrink-0">{icon}</span>}
-            <span className={selectedOption ? (variant === 'dark' ? 'text-white' : 'text-slate-800') : 'text-slate-400'}>
-              {selectedOption ? selectedOption.label : placeholder}
-            </span>
+      <div className="relative">
+        {trigger ? (
+          <div onClick={() => !disabled && setIsOpen(!isOpen)} className="cursor-pointer">
+            {trigger}
           </div>
+        ) : (
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => setIsOpen(!isOpen)}
+            className={`w-full ${getSizeClasses(size)} ${getTriggerVariantClasses(variant)} transition-all flex items-center justify-between gap-2 text-left focus:outline-hidden cursor-pointer shadow-2xs ${
+              disabled ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            <div className="flex items-center gap-2 truncate">
+              {icon && <span className="shrink-0">{icon}</span>}
+              <span className={selectedOption ? (variant === 'dark' ? 'text-white' : 'text-slate-800') : 'text-slate-400'}>
+                {selectedOption ? selectedOption.label : placeholder}
+              </span>
+            </div>
 
-          <FaChevronDown
-            className={`h-2.5 w-2.5 shrink-0 transition-transform duration-200 ${
-              variant === 'dark' ? 'text-slate-400' : 'text-slate-500'
-            } ${isOpen ? 'rotate-180 text-[#FF6500]' : ''}`}
-          />
-        </button>
-      )}
+            <FaChevronDown
+              className={`h-2.5 w-2.5 shrink-0 transition-transform duration-200 ${
+                variant === 'dark' ? 'text-slate-400' : 'text-slate-500'
+              } ${isOpen ? 'rotate-180 text-[#FF6500]' : ''}`}
+            />
+          </button>
+        )}
 
-      {isOpen && (
-        <div
-          className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} ${
-            popoverWidth === 'w-full' && !trigger ? 'left-0 right-0' : popoverWidth
-          } ${
-            dropdownPosition === 'up' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
-          } rounded-2xl z-50 animate-in fade-in duration-150 overflow-hidden ${getPopoverVariantClasses(variant)}`}
-        >
-          <div className="max-h-60 overflow-y-auto py-1.5 p-1 space-y-0.5 scrollbar-none">
-            {children ? (
-              <div onClick={() => setIsOpen(false)}>{children}</div>
-            ) : options.length === 0 ? (
-              <div className="px-4 py-2.5 text-xs text-slate-400 font-normal">No options available</div>
-            ) : (
-              options.map((opt) => {
-                const isSelected = opt.value === value;
-                return (
-                  <button
-                    key={String(opt.value)}
-                    type="button"
-                    onClick={() => {
-                      onChange?.(opt.value);
-                      setIsOpen(false);
-                    }}
-                    className={`w-full px-3.5 py-2.5 text-xs rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${getOptionClasses(
-                      variant,
-                      isSelected
-                    )}`}
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      {opt.icon && <span className="shrink-0">{opt.icon}</span>}
-                      <div className="truncate">
-                        <div className="truncate">{opt.label}</div>
-                        {opt.description && (
-                          <div className={`text-[10px] font-normal ${variant === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                            {opt.description}
-                          </div>
-                        )}
+        {isOpen && (
+          <div
+            className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} ${
+              popoverWidth === 'w-full' && !trigger ? 'left-0 right-0' : popoverWidth
+            } ${
+              dropdownPosition === 'up' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+            } rounded-2xl z-50 animate-in fade-in duration-150 overflow-hidden ${getPopoverVariantClasses(variant)}`}
+          >
+            <div className="max-h-60 overflow-y-auto py-1.5 p-1 space-y-0.5 scrollbar-none">
+              {children ? (
+                <div onClick={() => setIsOpen(false)}>{children}</div>
+              ) : options.length === 0 ? (
+                <div className="px-4 py-2.5 text-xs text-slate-400 font-normal">No options available</div>
+              ) : (
+                options.map((opt) => {
+                  const isSelected = opt.value === value;
+                  return (
+                    <button
+                      key={String(opt.value)}
+                      type="button"
+                      onClick={() => {
+                        onChange?.(opt.value);
+                        setIsOpen(false);
+                      }}
+                      className={`w-full px-3.5 py-2.5 text-xs rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${getOptionClasses(
+                        variant,
+                        isSelected
+                      )}`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        {opt.icon && <span className="shrink-0">{opt.icon}</span>}
+                        <div className="truncate">
+                          <div className="truncate">{opt.label}</div>
+                          {opt.description && (
+                            <div className={`text-[10px] font-normal ${variant === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                              {opt.description}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    {isSelected && (
-                      <FaCheck className="h-3 w-3 text-[#FF6500] shrink-0" />
-                    )}
-                  </button>
-                );
-              })
-            )}
+                      {isSelected && (
+                        <FaCheck className="h-3 w-3 text-[#FF6500] shrink-0" />
+                      )}
+                    </button>
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
