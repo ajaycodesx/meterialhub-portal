@@ -1,0 +1,176 @@
+# ==============================================================================
+# MaterialHub Staging Deployment Environment Configuration
+# Reproducible staging stack with FastAPI, PostgreSQL, Redis, and 4 Frontend Panels
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # PostgreSQL Database (Internal only, not exposed publicly)
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: materialhub-staging-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-materialhub_staging}
+      POSTGRES_USER: ${POSTGRES_USER:-materialhub_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-staging_pg_password_change_me}
+    volumes:
+      - staging_postgres_data:/var/lib/postgresql/data
+    networks:
+      - materialhub_staging_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-materialhub_user} -d ${POSTGRES_DB:-materialhub_staging}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # Redis Distributed Cache & Rate Limiting (Internal only)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: materialhub-staging-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-staging_redis_password_change_me}"]
+    volumes:
+      - staging_redis_data:/data
+    networks:
+      - materialhub_staging_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-staging_redis_password_change_me}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # FastAPI Backend Service
+  # ----------------------------------------------------------------------------
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: materialhub-staging-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: staging
+      DEBUG: "false"
+      PROJECT_NAME: "MaterialHub Staging API"
+      SECRET_KEY: ${SECRET_KEY:-staging_secret_key_minimum_32_chars_long!}
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-materialhub_user}:${POSTGRES_PASSWORD:-staging_pg_password_change_me}@postgres:5432/${POSTGRES_DB:-materialhub_staging}"
+      RATE_LIMIT_STORAGE_URL: "redis://:${REDIS_PASSWORD:-staging_redis_password_change_me}@redis:6379/0"
+      ALLOWED_HOSTS: '["api-staging.materialhub.in","localhost","127.0.0.1","backend"]'
+      BACKEND_CORS_ORIGINS: '["https://buyer-staging.materialhub.in","https://vendor-staging.materialhub.in","https://driver-staging.materialhub.in","https://admin-staging.materialhub.in","http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:3003"]'
+      TRUSTED_PROXY_IPS: '["127.0.0.1","10.0.0.0/8","172.16.0.0/12","192.168.0.0/16"]'
+      AUTO_SEED_DEV_DATA: "false"
+      LOG_LEVEL: INFO
+      LOG_FORMAT: json
+      ENFORCE_HTTPS: "false"  # SSL terminated at reverse proxy
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      - materialhub_staging_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------------------------
+  # Buyer Panel Frontend
+  # ----------------------------------------------------------------------------
+  buyer-panel:
+    build:
+      context: ../../buyer-panel
+      dockerfile: Dockerfile
+    container_name: materialhub-staging-buyer
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - materialhub_staging_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ----------------------------------------------------------------------------
+  # Vendor Panel Frontend
+  # ----------------------------------------------------------------------------
+  vendor-panel:
+    build:
+      context: ../../vendor-panel
+      dockerfile: Dockerfile
+    container_name: materialhub-staging-vendor
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:3001:3000"
+    networks:
+      - materialhub_staging_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ----------------------------------------------------------------------------
+  # Driver Panel Frontend
+  # ----------------------------------------------------------------------------
+  driver-panel:
+    build:
+      context: ../../driver-panel
+      dockerfile: Dockerfile
+    container_name: materialhub-staging-driver
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:3002:3000"
+    networks:
+      - materialhub_staging_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ----------------------------------------------------------------------------
+  # Admin Panel Frontend
+  # ----------------------------------------------------------------------------
+  admin-panel:
+    build:
+      context: ../../admin-panel
+      dockerfile: Dockerfile
+    container_name: materialhub-staging-admin
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:3003:3000"
+    networks:
+      - materialhub_staging_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  staging_postgres_data:
+    name: materialhub_staging_pg_data
+  staging_redis_data:
+    name: materialhub_staging_redis_data
+
+networks:
+  materialhub_staging_net:
+    name: materialhub_staging_net
+    driver: bridge

@@ -2,7 +2,7 @@
 
 ## UI/UX & Design Guidelines
 1. **Icon Library**: ALWAYS use `react-icons` (e.g., `react-icons/fa6`, `react-icons/md`, `react-icons/hi2`, `react-icons/fi`, `react-icons/tb`, `react-icons/io5`). Do NOT use `lucide-react`.
-2. **Curved Aesthetics**: Enforce curved design patterns (`rounded-2xl`, `rounded-3xl`, smooth pill badges, soft card shadows). Avoid sharp rectangular borders.
+2. **Curved Aesthetics**: Enforce curved design patterns (`rounded-2xl`, `rounded-3xl`, soft card shadows). Avoid sharp rectangular borders. Strictly avoid `rounded-full`.
 3. **Professional Folder Structure**:
    - `components/layout/`: Header, Footer, Navigation
    - `components/buyer/`: Feature components specific to buyer workflow (Modals, Tickers, Merchant Cards)
@@ -45,9 +45,34 @@
     - ALWAYS use custom-styled reusable UI components (`components/ui/Input.tsx`, `components/ui/Select.tsx`, `components/ui/Checkbox.tsx`, `components/ui/Button.tsx`).
     - Do NOT use raw unstyled HTML form inputs or native browser `<select>` dropdowns. Custom dropdowns must use overlay popover containers with smooth transitions, custom chevrons, and clean option items.
     - Component variants must use clean `switch` or `if/else` formatting for maintainability.
-16. **Consistent Secondary Pill Button Style (Platform-Wide Standard)**:
-    - All secondary action buttons (e.g., "View All Categories", "See All Merchants", section-level CTAs) MUST use the same pill button style as the Header navigation buttons.
-    - Standard style: `inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11`
-    - Do NOT use orange/colored backgrounds for secondary "view all" type buttons. Use the standard slate pill.
-    - For primary hero/section CTAs (e.g., "Check Delivery Area"), use the `Button` component with `variant="primary"`.
-
+16. **Standard Section Action Links ("View More >" / "All Brands >")**:
+    - All section-level secondary actions and navigation triggers (e.g., "View More", "All Brands", "View More Rates") MUST use clean typography with chevron icon navigation, NOT bulky rectangular pill buttons or arrow buttons.
+    - Standard class: `text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0` with `<FaChevronRight className="h-3 w-3" />`.
+17. **Vertical Border Dividers Instead of Bullet Dots**:
+    - Strictly prohibit bullet dot characters (`•`, `&bull;`) for inline metadata, lists, tag separations, and specifications.
+    - Use clean vertical border divider lines (e.g., `<span className="h-2.5 w-px bg-slate-300 inline-block" />` or `divide-x divide-slate-200`) with clean horizontal spacing (`gap-2` or `gap-3`).
+18. **NO Pulsing or Active Animation Dots**:
+    - Strictly prohibit pulsing or blinking dots (`animate-pulse`, `animate-ping`) on live status indicators, telemetry sync badges, GPS markers, and shipment cards.
+    - Use clean, professional static typography or subtle solid static indicator dots with high-contrast text tokens.
+19. **NO Background Color Behind Text Badges**:
+    - Do NOT place colored background fill pills behind text (such as `bg-emerald-50 text-emerald-700`, `bg-orange-50 text-orange-600` behind percentages, market indexes, or status tags).
+    - Rely on clean, purposeful typography with direct font weight and text color tokens (`text-emerald-600 font-semibold`, `text-[#FF6500] font-semibold`) on neutral card surfaces.
+20. **Authentic Transparent PNG Brand Logos**:
+    - Manufacturer, brand, and partner showcase cards must use authentic, transparent PNG logo images (`/images/brands/*.png`, `max-w-[85px] h-6 sm:h-7 object-contain`) positioned at the top right of each card.
+    - Never use arbitrary text tag badges or inline SVG text wordmarks as placeholders.
+21. **Card Grouping & Anchored Bottom CTAs**:
+    - Inside cards with headers, spec boxes, and a bottom action button, group the header text and spec box together at the top (`space-y-4`).
+    - Never let middle elements float in the vertical center due to `justify-between`. Always anchor bottom action buttons to the bottom using `mt-auto` / `mt-5`.
+22. **Brand Logo Surface Contrast & Variants**:
+    - On dark backgrounds (`bg-[#0d1527]`, dark navbars), use `/images/logo.png` where the left stroke of the "M" is white and the right stroke/arrow is brand orange.
+    - On light backgrounds (`bg-white`, `bg-slate-50`, footer cards), ALWAYS use `/images/logo_dark.png` where the left stroke of the "M" is dark slate-900 (`#0F172A`) to ensure high contrast and prevent the logo letterform from vanishing into the white surface.
+23. **Strictly Zero Code Comments**:
+    - Never include code comments in any project files (strictly no single-line `//`, multi-line `/* */`, or JSX `{/* */}`).
+    - Write clean, self-describing, production-ready code with descriptive variable and function names. All files must remain 100% comment-free at all times.
+24. **Strictly Prohibit `rounded-full`**:
+    - Never use `rounded-full` anywhere in the application (including buttons, badges, avatars, icon containers, pills, progress bars, or indicator dots).
+    - Enforce curved geometric design standards: use `rounded-2xl` or `rounded-3xl` for cards, modals, containers, and avatars; `rounded-xl` or `rounded-lg` for badges, buttons, chips, and progress tracks; and `rounded-xs` or `rounded-sm` for small indicator dots.
+25. **Tight Standard Gap Between Section Headers & Content**:
+    - Strictly enforce compact, elegant spacing between any section header and the content below it.
+    - Avoid oversized bottom margins or padding (prohibit `mb-8`, `mb-6`, `pb-4`, or `space-y-6` directly under section headings).
+    - Standard header-to-content gap: Use `mb-3 sm:mb-4` on section header containers, `space-y-3 sm:space-y-4` on section wrapper containers, and `pb-2 mb-2` on filter/tab strips. Ensure grid cards and category lists align closely and proportionally to their section headers without awkward empty whitespace.

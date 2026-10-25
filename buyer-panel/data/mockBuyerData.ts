@@ -148,7 +148,6 @@ export const HARDWARE_MERCHANTS: HardwareMerchant[] = [
 ];
 
 export const CATALOG_PRODUCTS: Product[] = [
-  // CEMENT & AGGREGATES
   {
     id: 'p1',
     title: 'UltraTech Cement 53 Grade',
@@ -189,7 +188,6 @@ export const CATALOG_PRODUCTS: Product[] = [
     image: '/images/cement_aggregates.png'
   },
 
-  // STEEL RODS
   {
     id: 'p4',
     title: 'Tata Tiscon TMT Steel Rods 12mm',
@@ -233,7 +231,6 @@ export const CATALOG_PRODUCTS: Product[] = [
     image: '/images/tmt_steel_rods.png'
   },
 
-  // PVC & PLUMBING
   {
     id: 'p7',
     title: 'Supreme PVC Pipe 110mm 4kg/cm²',
@@ -263,7 +260,6 @@ export const CATALOG_PRODUCTS: Product[] = [
     image: '/images/pvc_plumbing_pipes.png'
   },
 
-  // PAINTS
   {
     id: 'p9',
     title: 'Asian Paints Apex Ultima White',
@@ -291,7 +287,6 @@ export const CATALOG_PRODUCTS: Product[] = [
     image: '/images/paints_wall_putty.png'
   },
 
-  // ELECTRICALS
   {
     id: 'p11',
     title: 'Finolex Flame Retardant 2.5sqmm',
@@ -320,7 +315,6 @@ export const CATALOG_PRODUCTS: Product[] = [
     image: '/images/electrical_wires_switches.png'
   },
 
-  // TOOLS & HARDWARE
   {
     id: 'p13',
     title: 'Bosch GSB 13 RE Impact Drill',

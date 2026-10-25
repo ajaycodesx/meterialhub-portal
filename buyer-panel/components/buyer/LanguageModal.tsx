@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React,{ useState } from 'react';
 import { FaGlobe, FaCircleCheck, FaXmark, FaArrowRight } from 'react-icons/fa6';
 import { LanguageCode, LanguageOption } from '../../types/buyer';
 import { Button } from '../ui/Button';
@@ -41,7 +41,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
       <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6 relative flex flex-col">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-6 right-6 h-8 w-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
         >
           <FaXmark className="h-4 w-4" />
         </button>

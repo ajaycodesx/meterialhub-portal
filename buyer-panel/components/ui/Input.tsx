@@ -35,7 +35,7 @@ export const Input: React.FC<InputProps> = ({
 
         <input
           disabled={disabled}
-          className={`w-full py-2.5 text-xs font-medium rounded-2xl bg-slate-50 border transition-all text-slate-900 placeholder-slate-400 focus:outline-none ${
+          className={`w-full py-2.5 text-xs font-medium rounded-xl bg-slate-50 border transition-all text-slate-900 placeholder-slate-400 focus:outline-none ${
             icon ? 'pl-10 pr-4' : 'px-4'
           } ${
             error 

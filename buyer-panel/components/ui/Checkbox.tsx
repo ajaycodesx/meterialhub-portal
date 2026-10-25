@@ -22,10 +22,10 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 }) => {
   return (
     <label
-      className={`flex items-start gap-3 p-3 rounded-2xl border transition-all cursor-pointer ${
+      className={`flex items-start gap-3 p-3 rounded-2xl transition-all cursor-pointer ${
         checked
-          ? 'border-[#FF6500] bg-orange-50/60'
-          : 'border-slate-200 bg-slate-50 hover:bg-slate-100/80'
+          ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+          : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
       } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
     >
       <div

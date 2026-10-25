@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  FaLock, 
-  FaPhone, 
-  FaXmark, 
-  FaArrowRight, 
-  FaShieldHalved, 
-  FaCircleCheck 
+import React,{ useState } from 'react';
+import {
+FaLock,
+FaPhone,
+FaXmark,
+FaArrowRight,
+FaShieldHalved,
+FaCircleCheck
 } from 'react-icons/fa6';
 import { UserProfile } from '../../types/buyer';
 import { Input } from '../ui/Input';
@@ -72,13 +72,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6 relative flex flex-col">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-6 right-6 h-8 w-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer shadow-xs"
         >
           <FaXmark className="h-4 w-4" />
         </button>
 
         <div className="mb-6 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0 shadow-xs">
             <FaLock className="h-5 w-5" />
           </div>
           <div>
@@ -158,7 +158,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       newArr[idx] = e.target.value;
                       setOtpValues(newArr);
                     }}
-                    className="w-11 h-12 text-center text-lg font-semibold rounded-xl bg-slate-55 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/25 text-slate-900"
+                    className="w-11 h-12 text-center text-lg font-semibold rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/25 text-slate-900 shadow-2xs"
                   />
                 ))}
               </div>

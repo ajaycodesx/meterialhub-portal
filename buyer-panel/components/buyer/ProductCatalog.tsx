@@ -1,23 +1,25 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { 
-  FaShieldHalved, 
-  FaStar, 
-  FaLocationDot, 
-  FaMagnifyingGlass, 
-  FaChevronLeft, 
-  FaMinus, 
-  FaPlus, 
-  FaCartFlatbedSuitcase, 
-  FaTruckFast,
-  FaArrowRight,
-  FaBuilding,
-  FaBoxesStacked
+import React,{ useState,useMemo } from 'react';
+import {
+FaShieldHalved,
+FaStar,
+FaLocationDot,
+FaMagnifyingGlass,
+FaChevronLeft,
+FaMinus,
+FaPlus,
+FaCartFlatbedSuitcase,
+FaTruckFast,
+FaArrowRight,
+FaBuilding,
+FaBoxesStacked,
+FaCheck
 } from 'react-icons/fa6';
 import { HardwareMerchant, Product, CartItem } from '../../types/buyer';
 import { Button } from '../ui/Button';
 import { Select, SelectOption } from '../ui/Select';
+import { useAppContext } from '../../context/AppContext';
 
 interface ProductCatalogProps {
   merchant: HardwareMerchant;
@@ -32,8 +34,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   onBack,
   onProceedToCheckout
 }) => {
+  const { showToast } = useAppContext();
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [quoteSent, setQuoteSent] = useState(false);
   
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [selectedGrade, setSelectedGrade] = useState<string>('all');
@@ -42,9 +46,23 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   const [cartQuantities, setCartQuantities] = useState<Record<string, number>>({});
 
   const merchantProducts = useMemo(() => {
+    if (!merchant) return products;
+    const storeProducts = products.filter((p) => p.merchantId === merchant.id);
+    if (storeProducts.length > 0) return storeProducts;
+
+    const merchantCats = (merchant.mainCategory || '').toLowerCase();
     return products.filter((p) => {
-      const merchantCats = merchant.mainCategory.split(',').map((c) => c.trim().toLowerCase());
-      return merchantCats.includes(p.category.toLowerCase()) || p.category === 'tools';
+      const cat = (p.category || '').toLowerCase();
+      return (
+        merchantCats.includes(cat) ||
+        (cat === 'steel' && merchantCats.includes('steel')) ||
+        (cat === 'cement' && merchantCats.includes('cement')) ||
+        (cat === 'pvc' && merchantCats.includes('pvc')) ||
+        (cat === 'paints' && merchantCats.includes('paint')) ||
+        (cat === 'electricals' && merchantCats.includes('electrical')) ||
+        cat === 'tools' ||
+        cat.includes('hardware')
+      );
     });
   }, [products, merchant]);
 
@@ -106,6 +124,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     const currentQty = cartQuantities[product.id] || 0;
     if (currentQty === 0) {
       setCartQuantities((prev) => ({ ...prev, [product.id]: product.moq }));
+      showToast(`Added ${product.moq} ${product.unit}s of ${product.title} to order cart`);
     } else {
       setCartQuantities((prev) => ({ ...prev, [product.id]: currentQty + 1 }));
     }
@@ -172,237 +191,82 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   return (
     <div className="flex-1 bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6">
-        
-        {/* Mobile App Store Hero Banner (Matching Home Page Mobile Hero Card) */}
-        <div className="sm:hidden relative rounded-2xl overflow-hidden shadow-md bg-slate-900 text-white p-4 flex flex-col justify-between group min-h-[300px]">
-          <img
-            src="/images/store_hero_banner.jpg"
-            alt={`${merchant.name} Warehouse Yard`}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60"
-          />
-          
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/65 to-slate-950/30" />
-
-          <div className="relative z-10 flex items-center justify-between">
-            <button 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-5 lg:pt-6 pb-0 space-y-5 sm:space-y-6">
+        <div className="space-y-4 sm:space-y-5">
+          <div className="flex items-center justify-between gap-3">
+            <button
               onClick={onBack}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 hover:bg-black/70 text-white text-xs font-semibold backdrop-blur-md border border-white/20 transition-all cursor-pointer"
+              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
             >
               <FaChevronLeft className="h-3 w-3" />
-              <span>Suppliers</span>
+              <span>Back to Suppliers</span>
             </button>
 
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white text-[10px] font-semibold backdrop-blur-xs">
-              <FaShieldHalved className="h-3 w-3" />
-              Verified Hub
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+              <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Verified Direct Depot Stockist</span>
             </span>
           </div>
 
-          <div className="relative z-10 space-y-1 my-3">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold text-xl flex items-center justify-center shadow-md shrink-0 border border-white/20">
-                {merchant.name.charAt(0)}
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold text-white tracking-tight leading-tight">
-                  {merchant.name}
-                </h1>
-                <p className="text-xs text-slate-200 font-normal flex items-center gap-1 mt-0.5">
-                  <FaBuilding className="h-3 w-3 text-orange-400 shrink-0" />
-                  <span className="truncate max-w-[220px]">{merchant.address}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative z-10 space-y-3">
-            <div className="grid grid-cols-3 gap-1.5 text-[10px] font-medium w-full">
-              <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10 text-center truncate">
-                <FaLocationDot className="h-3 w-3 text-orange-400 shrink-0" />
-                <span className="truncate">{merchant.distanceKm} KM Away</span>
-              </span>
-              <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md text-center truncate">
-                <FaShieldHalved className="h-3 w-3 shrink-0" />
-                <span className="truncate">Verified Stock</span>
-              </span>
-              <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/15 text-white backdrop-blur-md border border-white/10 text-center truncate">
-                <FaStar className="h-3 w-3 text-amber-400 shrink-0" />
-                <span className="truncate">{merchant.rating} ({merchant.reviewsCount})</span>
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => alert(`Direct Quote Request sent to ${merchant.name}`)}
-                className="w-full justify-center text-xs py-2 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <span>Request Quote</span>
-              </button>
-
-              <div className="w-full text-center text-[10px] py-2 rounded-xl bg-white/20 text-white font-medium border border-white/20 backdrop-blur-xs flex items-center justify-center">
-                Min Order: ₹{merchant.minOrderValue.toLocaleString()}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Desktop & Tablet Store Hero Grid (Matching Home Page Hero Layout) */}
-        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-stretch bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md">
-          
-          <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6">
-            <div>
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <button
-                  onClick={onBack}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer"
-                >
-                  <FaChevronLeft className="h-3 w-3" />
-                  <span>Back to Suppliers</span>
-                </button>
-
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-                  <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>Verified Hardware Merchant</span>
-                </span>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-3xl bg-slate-900 text-white font-semibold text-2xl sm:text-3xl flex items-center justify-center shadow-md relative shrink-0 border border-slate-700">
-                  {merchant.name.charAt(0)}
-                  {merchant.verified && (
-                    <span className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white" title="Verified Merchant">
-                      <FaShieldHalved className="h-3.5 w-3.5 text-white" />
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight leading-tight">
-                    {merchant.name}
-                  </h1>
-                  
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal flex items-center gap-1.5">
-                    <FaBuilding className="h-3.5 w-3.5 text-orange-500 shrink-0" />
-                    <span>{merchant.address}</span>
-                  </p>
-
-                  <p className="text-xs text-slate-400 font-normal">
-                    Managed by <span className="font-semibold text-slate-700">{merchant.ownerName}</span> &bull; Stocking factory brands: {merchant.brands.join(', ')}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 sm:space-y-6">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100/60 flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
-                    <FaLocationDot className="h-3.5 w-3.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-900">{merchant.distanceKm} KM Away</h4>
-                    <p className="text-[11px] text-slate-500 font-normal">ETA: ~{merchant.deliveryEtaMinutes} Mins</p>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/60 flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0">
-                    <FaShieldHalved className="h-3.5 w-3.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-900">Verified Stock</h4>
-                    <p className="text-[11px] text-slate-500 font-normal">GST Tax Invoice</p>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-100/60 flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-                    <FaStar className="h-3.5 w-3.5 text-amber-500" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-900">{merchant.rating} Rating</h4>
-                    <p className="text-[11px] text-slate-500 font-normal">{merchant.reviewsCount} Reviews</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <div className="text-xs font-semibold text-slate-700">
-                  Minimum Order Value: <span className="text-[#FF6500] text-sm">₹{merchant.minOrderValue.toLocaleString()}</span>
-                </div>
-
-                <Button
-                  variant="primary"
-                  size="md"
-                  onClick={() => alert(`Direct Quote Request sent to ${merchant.name}`)}
-                  icon={<FaArrowRight className="h-3.5 w-3.5" />}
-                  className="px-6 py-3"
-                >
-                  Request Direct Quote
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-5 h-full flex">
-            <div className="relative rounded-3xl overflow-hidden shadow-md group bg-slate-900 w-full h-full min-h-[360px]">
-              <img
-                src="/images/store_hero_banner.jpg"
-                alt={`${merchant.name} Warehouse Yard`}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-85"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
-              
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-md border border-white/10">
-                  Warehouse Stock &amp; Yard
-                </span>
-                <span className="px-3 py-1 rounded-full bg-[#FF6500] text-white text-xs font-semibold shadow-xs">
-                  {merchant.brands.length} Brands Available
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Section 2: Store Products Inventory with Master-Detail Split Layout */}
-      <section className="py-4 sm:py-8 bg-transparent">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
-          
-          {/* Unified Top Section Header & Search Bar */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-slate-200/80 pb-3.5 sm:pb-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-[#FF6500] uppercase tracking-wider mb-0.5">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60">
+            <div className="space-y-1.5 min-w-0">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center gap-1.5">
                 <FaBoxesStacked className="h-3.5 w-3.5" />
-                <span>Store Inventory &amp; Direct Stock</span>
-              </div>
-              <h2 className="text-lg sm:text-2xl font-semibold text-slate-900 tracking-tight">
-                Explore {merchant.name} Materials
-              </h2>
-              <p className="text-xs text-slate-500 font-normal mt-0.5">
-                Select a category on the left to filter products, technical grades, and wholesale pricing in this store
+                Store Inventory &amp; Direct Stock
               </p>
+              
+              <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
+                Explore {merchant.name} Materials
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-normal pt-0.5">
+                <span>{merchant.address}</span>
+                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                <span className="flex items-center gap-1">
+                  <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
+                  {merchant.distanceKm} KM Away (ETA: ~{merchant.deliveryEtaMinutes} Mins)
+                </span>
+                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                <span>Managed by <strong className="font-semibold text-slate-800">{merchant.ownerName}</strong></span>
+                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                <span>Factory Brands: {merchant.brands.join(', ')}</span>
+                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                <span className="text-emerald-700 font-medium">★ {merchant.rating} ({merchant.reviewsCount} reviews)</span>
+                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                <span>Min. Order: <strong className="text-slate-900 font-semibold">₹{merchant.minOrderValue.toLocaleString()}</strong></span>
+              </div>
             </div>
 
-            <div className="relative w-full md:w-80 h-10 sm:h-11 shrink-0">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products in store inventory"
-                className="w-full h-full pl-9.5 pr-4 py-2 text-xs font-normal rounded-full bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 shadow-2xs"
-              />
-              <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <div className="relative w-full sm:w-72 md:w-80 h-10 sm:h-11 shrink-0">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products in store inventory"
+                  className="w-full h-full pl-9.5 pr-4 py-2 text-xs font-normal rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 shadow-2xs"
+                />
+                <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
+              </div>
+
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => {
+                  setQuoteSent(true);
+                  setTimeout(() => setQuoteSent(false), 4000);
+                }}
+                icon={quoteSent ? <FaCheck className="h-3.5 w-3.5" /> : <FaArrowRight className="h-3.5 w-3.5" />}
+                className="whitespace-nowrap px-4 py-2.5 h-10 sm:h-11"
+              >
+                {quoteSent ? 'Quote Sent' : 'Request Quote'}
+              </Button>
             </div>
           </div>
+        </div>
 
-          {/* Mobile View: Category Tabs & Sub-Category Pills Bar */}
+        <div className="space-y-3 sm:space-y-4">
           <div className="lg:hidden space-y-2 pt-1">
-            {/* Row 1: Main Category Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
               {categoryTabs.map((tab) => {
                 const isActive = selectedCategoryTab === tab;
@@ -415,7 +279,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       setSelectedGrade('all');
                       setSelectedGauge('all');
                     }}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer border ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer border ${
                       isActive
                         ? 'bg-[#FF6500] text-white border-[#FF6500] shadow-xs'
                         : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
@@ -427,7 +291,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               })}
             </div>
 
-            {/* Technical Filters Dropdowns for Mobile (Matching Tab Height & Font Size) */}
             <div className="grid grid-cols-2 gap-2 pt-1">
               <Select
                 label="Brand Filter"
@@ -448,11 +311,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             </div>
           </div>
 
-          {/* Main Grid: Left Side Category List & Right Side Store Products */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
             
-            {/* LEFT SIDE: Select Material Category (Desktop Only) */}
-            <div className="hidden lg:block lg:col-span-5 space-y-3">
+            <div className="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-3 lg:sticky lg:top-24 self-start">
               <div className="flex items-center justify-between px-1 h-6">
                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                   Store Material Categories
@@ -473,7 +334,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 )}
               </div>
 
-              {/* Category Selector Cards List */}
               <div className="space-y-2">
                 {categoryTabs.map((tab) => {
                   const isActive = selectedCategoryTab === tab;
@@ -490,10 +350,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         setSelectedGrade('all');
                         setSelectedGauge('all');
                       }}
-                      className={`group rounded-2xl p-3 sm:p-3.5 transition-all cursor-pointer border flex items-center justify-between ${
+                      className={`group rounded-2xl p-3 sm:p-3.5 transition-all cursor-pointer flex items-center justify-between ${
                         isActive
-                          ? 'bg-white border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
-                          : 'bg-white hover:bg-slate-50 border-slate-200/80 shadow-sm hover:shadow-md'
+                          ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                          : 'bg-white hover:bg-slate-50 shadow-2xs hover:shadow-xs'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -511,7 +371,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600">
                           {count} Items
                         </span>
                       </div>
@@ -520,8 +380,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 })}
               </div>
 
-              {/* Technical Specifications Filters Box */}
-              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3.5 pt-4 mt-4">
+              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-xs space-y-3.5 pt-4 mt-4">
                 <h3 className="font-semibold text-xs text-slate-900 uppercase tracking-wider text-slate-400">
                   Technical Grade &amp; Brand Filters
                 </h3>
@@ -556,8 +415,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               </div>
             </div>
 
-            {/* RIGHT SIDE: Store Inventory Products Grid */}
-            <div className="lg:col-span-7 space-y-2.5">
+            <div className="lg:col-span-8 xl:col-span-9 space-y-2.5">
               <div className="flex items-center justify-between px-1 h-6">
                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                   <FaShieldHalved className="h-3 w-3 text-emerald-600" />
@@ -566,7 +424,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               </div>
 
               {filteredProducts.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-2xl p-8 border border-slate-200/80 shadow-md">
+                <div className="text-center py-16 bg-white rounded-2xl p-8 shadow-xs">
                   <FaCartFlatbedSuitcase className="h-10 w-10 text-slate-300 mx-auto mb-3" />
                   <h3 className="text-base font-semibold text-slate-800">No Products Match Your Filters</h3>
                   <p className="text-xs text-slate-400 mt-1 font-normal">Try clearing category selection or technical filters</p>
@@ -585,7 +443,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
                   {filteredProducts.map((product) => {
                     const qty = cartQuantities[product.id] || 0;
                     const isAdded = qty > 0;
@@ -593,37 +451,50 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     return (
                       <div
                         key={product.id}
-                        className="bg-white rounded-2xl border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden p-4"
+                        className="bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden p-4"
                       >
                         <div>
-                          <div className="relative h-40 w-full rounded-xl bg-slate-100 overflow-hidden mb-3">
+                          <div className="relative h-40 w-full rounded-2xl bg-slate-100 overflow-hidden mb-3">
                             <img
                               src={product.image}
                               alt={product.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                             
-                            <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-900/80 text-white backdrop-blur-xs shadow-xs">
+                            <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-900/80 text-white backdrop-blur-xs shadow-xs">
                               {product.weightSpec}
                             </span>
+                            {typeof product.stockQty === 'number' && (
+                              <span className={`absolute top-2 right-2 text-[10px] font-semibold px-2.5 py-0.5 rounded-lg backdrop-blur-md shadow-xs ${
+                                product.stockQty > 0 ? 'bg-emerald-600/90 text-white' : 'bg-rose-600/90 text-white'
+                              }`}>
+                                {product.stockQty > 0 ? `${product.stockQty} in stock` : 'Out of stock'}
+                              </span>
+                            )}
                           </div>
 
                           <h4 className="font-semibold text-xs sm:text-sm text-slate-900 leading-snug">
                             {product.title}
                           </h4>
-                          <div className="flex flex-wrap items-center gap-1.5 mt-1.5 text-[10px] font-medium">
-                            <span className="px-2 py-0.5 rounded-md bg-orange-50 text-[#FF6500] font-semibold">
+                          <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[10px] font-medium text-slate-600">
+                            <span className="text-[#FF6500] font-semibold">
                               {product.brand}
                             </span>
                             {product.grade && (
-                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold">
-                                {product.grade}
-                              </span>
+                              <>
+                                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                                <span className="text-slate-700">
+                                  {product.grade}
+                                </span>
+                              </>
                             )}
                             {product.gauge && (
-                              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
-                                {product.gauge}
-                              </span>
+                              <>
+                                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                                <span className="text-slate-500">
+                                  {product.gauge}
+                                </span>
+                              </>
                             )}
                           </div>
                         </div>
@@ -678,13 +549,12 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
           </div>
         </div>
-      </section>
+    </div>
 
       {cartItems.length > 0 && (
         <div className="fixed bottom-14 md:bottom-0 left-0 right-0 z-40 bg-slate-900 text-white shadow-[0_-8px_24px_rgba(0,0,0,0.25)] border-t border-slate-800 animate-in slide-in-from-bottom duration-300">
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 sm:gap-6">
-            
-            {/* Left: Weight & Truck Icon */}
+
             <div className="flex items-center gap-2 shrink-0">
               <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl bg-[#FF6500] text-white flex items-center justify-center shrink-0 shadow-xs">
                 <FaTruckFast className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -698,21 +568,19 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               </div>
             </div>
 
-            {/* Middle: Recommended Vehicle Progress Bar */}
             <div className="flex-1 max-w-[140px] xs:max-w-xs sm:max-w-md space-y-1">
               <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-semibold text-slate-400">
                 <span className="truncate">Recommended Vehicle</span>
                 <span className="text-[#FF6500] font-semibold uppercase tracking-wider truncate ml-1">{vehicleRecommendation.name}</span>
               </div>
-              <div className="relative w-full h-1.5 sm:h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div className="relative w-full h-1.5 sm:h-2 bg-slate-800 rounded-lg overflow-hidden">
                 <div 
-                  className="absolute top-0 left-0 h-full bg-[#FF6500] transition-all duration-500 rounded-full"
+                  className="absolute top-0 left-0 h-full bg-[#FF6500] transition-all duration-500 rounded-lg"
                   style={{ width: `${Math.min(100, (totalWeightTons / vehicleRecommendation.limit) * 100)}%` }}
                 />
               </div>
             </div>
 
-            {/* Right: Est. Total Price & Checkout CTA Button */}
             <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               <div className="text-right">
                 <div className="text-[8px] sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Est. Material Total</div>
@@ -727,7 +595,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 size="sm"
                 onClick={() => onProceedToCheckout(cartItems)}
                 icon={<FaArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
-                className="px-3 sm:px-6 py-1.5 sm:py-3 rounded-full sm:rounded-2xl text-xs font-semibold shrink-0"
+                className="px-3 sm:px-6 py-1.5 sm:py-3 rounded-xl text-xs font-semibold shrink-0"
               >
                 <span className="hidden sm:inline">Checkout Supply Order</span>
                 <span className="sm:hidden">Checkout</span>

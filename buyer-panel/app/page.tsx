@@ -1,446 +1,131 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Header } from '../components/layout/Header';
-import { Footer } from '../components/layout/Footer';
-import { MobileBottomNav } from '../components/layout/MobileBottomNav';
-import { CommodityTicker } from '../components/buyer/CommodityTicker';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { HeroSection } from '../components/buyer/HeroSection';
+import { QuickDispatchAndShipments } from '../components/buyer/QuickDispatchAndShipments';
+import { TrendingDealsStrip } from '../components/buyer/TrendingDealsStrip';
+import { WholesaleRateIndex } from '../components/buyer/WholesaleRateIndex';
+import { FeaturedBrandsShowcase } from '../components/buyer/FeaturedBrandsShowcase';
 import { CategoriesGrid } from '../components/buyer/CategoriesGrid';
-import { MerchantStoreCards } from '../components/buyer/MerchantStoreCards';
-import { LocationServiceModal } from '../components/buyer/LocationServiceModal';
-import { LanguageModal } from '../components/buyer/LanguageModal';
-import { AuthModal } from '../components/buyer/AuthModal';
+import { ContractorTestimonials } from '../components/buyer/ContractorTestimonials';
+import { useAppContext } from '../context/AppContext';
+import { buyerApi } from '../lib/api';
+import { HardwareMerchant, MaterialCategory, CommodityRate } from '../types/buyer';
+import { MATERIAL_CATEGORIES, HARDWARE_MERCHANTS } from '../data/mockBuyerData';
 
-import { 
-  COMMODITY_RATES, 
-  MATERIAL_CATEGORIES, 
-  HARDWARE_MERCHANTS,
-  CATALOG_PRODUCTS
-} from '../data/mockBuyerData';
+interface BuyerHomePayload {
+  categories?: MaterialCategory[];
+  nearbyMerchants?: HardwareMerchant[];
+  trendingDeals?: {
+    id: string;
+    title: string;
+    discount: string;
+    price: number;
+    unit: string;
+    tag: string;
+    image: string;
+    category: string;
+  }[];
+  rateTicker?: CommodityRate[];
+}
 
-import { 
-  LocationState, 
-  LanguageCode, 
-  UserProfile,
-  HardwareMerchant,
-  CartItem
-} from '../types/buyer';
-
-import { ProductCatalog } from '../components/buyer/ProductCatalog';
-import { CartVehicleSelection, VehicleOption } from '../components/buyer/CartVehicleSelection';
-import { CheckoutPage } from '../components/buyer/CheckoutPage';
-import { OrderSuccess } from '../components/buyer/OrderSuccess';
-import { LiveTrackingPage } from '../components/buyer/LiveTrackingPage';
-import { ProfileSitesPage } from '../components/buyer/ProfileSitesPage';
-import { SiteDeliveryPage } from '../components/buyer/SiteDeliveryPage';
-
-import { 
-  FaTruckFast, 
-  FaShieldHalved, 
-  FaArrowRight, 
-  FaStore 
-} from 'react-icons/fa6';
-
-import { Button } from '../components/ui/Button';
-
-type BuyerPanelProps = {
-  initialView?: 'home' | 'catalog' | 'cart_vehicle' | 'checkout' | 'success' | 'tracking' | 'profile_sites' | 'site_delivery_page';
-};
-
-export default function BuyerPanelHome({ initialView = 'home' }: BuyerPanelProps) {
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-
-  const [location, setLocation] = useState<LocationState>({
-    address: 'Site #14, Kakkanad Zone',
-    pinCode: '682030',
-    isServiceable: true,
-    distanceKm: 8.5,
-    siteConstraints: {
-      roadWidth: '12ft+ (Standard Truck)',
-      heavyVehicleAccess: true,
-      craneNeeded: false,
-      unloadingTimeSlot: '08:00 AM - 01:00 PM'
-    }
-  });
-
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('en');
-  const [user, setUser] = useState<UserProfile>({
-    name: 'Ajay Kumar',
-    phone: '+91 98765 43210',
-    email: 'ajay.builder@materialhub.in',
-    isLoggedIn: true,
-    savedAddresses: []
-  });
-
+export default function HomePage() {
+  const router = useRouter();
+  const { setSelectedMerchant } = useAppContext();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedMerchant, setSelectedMerchant] = useState<HardwareMerchant | null>(HARDWARE_MERCHANTS[0]);
-  const [activeView, setActiveView] = useState<'home' | 'catalog' | 'cart_vehicle' | 'checkout' | 'success' | 'tracking' | 'profile_sites' | 'site_delivery_page'>(initialView);
-  const [currentCart, setCurrentCart] = useState<CartItem[]>([
-    {
-      product: CATALOG_PRODUCTS[0],
-      quantity: 50
-    },
-    {
-      product: CATALOG_PRODUCTS[1],
-      quantity: 20
-    }
-  ]);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleOption | null>({
-    id: 'pickup_truck',
-    name: 'Mahindra Bolero Pickup',
-    subtitle: 'Medium Payload Delivery',
-    capacityTons: 3.5,
-    freightFee: 1250,
-    etaMinutes: 60,
-    image: '/images/pickup_truck.jpg',
-    description: 'Ideal for medium loads up to 3.5 Tons (e.g. 70 Cement Bags or mixed Steel TMT Rods).'
-  });
-  const [placedOrderId, setPlacedOrderId] = useState<string>('MH-842910');
-  const [mobileTab, setMobileTab] = useState('home');
+  const [homeData, setHomeData] = useState<BuyerHomePayload | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    setUser({
-      name: 'Guest Buyer',
-      phone: '',
-      email: '',
-      isLoggedIn: false,
-      savedAddresses: []
-    });
-    setActiveView('home');
-  };
+  useEffect(() => {
+    async function fetchHomeData() {
+      try {
+        const data = await buyerApi.getHome();
+        setHomeData(data as BuyerHomePayload);
+      } catch (error) {
+        console.error('Failed to fetch home data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchHomeData();
+  }, []);
 
   const handleOpenStore = (merchant: HardwareMerchant) => {
     setSelectedMerchant(merchant);
-    setActiveView('catalog');
+    router.push('/catalog');
   };
 
-  const handleProceedToCartVehicle = (cart: CartItem[]) => {
-    setCurrentCart(cart);
-    setActiveView('cart_vehicle');
-  };
+  if (loading) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 animate-pulse">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white p-6 sm:p-8 rounded-3xl shadow-xs">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="h-6 w-36 bg-slate-200 rounded-xl" />
+            <div className="h-10 sm:h-12 w-3/4 bg-slate-200 rounded-2xl" />
+            <div className="h-4 w-full bg-slate-100 rounded-xl" />
+            <div className="h-4 w-2/3 bg-slate-100 rounded-xl" />
+            <div className="grid grid-cols-3 gap-3 pt-2">
+              <div className="h-16 bg-slate-100 rounded-2xl" />
+              <div className="h-16 bg-slate-100 rounded-2xl" />
+              <div className="h-16 bg-slate-100 rounded-2xl" />
+            </div>
+          </div>
+          <div className="lg:col-span-5 h-64 lg:h-auto bg-slate-100 rounded-3xl" />
+        </div>
 
-  const handleUpdateCartQty = (productId: string, newQty: number) => {
-    setCurrentCart((prev) =>
-      prev.map((item) => (item.product.id === productId ? { ...item, quantity: newQty } : item))
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="h-48 bg-slate-800 rounded-3xl shadow-xs" />
+          <div className="h-48 bg-white rounded-3xl shadow-xs" />
+        </div>
+
+        <div className="space-y-3">
+          <div className="h-6 w-48 bg-slate-200 rounded-xl" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-48 bg-white p-4 rounded-3xl shadow-xs space-y-3">
+                <div className="h-24 bg-slate-100 rounded-2xl" />
+                <div className="h-4 w-3/4 bg-slate-200 rounded-md" />
+                <div className="h-4 w-1/2 bg-slate-100 rounded-md" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     );
-  };
+  }
 
-  const handleRemoveCartItem = (productId: string) => {
-    setCurrentCart((prev) => prev.filter((item) => item.product.id !== productId));
-  };
+  const categories = (homeData?.categories && homeData.categories.length > 0)
+    ? homeData.categories
+    : MATERIAL_CATEGORIES;
 
-  const handleProceedToCheckout = (vehicle: VehicleOption, finalCart: CartItem[]) => {
-    setSelectedVehicle(vehicle);
-    setCurrentCart(finalCart);
-    setActiveView('checkout');
-  };
-
-  const handleOrderSuccess = (orderId: string) => {
-    setPlacedOrderId(orderId);
-    setActiveView('success');
-  };
-
-  const handleResetToHome = () => {
-    setSelectedMerchant(null);
-    setCurrentCart([]);
-    setSelectedVehicle(null);
-    setPlacedOrderId('');
-    setActiveView('home');
-  };
+  const merchants = (homeData?.nearbyMerchants && homeData.nearbyMerchants.length > 0)
+    ? homeData.nearbyMerchants
+    : HARDWARE_MERCHANTS;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased flex flex-col justify-between">
-      <div>
-        <Header
-          location={location}
-          onOpenLocationModal={() => setIsLocationModalOpen(true)}
-          onOpenAuthModal={() => setIsAuthModalOpen(true)}
-          onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-          user={user}
-          onLogout={handleLogout}
-          currentLanguage={currentLanguage}
-          onOpenProfileSites={() => setActiveView('profile_sites')}
-          onNavigate={(v) => setActiveView(v)}
-        />
+    <div className="w-full flex flex-col pt-3 sm:pt-5 lg:pt-6 space-y-8 sm:space-y-12 lg:space-y-16 pb-0">
+      <HeroSection />
 
-        <CommodityTicker rates={COMMODITY_RATES} />
+      <QuickDispatchAndShipments />
 
-        {activeView === 'site_delivery_page' && (
-          <SiteDeliveryPage
-            location={location}
-            onBack={() => setActiveView('home')}
-            onSaveInstructions={(instructions) => {
-              setLocation((prev) => ({
-                ...prev,
-                siteConstraints: {
-                  ...prev.siteConstraints,
-                  roadWidth: instructions.accessOption === 'narrow' ? 'Narrow Road (< 10ft)' : '12ft+ (Standard Truck)',
-                  heavyVehicleAccess: instructions.accessOption !== 'no_heavy',
-                  craneNeeded: instructions.accessOption === 'crane',
-                  unloadingTimeSlot: prev.siteConstraints?.unloadingTimeSlot || '08:00 AM - 01:00 PM'
-                }
-              }));
-              setActiveView('home');
-            }}
-          />
-        )}
+      <TrendingDealsStrip />
 
-        {activeView === 'profile_sites' && (
-          <ProfileSitesPage
-            user={user}
-            location={location}
-            onOpenSiteModal={() => setActiveView('site_delivery_page')}
-            onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-            onLogout={handleLogout}
-            onOpenStore={handleOpenStore}
-          />
-        )}
-
-        {activeView === 'catalog' && selectedMerchant && (
-          <ProductCatalog
-            merchant={selectedMerchant}
-            products={CATALOG_PRODUCTS}
-            onBack={() => setActiveView('home')}
-            onProceedToCheckout={handleProceedToCartVehicle}
-          />
-        )}
-
-        {activeView === 'cart_vehicle' && selectedMerchant && (
-          <CartVehicleSelection
-            merchant={selectedMerchant}
-            cartItems={currentCart}
-            onUpdateQuantity={handleUpdateCartQty}
-            onRemoveItem={handleRemoveCartItem}
-            onBackToCatalog={() => setActiveView('catalog')}
-            onProceedToCheckout={handleProceedToCheckout}
-          />
-        )}
-
-        {activeView === 'checkout' && selectedMerchant && selectedVehicle && (
-          <CheckoutPage
-            merchant={selectedMerchant}
-            cartItems={currentCart}
-            vehicle={selectedVehicle}
-            location={location}
-            onBackToCart={() => setActiveView('cart_vehicle')}
-            onPlaceOrderSuccess={handleOrderSuccess}
-          />
-        )}
-
-        {activeView === 'success' && (
-          <OrderSuccess
-            orderId={placedOrderId}
-            onTrackOrderLive={() => setActiveView('tracking')}
-            onReturnHome={handleResetToHome}
-          />
-        )}
-
-        {activeView === 'tracking' && selectedMerchant && (
-          <LiveTrackingPage
-            orderId={placedOrderId}
-            merchant={selectedMerchant}
-            vehicle={selectedVehicle}
-            location={location}
-            onBackToSuccess={() => setActiveView('success')}
-            onReturnHome={handleResetToHome}
-          />
-        )}
-
-        {activeView === 'home' && (
-          <>
-            <section className="relative py-2 sm:py-6">
-              <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                
-                {/* Mobile App Hero Banner (Matching Catalog Page Hero Card) */}
-                <div className="sm:hidden relative rounded-2xl overflow-hidden shadow-md bg-slate-900 text-white p-4 flex flex-col justify-between group min-h-[300px]">
-                  <img
-                    src="/images/hero_banner.png"
-                    alt="MaterialHub Wholesale Delivery Truck"
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60"
-                  />
-                  
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/65 to-slate-950/30" />
-
-                  <div className="relative z-10 space-y-1">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FF6500] text-white text-[10px] font-semibold uppercase tracking-wider shadow-2xs">
-                      Wholesale Supply Hub
-                    </span>
-                    <h1 className="text-xl font-semibold text-white tracking-tight leading-tight">
-                      Direct Factory &amp; Wholesale <span className="text-orange-400">Construction Materials</span>
-                    </h1>
-                  </div>
-
-                  <div className="relative z-10 space-y-3 pt-4">
-                    <div className="grid grid-cols-3 gap-1.5 text-[10px] font-medium w-full">
-                      <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/20 text-white backdrop-blur-md border border-white/10 text-center truncate">
-                        <FaTruckFast className="h-3 w-3 text-orange-400 shrink-0" />
-                        <span className="truncate">20 KM Radius</span>
-                      </span>
-                      <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-emerald-500/80 text-white backdrop-blur-md text-center truncate">
-                        <FaShieldHalved className="h-3 w-3 shrink-0" />
-                        <span className="truncate">GST Invoice</span>
-                      </span>
-                      <span className="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg bg-white/15 text-white backdrop-blur-md border border-white/10 text-center truncate">
-                        <FaStore className="h-3 w-3 text-amber-400 shrink-0" />
-                        <span className="truncate">Local Stores</span>
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => setIsLocationModalOpen(true)}
-                        icon={<FaArrowRight className="h-3 w-3" />}
-                        className="w-full justify-center text-xs py-2"
-                      >
-                        Check Area
-                      </Button>
-
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => setIsAuthModalOpen(true)}
-                        className="w-full justify-center text-xs py-2 bg-white/20 hover:bg-white/30 text-white border border-white/20"
-                      >
-                        Wholesale Rates
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Desktop & Tablet Hero Grid */}
-                <div className="hidden sm:grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-stretch bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs">
-                  <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6">
-                    <div>
-                      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-3 sm:mb-4">
-                        Direct Factory &amp; Wholesale <span className="text-[#FF6500]">Construction Materials</span>
-                      </h1>
-
-                      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
-                        Order Cement, TMT Steel Rods, PVC Pipes, Paints &amp; Electricals directly from verified local hardware stores, with real-time stock availability, transparent wholesale pricing, GST tax invoice, and same-day site delivery within a 20 KM radius.
-                      </p>
-                    </div>
-
-                    <div className="space-y-5">
-                      {/* Clean Inner Feature Cards */}
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 shadow-2xs flex items-center gap-3 transition-all">
-                          <div className="h-9 w-9 rounded-xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0 border border-orange-100/80">
-                            <FaTruckFast className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <h4 className="text-xs font-semibold text-slate-900">20 KM Radius</h4>
-                            <p className="text-[10px] text-slate-500 font-normal">Same-Day Delivery</p>
-                          </div>
-                        </div>
-
-                        <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 shadow-2xs flex items-center gap-3 transition-all">
-                          <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100/80">
-                            <FaShieldHalved className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <h4 className="text-xs font-semibold text-slate-900">GST Invoice</h4>
-                            <p className="text-[10px] text-slate-500 font-normal">100% Tax Credit</p>
-                          </div>
-                        </div>
-
-                        <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 shadow-2xs flex items-center gap-3 transition-all">
-                          <div className="h-9 w-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 border border-slate-200/80">
-                            <FaStore className="h-4 w-4 text-[#FF6500]" />
-                          </div>
-                          <div>
-                            <h4 className="text-xs font-semibold text-slate-900">Local Hardware</h4>
-                            <p className="text-[10px] text-slate-500 font-normal">Verified Stores</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Primary & Secondary Hero CTAs */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <Button
-                          variant="primary"
-                          size="md"
-                          onClick={() => setIsLocationModalOpen(true)}
-                          icon={<FaArrowRight className="h-3.5 w-3.5" />}
-                          className="w-full justify-center text-sm py-3.5"
-                        >
-                          Check Delivery Area
-                        </Button>
-
-                        <Button
-                          variant="secondary"
-                          size="md"
-                          onClick={() => setIsAuthModalOpen(true)}
-                          className="w-full justify-center text-sm py-3.5 font-semibold"
-                        >
-                          Wholesale Rates
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-5 h-full flex">
-                    <div className="relative rounded-3xl overflow-hidden shadow-2xs group bg-slate-100 w-full h-full min-h-[380px]">
-                      <img
-                        src="/images/hero_banner.png"
-                        alt="MaterialHub Wholesale Delivery Truck"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </section>
-
-            <CategoriesGrid
-              categories={MATERIAL_CATEGORIES}
-              merchants={HARDWARE_MERCHANTS}
-              onSelectCategory={(catId) => setSelectedCategory(catId)}
-              selectedCategory={selectedCategory}
-              onSelectMerchant={handleOpenStore}
-            />
-          </>
-        )}
+      <div id="wholesale-rates" className="w-full">
+        <WholesaleRateIndex />
       </div>
 
-      <Footer
-        onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-        currentLanguage={currentLanguage}
+      <FeaturedBrandsShowcase />
+
+      <CategoriesGrid
+        categories={categories}
+        merchants={merchants}
+        onSelectCategory={(catId) => setSelectedCategory(catId)}
+        selectedCategory={selectedCategory}
+        onSelectMerchant={handleOpenStore}
       />
 
-      <MobileBottomNav
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
-        isLoggedIn={user.isLoggedIn}
-        cartCount={currentCart.length}
-      />
-
-      <LocationServiceModal
-        isOpen={isLocationModalOpen}
-        onClose={() => setIsLocationModalOpen(false)}
-        locationState={location}
-        onUpdateLocation={(newLoc) => setLocation(newLoc)}
-        onProceedNext={() => {
-          setIsLocationModalOpen(false);
-          setActiveView('site_delivery_page');
-        }}
-      />
-
-      <LanguageModal
-        isOpen={isLanguageModalOpen}
-        onClose={() => setIsLanguageModalOpen(false)}
-        selectedLanguage={currentLanguage}
-        onSelectLanguage={(lang) => setCurrentLanguage(lang)}
-      />
-
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onLoginSuccess={(u) => setUser(u)}
-      />
+      <ContractorTestimonials />
     </div>
   );
 }

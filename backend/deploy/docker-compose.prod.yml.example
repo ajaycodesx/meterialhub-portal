@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: materialhub-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: materialhub_prod
+      POSTGRES_USER: materialhub_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - materialhub_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U materialhub_user -d materialhub_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: materialhub-redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - materialhub_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: materialhub-api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+      PROJECT_NAME: "MaterialHub API"
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: "postgresql+asyncpg://materialhub_user:${POSTGRES_PASSWORD}@postgres:5432/materialhub_prod"
+      RATE_LIMIT_STORAGE_URL: "redis://:${REDIS_PASSWORD}@redis:6379/0"
+      ALLOWED_HOSTS: '["api.materialhub.in"]'
+      BACKEND_CORS_ORIGINS: '["https://buyer.materialhub.in","https://vendor.materialhub.in","https://driver.materialhub.in","https://admin.materialhub.in"]'
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      LOG_LEVEL: INFO
+      LOG_FORMAT: json
+      ENFORCE_HTTPS: "false"  # HTTPS terminated at reverse proxy/load balancer
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      - materialhub_internal
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  materialhub_internal:
+    driver: bridge

@@ -1,12 +1,10 @@
 'use client';
 
 import React from 'react';
-import { 
-  FaFire, 
-  FaArrowTrendUp, 
-  FaArrowTrendDown, 
-  FaMinus, 
-  FaRotateRight 
+import {
+  FaArrowTrendUp,
+  FaArrowTrendDown,
+  FaMinus
 } from 'react-icons/fa6';
 import { CommodityRate } from '../../types/buyer';
 
@@ -15,56 +13,66 @@ interface CommodityTickerProps {
 }
 
 export const CommodityTicker: React.FC<CommodityTickerProps> = ({ rates }) => {
-  const marqueeItems = [...rates, ...rates, ...rates];
+  const defaultItems = [
+    { name: 'UltraTech Cement', rate: '1.10', change: '0.640%', trend: 'up' },
+    { name: 'TMT Steel', rate: '33.25', change: '0.046%', trend: 'up' },
+    { name: 'PVC Pipes tement', rate: '3.10', change: '0.052%', trend: 'down' },
+    { name: 'PVC Pipes', rate: '22.50', change: '0.232%', trend: 'up' },
+    { name: 'UltraTech Cement', rate: '10', change: '0.335%', trend: 'down' },
+    { name: 'Cement', rate: '27.30', change: '0.87%', trend: 'down' },
+    { name: 'TMT Steel Fe550D', rate: '58.50', change: '0.420%', trend: 'up' },
+  ];
+
+  const itemsToDisplay = rates && rates.length > 0
+    ? rates.map((r) => ({
+        name: r.materialName,
+        rate: r.wholesaleRate >= 1000 ? (r.wholesaleRate / 1000).toFixed(2) : String(r.wholesaleRate),
+        change: `${r.changePercent}%`,
+        trend: r.trend,
+      }))
+    : defaultItems;
+
+  const marqueeItems = [...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay];
 
   return (
-    <div className="w-full bg-slate-900 text-white py-1.5 overflow-hidden shadow-xs flex items-center h-10 sm:h-12 border-b border-slate-800">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4 w-full h-full">
-        <div className="shrink-0 flex items-center gap-1.5 bg-[#FF6500] px-2.5 sm:px-4 rounded-full text-white font-semibold text-[10px] sm:text-xs z-10 shadow-xs h-7 sm:h-8">
-          <FaFire className="h-3 w-3 animate-bounce text-white" />
-          <span className="uppercase tracking-wider font-semibold hidden sm:inline">Wholesale Rates</span>
-          <span className="uppercase tracking-wider font-semibold sm:hidden">Rates</span>
-        </div>
-        <div className="overflow-hidden whitespace-nowrap w-full relative flex items-center h-full">
-          {/* Smooth curved gradient edge fades at start and end of marquee */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
+    <div className="relative z-20 w-full bg-[#0B1120] text-white overflow-hidden shadow-xs flex items-center h-8 sm:h-9 border-t border-slate-800/80">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative flex items-center h-full overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#0B1120] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#0B1120] to-transparent z-10 pointer-events-none" />
 
-          <div className="animate-marquee flex items-center gap-4 sm:gap-6">
-            {marqueeItems.map((item, index) => (
-              <div
-                key={`${item.id}-${index}`}
-                className="inline-flex items-center gap-2.5 text-xs font-medium px-4 rounded-full bg-slate-800/90 border border-slate-700/80 hover:bg-slate-700 transition-colors cursor-pointer shrink-0 h-8"
-              >
-                <span className="text-slate-300 font-normal">{item.materialName}:</span>
-                <span className="text-white font-semibold">₹{item.wholesaleRate.toLocaleString()}</span>
-                <span className="text-[11px] text-slate-400">/{item.unit}</span>
+        <div className="animate-marquee flex items-center whitespace-nowrap">
+          {marqueeItems.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                const el = document.getElementById('wholesale-rates');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-2 text-xs font-normal px-4 border-r border-slate-800 hover:text-[#FF6500] transition-colors cursor-pointer shrink-0"
+            >
+              <span className="text-slate-200 font-medium">{item.name}</span>
+              <span className="text-slate-300 font-normal">{item.rate}</span>
 
-                {item.trend === 'up' && (
-                  <span className="inline-flex items-center gap-1 text-red-400 font-semibold text-[11px] bg-red-950/70 px-2 py-0.5 rounded-full border border-red-800/40">
-                    <FaArrowTrendUp className="h-2.5 w-2.5" />
-                    +{item.changePercent}%
-                  </span>
-                )}
-                {item.trend === 'down' && (
-                  <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold text-[11px] bg-emerald-950/70 px-2 py-0.5 rounded-full border border-emerald-800/40">
-                    <FaArrowTrendDown className="h-2.5 w-2.5" />
-                    -{item.changePercent}%
-                  </span>
-                )}
-                {item.trend === 'stable' && (
-                  <span className="inline-flex items-center gap-1 text-slate-400 text-[11px] font-normal">
-                    <FaMinus className="h-2 w-2" />
-                    0.0%
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="shrink-0 hidden xl:flex items-center gap-1.5 text-xs text-slate-400 font-medium bg-slate-800/90 px-3.5 rounded-full border border-slate-700/80 h-8">
-          <FaRotateRight className="h-3 w-3 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
-          <span className="text-[11px] font-semibold text-slate-300">Live Rates</span>
+              {item.trend === 'up' && (
+                <span className="inline-flex items-center gap-1 text-[#34D399] font-medium text-xs">
+                  <FaArrowTrendUp className="h-2 w-2" />
+                  +{item.change}
+                </span>
+              )}
+              {item.trend === 'down' && (
+                <span className="inline-flex items-center gap-1 text-[#FB923C] font-medium text-xs">
+                  <FaArrowTrendDown className="h-2 w-2" />
+                  -{item.change}
+                </span>
+              )}
+              {item.trend === 'stable' && (
+                <span className="inline-flex items-center gap-1 text-slate-400 text-xs">
+                  <FaMinus className="h-1.5 w-1.5" />
+                  0.0%
+                </span>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

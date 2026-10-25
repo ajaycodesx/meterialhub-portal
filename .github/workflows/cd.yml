@@ -1,0 +1,175 @@
+# MaterialHub CD Pipeline
+# Automated deployment to staging and production environments
+
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://api-staging.materialhub.in
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker images
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY_BACKEND: materialhub-backend-staging
+          ECR_REPOSITORY_BUYER: materialhub-buyer-staging
+          ECR_REPOSITORY_VENDOR: materialhub-vendor-staging
+          ECR_REPOSITORY_DRIVER: materialhub-driver-staging
+          ECR_REPOSITORY_ADMIN: materialhub-admin-staging
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build and push backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG -f backend/deploy/Dockerfile backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG
+
+          # Build and push buyer panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BUYER:$IMAGE_TAG -f buyer-panel/Dockerfile buyer-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BUYER:$IMAGE_TAG
+
+          # Build and push vendor panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_VENDOR:$IMAGE_TAG -f vendor-panel/Dockerfile vendor-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_VENDOR:$IMAGE_TAG
+
+          # Build and push driver panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_DRIVER:$IMAGE_TAG -f driver-panel/Dockerfile driver-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_DRIVER:$IMAGE_TAG
+
+          # Build and push admin panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ADMIN:$IMAGE_TAG -f admin-panel/Dockerfile admin-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_ADMIN:$IMAGE_TAG
+
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/materialhub-staging
+            docker-compose -f docker-compose.staging.yml pull
+            docker-compose -f docker-compose.staging.yml up -d
+            docker-compose -f docker-compose.staging.yml exec -T backend alembic upgrade head
+
+      - name: Run smoke tests
+        run: |
+          curl -f https://api-staging.materialhub.in/api/v1/health || exit 1
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://api.materialhub.in
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker images
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY_BACKEND: materialhub-backend-prod
+          ECR_REPOSITORY_BUYER: materialhub-buyer-prod
+          ECR_REPOSITORY_VENDOR: materialhub-vendor-prod
+          ECR_REPOSITORY_DRIVER: materialhub-driver-prod
+          ECR_REPOSITORY_ADMIN: materialhub-admin-prod
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build and push backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG -f backend/deploy/Dockerfile backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG
+
+          # Build and push buyer panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BUYER:$IMAGE_TAG -f buyer-panel/Dockerfile buyer-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BUYER:$IMAGE_TAG
+
+          # Build and push vendor panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_VENDOR:$IMAGE_TAG -f vendor-panel/Dockerfile vendor-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_VENDOR:$IMAGE_TAG
+
+          # Build and push driver panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_DRIVER:$IMAGE_TAG -f driver-panel/Dockerfile driver-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_DRIVER:$IMAGE_TAG
+
+          # Build and push admin panel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ADMIN:$IMAGE_TAG -f admin-panel/Dockerfile admin-panel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_ADMIN:$IMAGE_TAG
+
+      - name: Create database backup before deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/materialhub-prod
+            python -m scripts.backup --output-dir ./backups
+
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/materialhub-prod
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
+            docker-compose -f docker-compose.prod.yml exec -T backend alembic upgrade head
+
+      - name: Run smoke tests
+        run: |
+          curl -f https://api.materialhub.in/api/v1/health || exit 1
+
+      - name: Notify deployment success
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Production deployment successful'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()

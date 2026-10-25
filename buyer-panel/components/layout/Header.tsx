@@ -2,23 +2,19 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  FaLocationDot, 
-  FaMagnifyingGlass, 
-  FaMicrophone, 
-  FaStore, 
-  FaTruck, 
-  FaChevronDown, 
-  FaUser, 
-  FaCircleCheck, 
-  FaBagShopping, 
-  FaHeart, 
-  FaRightFromBracket, 
+import { useRouter } from 'next/navigation';
+import {
+  FaLocationDot,
+  FaMagnifyingGlass,
+  FaMicrophone,
+  FaChevronDown,
+  FaUser,
+  FaBagShopping,
+  FaRightFromBracket,
   FaCreditCard,
-  FaMapLocationDot,
-  FaHeadset,
-  FaCartShopping
+  FaMapLocationDot
 } from 'react-icons/fa6';
+import { FiBell, FiShoppingCart } from 'react-icons/fi';
 import { LocationState, UserProfile } from '../../types/buyer';
 import { Select } from '../ui/Select';
 
@@ -26,10 +22,10 @@ interface HeaderProps {
   location: LocationState;
   onOpenLocationModal: () => void;
   onOpenAuthModal: () => void;
-  onOpenLanguageModal: () => void;
+  onOpenLanguageModal?: () => void;
   user: UserProfile;
   onLogout: () => void;
-  currentLanguage: string;
+  currentLanguage?: string;
   onOpenProfileSites?: () => void;
   onNavigate?: (view: 'home' | 'catalog' | 'cart_vehicle' | 'checkout' | 'success' | 'tracking' | 'profile_sites' | 'site_delivery_page') => void;
   cartCount?: number;
@@ -39,14 +35,13 @@ export const Header: React.FC<HeaderProps> = ({
   location,
   onOpenLocationModal,
   onOpenAuthModal,
-  onOpenLanguageModal,
   user,
   onLogout,
-  currentLanguage,
   onOpenProfileSites,
   onNavigate,
-  cartCount = 2
+  cartCount = 1
 }) => {
+  const router = useRouter();
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -55,32 +50,41 @@ export const Header: React.FC<HeaderProps> = ({
     setTimeout(() => {
       setSearchQuery('UltraTech Cement 53 Grade');
       setIsListeningVoice(false);
-    }, 1800);
+      router.push('/catalog');
+    }, 1500);
+  };
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    router.push('/catalog');
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-xs">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
+    <header className="relative z-30 w-full bg-[#0d1527] text-white">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3">
         
-        <div className="flex items-center justify-between gap-2 w-full">
+        <div className="flex items-center justify-between gap-3 lg:gap-6 w-full">
           
           <Link 
             href="/"
             onClick={() => onNavigate?.('home')}
-            className="flex items-center gap-2 shrink-0 cursor-pointer group"
+            className="flex items-center gap-2.5 shrink-0 cursor-pointer group"
           >
-            <div className="relative h-9 w-9 sm:h-11 sm:w-11 rounded-full overflow-hidden shadow-xs border border-orange-100 bg-slate-900 shrink-0">
+            <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
               <img
                 src="/images/logo.png"
-                alt="MaterialHub Circular Brand Logo"
-                className="h-full w-full object-cover"
+                alt="MaterialHub Logo"
+                className="h-full w-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/hero_banner.png';
+                }}
               />
             </div>
-            <div>
-              <span className="font-semibold text-base sm:text-xl tracking-tight text-slate-900 leading-tight">
+            <div className="leading-tight">
+              <div className="text-lg sm:text-xl font-semibold tracking-tight text-white leading-none">
                 Material<span className="text-[#FF6500]">Hub</span>
-              </span>
-              <p className="text-[10px] sm:text-xs text-slate-500 font-normal hidden sm:block leading-tight">
+              </div>
+              <p className="text-xs text-slate-400 font-normal leading-tight mt-1 hidden sm:block">
                 Wholesale Construction Supply Platform
               </p>
             </div>
@@ -88,246 +92,193 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onOpenLocationModal}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 transition-all text-left group h-10 sm:h-11 shrink-0 cursor-pointer"
+            className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/60 transition-all text-left shrink-0 cursor-pointer h-11"
           >
-            <div className="h-6 w-6 rounded-lg bg-[#FF6500] text-white flex items-center justify-center shrink-0">
-              <FaLocationDot className="h-3 w-3" />
+            <div className="text-[#FF6500] shrink-0">
+              <FaLocationDot className="h-4 w-4" />
             </div>
-            <div className="text-xs leading-tight min-w-0">
-              <div className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider truncate">
-                Delivery Site
+            <div className="leading-tight min-w-0">
+              <div className="text-xs font-medium text-slate-400 tracking-wider uppercase">
+                Inline Delivery Site
               </div>
-              <div className="flex items-center gap-1">
-                <span className="font-semibold text-slate-800 text-xs truncate max-w-[120px]">
-                  {location.address || 'Select Site'}
-                </span>
-                <FaChevronDown className="h-2 w-2 text-slate-400 shrink-0" />
+              <div className="text-xs font-semibold text-white truncate max-w-[150px]">
+                {location.address ? `${location.address.split(',')[0]}, 20km` : 'Site #14, Kakkanad, 20km'}
               </div>
             </div>
-            {location.isServiceable && (
-              <span className="hidden md:flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-semibold shrink-0">
-                <FaCircleCheck className="h-2.5 w-2.5" />
-                20km
-              </span>
-            )}
+            <FaChevronDown className="h-2.5 w-2.5 text-slate-400 shrink-0 ml-0.5" />
           </button>
 
-          <div className="hidden lg:flex flex-1 max-w-xs xl:max-w-md items-center relative h-10 sm:h-11">
-            <div className="relative w-full h-full flex items-center">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Cement, Steel Rods, PVC Pipes"
-                className="w-full h-full pl-9.5 pr-28 py-2 text-xs font-normal rounded-full bg-slate-50 border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 placeholder-slate-400 shadow-2xs"
-              />
-              <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
-              
-              <button
-                onClick={handleVoiceSearch}
-                className={`absolute right-1.5 h-8 px-3 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  isListeningVoice 
-                    ? 'bg-red-500 text-white shadow-xs animate-pulse' 
-                    : 'bg-slate-900 text-white hover:bg-slate-800 shadow-2xs'
-                }`}
-              >
-                <FaMicrophone className={`h-3 w-3 ${isListeningVoice ? 'text-white' : 'text-[#FF6500]'}`} />
-                <span className="truncate">{isListeningVoice ? 'Listening' : 'Voice'}</span>
-              </button>
-            </div>
-          </div>
+          <form
+            onSubmit={handleSearchSubmit}
+            className="hidden lg:flex flex-1 min-w-[280px] max-w-xl xl:max-w-2xl items-center relative h-11 bg-white rounded-xl shadow-xs px-1.5"
+          >
+            <FaMagnifyingGlass className="h-4 w-4 text-slate-400 ml-3 shrink-0" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search Cement, Steel, Sand..."
+              className="w-full h-full pl-3 pr-2 text-xs font-normal text-slate-900 placeholder-slate-400 focus:outline-none bg-transparent"
+            />
+            
+            <button
+              type="button"
+              onClick={handleVoiceSearch}
+              className={`h-8 px-3.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                isListeningVoice 
+                  ? 'bg-red-500 text-white shadow-xs animate-pulse' 
+                  : 'bg-[#0d1527] text-white hover:bg-[#1a253d] shadow-2xs'
+              }`}
+            >
+              <FaMicrophone className={`h-3 w-3 ${isListeningVoice ? 'text-white' : 'text-[#FF6500]'}`} />
+              <span className="font-medium text-xs">{isListeningVoice ? 'Listening...' : 'Voice Search'}</span>
+            </button>
+          </form>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-3.5 shrink-0">
             
             <button
               onClick={onOpenLocationModal}
-              className="sm:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold max-w-[120px] shrink-0 cursor-pointer"
+              className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#1c2638] border border-slate-700/60 text-white text-xs font-semibold max-w-[120px] shrink-0 cursor-pointer"
             >
               <FaLocationDot className="h-3 w-3 text-[#FF6500] shrink-0" />
               <span className="truncate text-[11px] font-semibold">{location.address.split(',')[0]}</span>
               <FaChevronDown className="h-2 w-2 text-slate-400 shrink-0" />
             </button>
 
-            <Link
-              href="/cart"
-              onClick={() => onNavigate?.('cart_vehicle')}
-              className="relative h-9 w-9 sm:h-11 sm:w-11 rounded-2xl bg-orange-50 hover:bg-orange-100 text-[#FF6500] flex items-center justify-center transition-all cursor-pointer shrink-0"
-              title="View Cart & Truck Allocation"
-            >
-              <FaCartShopping className="h-4 w-4" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4.5 min-w-[18px] px-1 rounded-full bg-[#FF6500] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-xs">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            <button
-              onClick={onOpenLanguageModal}
-              className="hidden sm:flex px-3 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 items-center gap-1.5 transition-all h-10 sm:h-11 cursor-pointer"
-            >
-              <span className="text-xs">🇮🇳</span>
-              <span className="uppercase text-xs font-semibold">{currentLanguage}</span>
-            </button>
-
             <Select
               align="right"
-              popoverWidth="w-56 sm:w-64"
+              popoverWidth="w-60 sm:w-64"
               trigger={
-                <button className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 transition-all h-10 sm:h-11 cursor-pointer">
-                  <div className="h-5 w-5 rounded-md bg-[#FF6500] text-white flex items-center justify-center shrink-0">
-                    <FaStore className="h-2.5 w-2.5" />
+                <div className="flex items-center gap-2.5 hover:opacity-95 transition-opacity cursor-pointer">
+                  <div className="h-10 w-10 rounded-2xl overflow-hidden bg-slate-700 shrink-0 ring-1 ring-slate-600/60">
+                    <img
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+                      alt={user.isLoggedIn ? user.name : 'Ajay Kumar'}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/logo.png';
+                      }}
+                    />
                   </div>
-                  <span className="text-xs font-semibold text-slate-800">Portals</span>
-                  <FaChevronDown className="h-2.5 w-2.5 text-slate-400" />
-                </button>
+                  <div className="hidden md:flex items-center gap-2">
+                    <div className="text-left leading-tight">
+                      <div className="text-sm font-semibold text-white tracking-tight">
+                        {user.isLoggedIn ? user.name : 'Ajay Kumar'}
+                      </div>
+                      <div className="text-xs text-slate-400 font-normal mt-0.5">
+                        (Contractor)
+                      </div>
+                    </div>
+                    <FaChevronDown className="h-3 w-3 text-slate-300 ml-0.5 shrink-0" />
+                  </div>
+                </div>
               }
             >
-              <div className="px-4 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                Ecosystem Portals
+              <div className="px-4 py-2.5 border-b border-slate-100">
+                <p className="text-xs font-semibold text-slate-900">{user.isLoggedIn ? user.name : 'Ajay Kumar'}</p>
+                <p className="text-xs text-slate-500 font-normal">{user.phone || '+91 98470 12345'}</p>
               </div>
-              <a
-                href="../vendor-panel"
-                className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#FF6500] transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-orange-100 text-[#FF6500] flex items-center justify-center shrink-0">
-                  <FaStore className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <div className="font-semibold">Become a Vendor</div>
-                  <div className="text-[10px] text-slate-500 font-normal">Merchant Store Onboarding</div>
-                </div>
-              </a>
-              <a
-                href="../driver-panel"
-                className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#FF6500] transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                  <FaTruck className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <div className="font-semibold">Logistics Partner</div>
-                  <div className="text-[10px] text-slate-500 font-normal">Driver &amp; Fleet Network</div>
-                </div>
-              </a>
-              <div className="border-t border-slate-100 my-1"></div>
-              <a
-                href="#support"
-                className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                  <FaHeadset className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <div className="font-semibold">24x7 Site Support</div>
-                  <div className="text-[10px] text-slate-500 font-normal">Live Helpdesk &amp; Orders</div>
-                </div>
-              </a>
-            </Select>
+              <div className="py-1">
+                <Link 
+                  href="/profile"
+                  onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                >
+                  <FaUser className="h-3.5 w-3.5" /> Profile Settings
+                </Link>
 
-            {user.isLoggedIn ? (
-              <Select
-                align="right"
-                popoverWidth="w-60 sm:w-64"
-                trigger={
-                  <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-2xl bg-orange-50 hover:bg-orange-100/80 border border-orange-200 transition-all h-9 sm:h-11 cursor-pointer">
-                    <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-xl bg-[#FF6500] text-white flex items-center justify-center font-semibold text-xs">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="hidden md:inline text-xs font-semibold text-slate-900 max-w-[80px] truncate">
-                      {user.name}
-                    </span>
-                    <FaChevronDown className="h-2.5 w-2.5 text-slate-500" />
-                  </div>
-                }
-              >
-                <div className="px-4 py-2.5 border-b border-slate-100">
-                  <p className="text-xs font-semibold text-slate-900">{user.name}</p>
-                  <p className="text-xs text-slate-500 font-normal">{user.phone || user.email}</p>
-                </div>
-                <div className="py-1">
-                  <Link 
-                    href="/profile"
-                    onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
-                  >
-                    <FaUser className="h-3.5 w-3.5" /> Profile Settings
-                  </Link>
+                <Link 
+                  href="/tracking"
+                  onClick={() => { onNavigate?.('tracking'); }} 
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                >
+                  <FaBagShopping className="h-3.5 w-3.5" /> My Orders &amp; Tracking
+                </Link>
 
-                  <Link 
-                    href="/tracking"
-                    onClick={() => { onNavigate?.('tracking'); }} 
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
-                  >
-                    <FaBagShopping className="h-3.5 w-3.5" /> My Orders &amp; Tracking
-                  </Link>
+                <Link 
+                  href="/profile"
+                  onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                >
+                  <FaCreditCard className="h-3.5 w-3.5" /> Connected Bank / Credit
+                </Link>
 
-                  <Link 
-                    href="/profile"
-                    onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
-                  >
-                    <FaCreditCard className="h-3.5 w-3.5" /> Connected Bank / UPI
-                  </Link>
-
-                  <Link 
-                    href="/site-delivery"
-                    onClick={() => { onNavigate?.('site_delivery_page'); }} 
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
-                  >
-                    <FaMapLocationDot className="h-3.5 w-3.5" /> Saved Site Addresses
-                  </Link>
-
-                  <Link 
-                    href="/profile"
-                    onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
-                  >
-                    <FaHeart className="h-3.5 w-3.5" /> Favorite Merchants
-                  </Link>
-                </div>
-                <div className="border-t border-slate-100 pt-1">
+                <Link 
+                  href="/site-delivery"
+                  onClick={() => { onNavigate?.('site_delivery_page'); }} 
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                >
+                  <FaMapLocationDot className="h-3.5 w-3.5" /> Saved Site Addresses
+                </Link>
+              </div>
+              <div className="border-t border-slate-100 pt-1">
+                {user.isLoggedIn ? (
                   <button
                     onClick={onLogout}
                     className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 cursor-pointer"
                   >
                     <FaRightFromBracket className="h-3.5 w-3.5" /> Logout Session
                   </button>
-                </div>
-              </Select>
-            ) : (
-              <button
-                onClick={onOpenAuthModal}
-                className="px-3 sm:px-4.5 py-1.5 sm:py-2 rounded-full bg-[#FF6500] hover:bg-[#E05800] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 h-9 sm:h-11 shrink-0 cursor-pointer"
-              >
-                <FaUser className="h-3.5 w-3.5" />
-                <span>Sign In</span>
-              </button>
-            )}
+                ) : (
+                  <button
+                    onClick={onOpenAuthModal}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-[#FF6500] hover:bg-orange-50 cursor-pointer"
+                  >
+                    <FaUser className="h-3.5 w-3.5" /> Sign In / Register
+                  </button>
+                )}
+              </div>
+            </Select>
+
+            <div className="h-7 w-[1px] bg-slate-700/80 mx-1 sm:mx-2 hidden sm:block shrink-0" />
+
+            <button
+              onClick={() => router.push('/tracking')}
+              className="relative p-1.5 text-slate-200 hover:text-white transition-colors cursor-pointer shrink-0"
+              title="Notifications"
+            >
+              <FiBell className="h-6 w-6 text-slate-200" />
+              <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-xs bg-[#FF6500]" />
+            </button>
+
+            <Link 
+              href="/cart"
+              onClick={() => onNavigate?.('cart_vehicle')}
+              className="flex items-center gap-2 text-white hover:opacity-90 transition-opacity cursor-pointer shrink-0 ml-0.5 sm:ml-1"
+              title="View Cart & Truck Allocation"
+            >
+              <FiShoppingCart className="h-6 w-6 text-white shrink-0" />
+              <span className="text-base font-semibold text-white hidden sm:inline tracking-tight">Cart</span>
+              <span className="h-6 w-6 rounded-xl bg-[#FF6500] text-white text-xs font-bold flex items-center justify-center shadow-xs shrink-0">
+                {cartCount > 0 ? cartCount : 1}
+              </span>
+            </Link>
 
           </div>
         </div>
 
-        <div className="lg:hidden pt-2 pb-0.5">
-          <div className="relative flex items-center h-9">
+        <div className="lg:hidden pt-2.5 pb-0.5">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center h-9 bg-white rounded-xl shadow-xs px-2">
+            <FaMagnifyingGlass className="h-3 w-3 text-slate-400 mr-2 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Cement, Steel, PVC Pipes"
-              className="w-full h-full pl-8.5 pr-26 py-1.5 text-xs font-normal rounded-full bg-slate-50 border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 text-slate-900"
+              placeholder="Search Cement, Steel, Sand..."
+              className="w-full h-full text-xs font-normal text-slate-900 placeholder-slate-400 focus:outline-none bg-transparent"
             />
-            <FaMagnifyingGlass className="absolute left-3 top-3 h-3 w-3 text-slate-400" />
             <button
+              type="button"
               onClick={handleVoiceSearch}
-              className={`absolute right-1 h-7 px-2.5 rounded-full text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all ${
-                isListeningVoice ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-900 text-white'
+              className={`h-7 px-2 rounded-lg text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all ${
+                isListeningVoice ? 'bg-red-500 text-white animate-pulse' : 'bg-[#0d1527] text-white'
               }`}
             >
               <FaMicrophone className={`h-2.5 w-2.5 ${isListeningVoice ? 'text-white' : 'text-[#FF6500]'}`} />
-              <span>{isListeningVoice ? 'Listening' : 'Voice'}</span>
+              <span>{isListeningVoice ? 'Listening...' : 'Voice'}</span>
             </button>
-          </div>
+          </form>
         </div>
 
       </div>

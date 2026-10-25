@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { 
-  FaChevronLeft, 
-  FaLocationDot, 
-  FaArrowRight, 
-  FaTruckFast, 
-  FaUserCheck, 
-  FaPhone, 
-  FaPeopleCarryBox, 
-  FaRoad, 
-  FaCircleCheck,
-  FaShieldHalved,
-  FaBuilding
+import React,{ useState } from 'react';
+import {
+FaChevronLeft,
+FaLocationDot,
+FaArrowRight,
+FaTruckFast,
+FaUserCheck,
+FaPhone,
+FaPeopleCarryBox,
+FaRoad,
+FaCircleCheck,
+FaShieldHalved,
+FaBuilding,
+FaChevronRight
 } from 'react-icons/fa6';
 import { LocationState } from '../../types/buyer';
 import { Input } from '../ui/Input';
@@ -54,44 +54,47 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="py-5 sm:py-10">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
+      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
           
-          {/* Top Page Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-4 sm:pb-6">
-            <div>
-              <div className="mb-2.5">
-                <button
-                  onClick={onBack}
-                  className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 shadow-2xs cursor-pointer"
-                >
-                  <FaChevronLeft className="h-3 w-3" />
-                  <span>Back to Previous Setup</span>
-                </button>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <button
+                onClick={onBack}
+                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0"
+                title="Back to Previous Setup"
+                aria-label="Back"
+              >
+                <FaChevronLeft className="h-4 w-4" />
+              </button>
+              <div>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
+                  <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBack}>Order Flow</span>
+                  <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
+                  <span className="text-slate-700 font-semibold">Site Instructions</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
+                  Site Delivery &amp; Access Instructions
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+                  Configure site access constraints, labor assistance, and site supervisor contact details
+                </p>
               </div>
-              <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-                Site Delivery &amp; Access Instructions
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1">
-                Configure site access constraints, labor assistance, and site supervisor contact details
-              </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             
-            {/* LEFT SIDE: Options Selection Cards */}
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
               
-              {/* Site Access Constraints Card */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                     <FaRoad className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-slate-900">Site Access Options</h3>
-                    <p className="text-xs text-slate-500 font-normal">Select road access width and unloading vehicle constraints</p>
+                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Site Access Options</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Select road access width and unloading vehicle constraints</p>
                   </div>
                 </div>
 
@@ -102,8 +105,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setAccessOption('narrow')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       accessOption === 'narrow'
-                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -123,8 +126,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setAccessOption('no_heavy')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       accessOption === 'no_heavy'
-                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -144,8 +147,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setAccessOption('crane')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       accessOption === 'crane'
-                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -165,8 +168,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setAccessOption('ground')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       accessOption === 'ground'
-                        ? 'bg-orange-50/90 border-2 border-[#FF6500] shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -184,8 +187,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 </div>
               </div>
 
-              {/* Labor Assistance Options Card */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
                   <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                     <FaPeopleCarryBox className="h-5 w-5" />
@@ -203,8 +205,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setLaborAssistance('two_helpers')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       laborAssistance === 'two_helpers'
-                        ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-emerald-50/80 shadow-xs ring-1 ring-emerald-200'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -222,8 +224,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setLaborAssistance('four_helpers')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       laborAssistance === 'four_helpers'
-                        ? 'bg-emerald-50/90 border-2 border-emerald-600 shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-emerald-50/80 shadow-xs ring-1 ring-emerald-200'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -241,8 +243,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     onClick={() => setLaborAssistance('none')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer ${
                       laborAssistance === 'none'
-                        ? 'bg-slate-100 border-2 border-slate-400 shadow-xs'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs'
+                        ? 'bg-slate-100 shadow-xs ring-1 ring-slate-300'
+                        : 'bg-slate-50/80 hover:bg-slate-100 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -255,15 +257,14 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                 </div>
               </div>
 
-              {/* Site Supervisor Contact Details Card */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                     <FaUserCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-slate-900">Site Contact Person Details</h3>
-                    <p className="text-xs text-slate-500 font-normal">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
+                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Site Contact Person Details</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
                   </div>
                 </div>
 
@@ -288,14 +289,13 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
 
             </div>
 
-            {/* RIGHT SIDE: Summary Card */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-24 self-start">
               
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 <h3 className="font-semibold text-base text-slate-900 border-b border-slate-100 pb-3.5">Delivery Instructions Summary</h3>
 
                 <div className="space-y-3 text-xs text-slate-600 font-normal">
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Target Site</span>
                     <p className="font-semibold text-slate-900 flex items-center gap-1.5">
                       <FaBuilding className="h-3 w-3 text-[#FF6500]" />
@@ -303,7 +303,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Access Constraints</span>
                     <p className="font-semibold text-slate-900">
                       {accessOption === 'narrow' && 'Narrow Road (< 10ft Mini Truck Only)'}
@@ -313,7 +313,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Unloading Helpers</span>
                     <p className="font-semibold text-slate-900 text-emerald-700">
                       {laborAssistance === 'two_helpers' && '2 Unloading Helpers (+₹400)'}
@@ -322,7 +322,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Supervisor Contact</span>
                     <p className="font-semibold text-slate-900">{supervisorName}</p>
                     <p className="text-slate-500 font-medium">{supervisorPhone}</p>

@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  FaStore, 
-  FaLocationDot, 
-  FaClock, 
-  FaStar, 
-  FaShieldHalved, 
-  FaPhone, 
-  FaBagShopping, 
-  FaFilter, 
-  FaBuilding, 
-  FaCircleCheck 
+import React,{ useState } from 'react';
+import {
+FaStore,
+FaLocationDot,
+FaClock,
+FaStar,
+FaShieldHalved,
+FaPhone,
+FaBagShopping,
+FaFilter,
+FaBuilding,
+FaCircleCheck
 } from 'react-icons/fa6';
 import { HardwareMerchant } from '../../types/buyer';
 import { Select, SelectOption } from '../ui/Select';
@@ -70,13 +70,16 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 mb-2.5 sm:mb-5">
           <div>
-            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-0.5">
-              <FaCircleCheck className="h-3 w-3" />
-              <span>Verified Local Merchants</span>
-            </div>
-            <h2 className="text-lg sm:text-2xl font-semibold text-slate-900 tracking-tight">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center gap-1.5">
+              <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" />
+              Verified Local Merchants
+            </p>
+            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">
               Nearby Hardware Suppliers
             </h2>
+            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
+              Find verified hardware stores, dealer warehouses, and direct merchant stock within your delivery radius
+            </p>
           </div>
 
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
@@ -96,16 +99,16 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                 icon={<FaFilter className="h-3 w-3 text-slate-500" />}
                 options={SORT_OPTIONS}
                 value={sortBy}
-                onChange={(val) => setSortBy(val as any)}
+                onChange={(val) => setSortBy(val as 'distance' | 'rating' | 'eta')}
               />
             </div>
 
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-full text-xs font-semibold transition-all h-9 sm:h-9 border cursor-pointer ${
+              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-2xl text-xs font-semibold transition-all h-9 sm:h-9 cursor-pointer ${
                 onlyVerified
-                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
-                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                  ? 'bg-emerald-50 text-emerald-800 shadow-xs'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 shadow-2xs'
               }`}
             >
               {onlyVerified
@@ -118,7 +121,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-2xl sm:rounded-3xl p-6 border border-slate-200/80 shadow-xs">
+          <div className="text-center py-12 bg-white rounded-2xl sm:rounded-3xl p-6 shadow-xs">
             <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
             <h3 className="text-sm font-semibold text-slate-800">No Stores Found</h3>
             <p className="text-xs text-slate-400 mt-0.5 font-normal">Try expanding your radius filter to 20 KM</p>
@@ -131,7 +134,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
             {filtered.map((merchant) => (
               <div
                 key={merchant.id}
-                className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                className="bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden"
               >
                 <div className="bg-slate-50/80 p-3.5 sm:p-5 border-b border-slate-100">
                   <div className="flex items-start justify-between gap-2.5">
@@ -141,7 +144,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                           {merchant.name.charAt(0)}
                         </div>
                         {merchant.verified && (
-                          <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white">
+                          <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-lg bg-emerald-500 flex items-center justify-center shadow-xs ring-2 ring-white">
                             <FaShieldHalved className="h-2.5 w-2.5 text-white" />
                           </span>
                         )}
@@ -157,7 +160,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                       </div>
                     </div>
 
-                    <span className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl bg-white border border-slate-200/60 text-slate-800 text-[10px] sm:text-[11px] font-semibold shrink-0 shadow-2xs">
+                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-2xl bg-white text-slate-800 text-[10px] sm:text-[11px] font-semibold shrink-0 shadow-2xs">
                       <FaStar className="h-2.5 w-2.5 text-amber-400" />
                       {merchant.rating}
                     </span>
@@ -166,7 +169,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
 
                 <div className="p-3.5 sm:p-5 flex-1 flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 bg-orange-50/70 rounded-xl px-2.5 py-2 border border-orange-100/60">
+                    <div className="flex items-center gap-2 bg-orange-50/70 rounded-2xl px-2.5 py-2">
                       <div className="h-6 w-6 rounded-lg bg-[#FF6500]/10 text-[#FF6500] flex items-center justify-center shrink-0">
                         <FaLocationDot className="h-3 w-3" />
                       </div>
@@ -176,7 +179,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 bg-emerald-50/70 rounded-xl px-2.5 py-2 border border-emerald-100/60">
+                    <div className="flex items-center gap-2 bg-emerald-50/70 rounded-2xl px-2.5 py-2">
                       <div className="h-6 w-6 rounded-lg bg-emerald-600/10 text-emerald-600 flex items-center justify-center shrink-0">
                         <FaClock className="h-3 w-3" />
                       </div>
@@ -191,13 +194,11 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                     <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                       Featured Stocked Brands
                     </div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] sm:text-[11px] font-medium text-slate-600">
                       {merchant.brands.map((brand, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-medium text-[10px] sm:text-[11px]"
-                        >
-                          {brand}
+                        <span key={idx} className="flex items-center gap-2">
+                          {idx > 0 && <span className="h-2.5 w-px bg-slate-300 inline-block" />}
+                          <span>{brand}</span>
                         </span>
                       ))}
                     </div>

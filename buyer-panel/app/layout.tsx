@@ -1,22 +1,30 @@
-import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Poppins } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import React from "react";
+import { Urbanist, Manrope } from "next/font/google";
 import "./globals.css";
+import { AppProvider } from "../context/AppContext";
+import { AppShell } from "../components/layout/AppShell";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "MaterialHub - Wholesale Construction Materials Platform",
   description: "Direct B2B and retail marketplace for Cement, TMT Steel, PVC Pipes, Paints & Hardware.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -27,9 +35,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${poppins.variable} h-full antialiased`}
+      className={`${urbanist.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <AppProvider>
+          <AppShell>{children}</AppShell>
+        </AppProvider>
+      </body>
     </html>
   );
 }

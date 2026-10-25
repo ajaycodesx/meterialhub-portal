@@ -1,24 +1,30 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  FaChevronLeft, 
-  FaLocationDot, 
-  FaBuilding, 
-  FaClock, 
-  FaTruckFast, 
-  FaShieldHalved, 
-  FaCircleCheck, 
-  FaCreditCard, 
-  FaLandmark, 
-  FaMoneyBillWave, 
-  FaFileInvoiceDollar, 
-  FaLock, 
-  FaArrowRight
+import {
+  FaChevronLeft,
+  FaLocationDot,
+  FaBuilding,
+  FaClock,
+  FaTruckFast,
+  FaCircleCheck,
+  FaCreditCard,
+  FaLandmark,
+  FaMoneyBillWave,
+  FaFileInvoiceDollar,
+  FaLock,
+  FaArrowRight,
+  FaShieldHalved,
+  FaSpinner,
+  FaXmark,
+  FaBolt,
+  FaCheck,
+  FaChevronRight
 } from 'react-icons/fa6';
 import { HardwareMerchant, CartItem, LocationState } from '../../types/buyer';
 import { VehicleOption } from './CartVehicleSelection';
 import { Button } from '../ui/Button';
+import { buyerApi, authApi, apiClient, paymentApi } from '../../lib/api';
 
 interface CheckoutPageProps {
   merchant: HardwareMerchant;
@@ -39,74 +45,242 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   onBackToCart,
   onPlaceOrderSuccess
 }) => {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [showRazorpayModal, setShowRazorpayModal] = useState(false);
+  const [razorpayOrderData, setRazorpayOrderData] = useState<{
+    orderId: string;
+    razorpayOrderId: string;
+    amount: number;
+    keyId: string;
+    method: PaymentMethod;
+  } | null>(null);
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
+  const [paymentVerifiedSuccess, setPaymentVerifiedSuccess] = useState(false);
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
   const totalWeightKg = cartItems.reduce((acc, item) => acc + (item.product.weightKg * item.quantity), 0);
   const totalWeightTons = totalWeightKg / 1000;
 
   const freightFee = vehicle.freightFee;
-  const handlingFee = 250; // Site offloading support fee
-  const gstAmount = Math.round(subtotal * 0.18); // 18% GST average on materials
+  const handlingFee = 250;
+  const gstAmount = Math.round(subtotal * 0.18);
   const grandTotal = subtotal + freightFee + handlingFee + gstAmount;
 
-  const handleConfirmOrder = () => {
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window === 'undefined') return resolve(false);
+      if ((window as any).Razorpay) return resolve(true);
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleConfirmOrder = async () => {
     setIsPlacingOrder(true);
-    setTimeout(() => {
+    setError(null);
+
+    try {
+      const demoEmail = process.env.NEXT_PUBLIC_DEMO_BUYER_EMAIL || 'buyer@materialhub.in';
+      const demoPassword = process.env.NEXT_PUBLIC_DEMO_BUYER_PASSWORD || 'buyer123';
+
+      if (!localStorage.getItem('access_token')) {
+        try {
+          const auth: any = await authApi.login(demoEmail, demoPassword);
+          if (auth?.access_token) {
+            apiClient.setToken(auth.access_token);
+          }
+        } catch (loginErr) {
+          console.warn('Initial auto-login attempt failed:', loginErr);
+        }
+      }
+
+      const orderData = {
+        merchantId: merchant.id,
+        items: cartItems.map(item => ({
+          productId: item.product.id,
+          quantity: item.quantity
+        })),
+        deliveryAddress: location.address,
+        pincode: location.pinCode,
+        siteConstraints: {
+          roadWidth: location.siteConstraints?.roadWidth || 'Standard',
+          craneNeeded: location.siteConstraints?.craneNeeded || false,
+          unloadingTimeSlot: location.siteConstraints?.unloadingTimeSlot || 'Flexible'
+        },
+        paymentMode: paymentMethod === 'cod'
+          ? 'Cash on Unloading'
+          : paymentMethod === 'credit'
+          ? 'Wholesale B2B Credit'
+          : 'Online Payment (Razorpay)'
+      };
+
+      let response: any;
+      try {
+        response = await buyerApi.createOrder(orderData);
+      } catch (orderErr: any) {
+        if (orderErr?.status === 401 || orderErr?.message?.includes('credentials')) {
+          const auth: any = await authApi.login(demoEmail, demoPassword);
+          if (auth?.access_token) {
+            apiClient.setToken(auth.access_token);
+            response = await buyerApi.createOrder(orderData);
+          } else {
+            throw orderErr;
+          }
+        } else {
+          throw orderErr;
+        }
+      }
+
+      const placedId = response?.orderId || response?.id || `MH-${Date.now().toString().slice(-6)}`;
+
+      if (paymentMethod === 'cod' || paymentMethod === 'credit') {
+        onPlaceOrderSuccess(placedId);
+        return;
+      }
+
+      const paymentOrder: any = await paymentApi.createOrder({
+        order_id: placedId,
+        amount: grandTotal * 100,
+        currency: 'INR',
+        receipt: `rcpt_${placedId}`
+      });
+
+      const keyId = paymentOrder.key_id || 'sim_key_id';
+
+      if (keyId.startsWith('rzp_')) {
+        const loaded = await loadRazorpayScript();
+        if (loaded && (window as any).Razorpay) {
+          const options = {
+            key: keyId,
+            amount: paymentOrder.amount,
+            currency: paymentOrder.currency || 'INR',
+            name: 'MaterialHub B2B',
+            description: `Order ${placedId} - ${merchant.name}`,
+            order_id: paymentOrder.id,
+            handler: async (resp: any) => {
+              try {
+                await paymentApi.verifyPayment({
+                  razorpay_order_id: resp.razorpay_order_id,
+                  razorpay_payment_id: resp.razorpay_payment_id,
+                  razorpay_signature: resp.razorpay_signature
+                });
+                onPlaceOrderSuccess(placedId);
+              } catch (verifyErr: any) {
+                setError(verifyErr.message || 'Payment verification failed');
+              }
+            },
+            prefill: {
+              name: 'Ajay Construction Corp',
+              email: 'buyer@materialhub.in',
+              contact: '+919876543210'
+            },
+            theme: {
+              color: '#FF6500'
+            }
+          };
+          const rzp = new (window as any).Razorpay(options);
+          rzp.open();
+          return;
+        }
+      }
+
+      setRazorpayOrderData({
+        orderId: placedId,
+        razorpayOrderId: paymentOrder.id,
+        amount: grandTotal,
+        keyId,
+        method: paymentMethod
+      });
+      setShowRazorpayModal(true);
+
+    } catch (err: any) {
+      setError(err.message || 'Failed to place order. Please try again.');
+      console.error('Order placement error:', err);
+    } finally {
       setIsPlacingOrder(false);
-      const generatedOrderId = `MH-${Math.floor(100000 + Math.random() * 900000)}`;
-      onPlaceOrderSuccess(generatedOrderId);
-    }, 1200);
+    }
+  };
+
+  const handleVerifySimulatedPayment = async () => {
+    if (!razorpayOrderData) return;
+    setIsVerifyingPayment(true);
+    try {
+      const simPaymentId = `pay_sim_${Date.now()}`;
+      await paymentApi.verifyPayment({
+        razorpay_order_id: razorpayOrderData.razorpayOrderId,
+        razorpay_payment_id: simPaymentId,
+        razorpay_signature: 'sim_verified_signature'
+      });
+      setPaymentVerifiedSuccess(true);
+      setTimeout(() => {
+        setShowRazorpayModal(false);
+        onPlaceOrderSuccess(razorpayOrderData.orderId);
+      }, 1000);
+    } catch (err: any) {
+      setError(err.message || 'Payment verification failed. Please try again.');
+      setShowRazorpayModal(false);
+    } finally {
+      setIsVerifyingPayment(false);
+    }
   };
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="py-5 sm:py-10">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
-          
-          {/* Top Page Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-4 sm:pb-6">
-            <div>
-              <div className="mb-2">
-                <button
-                  onClick={onBackToCart}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
-                >
-                  <FaChevronLeft className="h-3 w-3" />
-                  <span>Back to Cart &amp; Vehicle Selection</span>
-                </button>
+      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <button
+                onClick={onBackToCart}
+                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0"
+                title="Back to Cart & Vehicle Selection"
+                aria-label="Back to Cart"
+              >
+                <FaChevronLeft className="h-4 w-4" />
+              </button>
+              <div>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
+                  <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBackToCart}>Store Cart</span>
+                  <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
+                  <span className="text-slate-700 font-semibold">Checkout Confirmation</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
+                  Checkout &amp; Site Delivery Confirmation
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+                  Verify unloading site address, payment method, and GST tax invoice details
+                </p>
               </div>
-              <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-                Checkout &amp; Site Delivery Confirmation
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1">
-                Verify unloading site address, payment method, and GST tax invoice details
-              </p>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 shrink-0">
-              <FaLock className="h-3.5 w-3.5 text-emerald-600" />
-              <span>256-Bit SSL Encrypted Checkout</span>
+            <div className="flex items-center self-start sm:self-center shrink-0">
+              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-emerald-600">
+                <FaLock className="h-3.5 w-3.5 text-emerald-600" />
+                <span className="text-slate-800">256-Bit SSL Encrypted Checkout</span>
+              </div>
             </div>
           </div>
 
-          {/* Master-Detail Split Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-            
-            {/* LEFT SIDE: Site Details, Logistics Summary & Payment Options */}
+
             <div className="lg:col-span-7 space-y-5 sm:space-y-6">
-              
-              {/* Delivery Address & Site Details */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
+
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                       <FaLocationDot className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Delivery Address &amp; Site Details</h3>
-                      <p className="text-xs text-slate-500 font-normal">Verified unloading site for heavy logistics</p>
+                      <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Delivery Address &amp; Site Details</h2>
+                      <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Verified unloading site for heavy logistics</p>
                     </div>
                   </div>
 
@@ -116,7 +290,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   </span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-2">
+                <div className="p-4 rounded-2xl bg-slate-50/80 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs sm:text-sm font-semibold text-slate-900 flex items-center gap-2">
                       <FaBuilding className="h-3.5 w-3.5 text-orange-500 shrink-0" />
@@ -132,8 +306,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 </div>
               </div>
 
-              {/* Order Summary & Allocated Logistics Vehicle */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
@@ -146,9 +319,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="p-4 rounded-2xl bg-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="h-16 w-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-200/60">
+                    <div className="h-16 w-20 rounded-xl bg-slate-100 overflow-hidden shrink-0">
                       <img
                         src={vehicle.image}
                         alt={vehicle.name}
@@ -158,9 +331,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     <div>
                       <h4 className="font-semibold text-xs sm:text-sm text-slate-900">{vehicle.name}</h4>
                       <p className="text-xs text-slate-500 font-normal mt-0.5">{vehicle.subtitle}</p>
-                      <div className="flex items-center gap-2.5 text-[11px] text-slate-600 font-medium mt-1">
+                      <div className="flex items-center gap-2 text-[11px] text-slate-600 font-medium mt-1">
                         <span>Payload: <strong className="text-slate-900">{totalWeightTons.toFixed(2)} Tons</strong></span>
-                        <span>&bull;</span>
+                        <span className="h-2.5 w-px bg-slate-300 inline-block" />
                         <span className="flex items-center gap-1 text-slate-700 font-semibold">
                           <FaClock className="h-3 w-3 text-orange-500" />
                           ETA ~{vehicle.etaMinutes} Mins
@@ -169,22 +342,21 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </div>
                   </div>
 
-                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200/80 text-slate-900 text-xs font-semibold text-center shrink-0">
+                  <span className="px-3 py-1.5 rounded-xl bg-white shadow-2xs text-slate-900 text-xs font-semibold text-center shrink-0">
                     Freight: ₹{freightFee.toLocaleString()}
                   </span>
                 </div>
               </div>
 
-              {/* Payment Method Selection */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
                       <FaCreditCard className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Select Payment Method</h3>
-                      <p className="text-xs text-slate-500 font-normal">Instant digital payment or B2B credit terms</p>
+                      <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Select Payment Method</h2>
+                      <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Instant digital payment or B2B credit terms</p>
                     </div>
                   </div>
                 </div>
@@ -196,8 +368,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     onClick={() => setPaymentMethod('upi')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                       paymentMethod === 'upi'
-                        ? 'bg-white border-2 border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-sm hover:shadow-md'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/60 hover:bg-slate-100/70 shadow-2xs hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -217,8 +389,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     onClick={() => setPaymentMethod('netbanking')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                       paymentMethod === 'netbanking'
-                        ? 'bg-white border-2 border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-sm hover:shadow-md'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/60 hover:bg-slate-100/70 shadow-2xs hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -238,8 +410,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     onClick={() => setPaymentMethod('card')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
                       paymentMethod === 'card'
-                        ? 'bg-white border-2 border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-sm hover:shadow-md'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/60 hover:bg-slate-100/70 shadow-2xs hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -256,11 +428,32 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod('credit')}
+                    onClick={() => setPaymentMethod('cod')}
                     className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer ${
+                      paymentMethod === 'cod'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/60 hover:bg-slate-100/70 shadow-2xs hover:shadow-xs'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                        <FaTruckFast className="h-4 w-4 text-amber-600" />
+                        Cash on Unloading
+                      </span>
+                      {paymentMethod === 'cod' && <FaCircleCheck className="h-4 w-4 text-[#FF6500]" />}
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      Inspect goods at site and verify count before handing payment to driver.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('credit')}
+                    className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all cursor-pointer sm:col-span-2 ${
                       paymentMethod === 'credit'
-                        ? 'bg-white border-2 border-[#FF6500] shadow-lg ring-2 ring-[#FF6500]/20'
-                        : 'bg-white hover:bg-slate-50 border border-slate-200/90 shadow-sm hover:shadow-md'
+                        ? 'bg-orange-50/80 shadow-xs ring-1 ring-orange-200'
+                        : 'bg-slate-50/60 hover:bg-slate-100/70 shadow-2xs hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -280,10 +473,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
             </div>
 
-            {/* RIGHT SIDE: Order Total & Tax Invoice Summary */}
-            <div className="lg:col-span-5 space-y-5 sm:space-y-6">
+            <div className="lg:col-span-5 space-y-5 lg:sticky lg:top-24 self-start">
               
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-5">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 
                 <div className="border-b border-slate-100 pb-3.5 space-y-1">
                   <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
@@ -325,19 +517,31 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   </div>
                 </div>
 
+                {error && (
+                  <div className="mt-4 p-3 rounded-2xl bg-red-50 text-red-700 text-xs font-medium shadow-xs">
+                    {error}
+                  </div>
+                )}
+
                 <Button
                   variant="primary"
                   size="md"
                   disabled={isPlacingOrder}
                   onClick={handleConfirmOrder}
-                  icon={<FaArrowRight className="h-3.5 w-3.5" />}
+                  icon={isPlacingOrder ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaArrowRight className="h-3.5 w-3.5" />}
                   className="w-full mt-4 py-3 sm:py-3.5"
                 >
-                  {isPlacingOrder ? 'Processing Supply Order' : 'Place Supply Order Now'}
+                  {isPlacingOrder
+                    ? 'Processing Supply Order...'
+                    : paymentMethod === 'cod'
+                    ? 'Place Order (Cash on Unloading)'
+                    : paymentMethod === 'credit'
+                    ? 'Confirm B2B Credit Order'
+                    : `Proceed to Pay ₹${grandTotal.toLocaleString()}`}
                 </Button>
 
                 <div className="text-center text-[11px] text-slate-400 font-normal pt-1">
-                  By placing this order, you agree to MaterialHub's Wholesale B2B Terms &amp; Conditions.
+                  By placing this order, you agree to MaterialHub&apos;s Wholesale B2B Terms &amp; Conditions.
                 </div>
 
               </div>
@@ -348,6 +552,101 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
         </div>
       </section>
+
+      {showRazorpayModal && razorpayOrderData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all">
+            
+            <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-5 sm:p-6 text-white relative">
+              <button
+                onClick={() => {
+                  if (!isVerifyingPayment) setShowRazorpayModal(false);
+                }}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <FaXmark className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-2.5 mb-2 text-[11px]">
+                <span className="font-semibold text-orange-400">
+                  Razorpay Secure Gateway
+                </span>
+                <span className="h-3 w-px bg-slate-600 inline-block" />
+                <span className="flex items-center gap-1 text-slate-300">
+                  <FaShieldHalved className="h-3 w-3 text-emerald-400" />
+                  256-Bit SSL
+                </span>
+              </div>
+
+              <h3 className="text-lg font-semibold tracking-tight text-white">
+                Complete Online Payment
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Merchant: {merchant.name}
+              </p>
+            </div>
+
+            <div className="p-6 space-y-5">
+              <div className="p-4 rounded-2xl bg-slate-50 space-y-2">
+                <div className="flex justify-between items-center text-xs text-slate-500">
+                  <span>Order Reference</span>
+                  <span className="font-semibold text-slate-700">{razorpayOrderData.orderId}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-slate-500">
+                  <span>Gateway Transaction Ref</span>
+                  <span className="font-mono text-[11px] text-slate-600">{razorpayOrderData.razorpayOrderId}</span>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 flex justify-between items-center">
+                  <span className="text-sm font-semibold text-slate-800">Total Payable</span>
+                  <span className="text-xl font-semibold text-[#FF6500]">
+                    ₹{razorpayOrderData.amount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/70 text-xs text-blue-900 space-y-1">
+                <div className="flex items-center gap-2 font-semibold">
+                  <FaBolt className="h-3.5 w-3.5 text-blue-600" />
+                  Payment Channel: {razorpayOrderData.method.toUpperCase()}
+                </div>
+                <p className="text-[11px] text-blue-700 font-normal leading-relaxed">
+                  Development Simulation Mode is enabled. Confirming below will trigger real-time cryptographic webhook verification with the backend.
+                </p>
+              </div>
+
+              {paymentVerifiedSuccess ? (
+                <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center gap-2 text-sm font-semibold border border-emerald-200">
+                  <FaCircleCheck className="h-5 w-5 text-emerald-600" />
+                  <span>Payment Verified Successfully! Redirecting...</span>
+                </div>
+              ) : (
+                <div className="space-y-3 pt-2">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    disabled={isVerifyingPayment}
+                    onClick={handleVerifySimulatedPayment}
+                    icon={isVerifyingPayment ? <FaSpinner className="h-4 w-4 animate-spin" /> : <FaCheck className="h-4 w-4" />}
+                    className="w-full py-3.5"
+                  >
+                    {isVerifyingPayment ? 'Verifying with Gateway...' : `Confirm & Authorize ₹${razorpayOrderData.amount.toLocaleString()}`}
+                  </Button>
+
+                  <button
+                    type="button"
+                    disabled={isVerifyingPayment}
+                    onClick={() => setShowRazorpayModal(false)}
+                    className="w-full text-center text-xs text-slate-500 hover:text-slate-800 py-2 transition-colors cursor-pointer"
+                  >
+                    Cancel and Return to Payment Selection
+                  </button>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

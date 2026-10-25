@@ -1,30 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  FaChevronLeft, 
-  FaMapLocationDot, 
-  FaTruckFast, 
-  FaPhone, 
-  FaCommentDots, 
-  FaShieldHalved, 
-  FaCircleCheck, 
-  FaClock, 
-  FaBuilding, 
-  FaFileInvoiceDollar, 
-  FaTriangleExclamation, 
-  FaHeadset, 
-  FaKey, 
+import {
+  FaChevronLeft,
+  FaMapLocationDot,
+  FaTruckFast,
+  FaPhone,
+  FaCommentDots,
+  FaCircleCheck,
+  FaClock,
+  FaFileInvoiceDollar,
+  FaTriangleExclamation,
+  FaHeadset,
+  FaKey,
   FaCheck,
-  FaBoxesStacked,
-  FaStore,
   FaLocationPin,
   FaCompass
 } from 'react-icons/fa6';
 import { HardwareMerchant, LocationState } from '../../types/buyer';
 import { VehicleOption } from './CartVehicleSelection';
 import { Button } from '../ui/Button';
+import { buyerApi } from '../../lib/api';
 
 interface LiveTrackingPageProps {
   orderId: string;
@@ -44,20 +41,99 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
   onReturnHome
 }) => {
   const [reportDelaySent, setReportDelaySent] = useState(false);
-  const verificationOtp = '4829';
+  const [noticeMsg, setNoticeMsg] = useState<string | null>(null);
+  const [trackingData, setTrackingData] = useState<any>(null);
+  const [isWsConnected, setIsWsConnected] = useState(false);
+
+  useEffect(() => {
+    let socket: WebSocket | null = null;
+    let reconnectTimer: NodeJS.Timeout;
+
+    async function fetchTracking() {
+      if (!orderId) return;
+      try {
+        const res: any = await buyerApi.getOrderTracking(orderId);
+        setTrackingData(res);
+      } catch (err) {
+        console.error('Tracking fetch error:', err);
+      }
+    }
+
+    function setupWebSocket() {
+      if (typeof window === 'undefined') return;
+      const token = localStorage.getItem('access_token') || 'u_buyer_1';
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
+
+      try {
+        socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => {
+          setIsWsConnected(true);
+        };
+
+        socket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (['order_status_update', 'trip_status_update', 'delivery_verification', 'notification'].includes(data.event)) {
+              fetchTracking();
+            }
+          } catch (e) {
+            console.error('Error parsing WebSocket message:', e);
+          }
+        };
+
+        socket.onclose = () => {
+          setIsWsConnected(false);
+          reconnectTimer = setTimeout(setupWebSocket, 3000);
+        };
+
+        socket.onerror = () => {
+          setIsWsConnected(false);
+        };
+      } catch (e) {
+        setIsWsConnected(false);
+      }
+    }
+
+    fetchTracking();
+    setupWebSocket();
+
+    const fallbackInterval = setInterval(fetchTracking, 4000);
+
+    return () => {
+      if (socket) socket.close();
+      clearTimeout(reconnectTimer);
+      clearInterval(fallbackInterval);
+    };
+  }, [orderId]);
+
+  const currentStatus = trackingData?.status || 'confirmed';
+  const trip = trackingData?.trip;
+  const driver = trip?.driver;
+  const activeOtp = trackingData?.verificationOtp;
+
+  const isConfirmed = true;
+  const isPacked = ['packing', 'out_for_delivery', 'delivered'].includes(currentStatus) || Boolean(trip);
+  const isAssigned = Boolean(driver) || ['out_for_delivery', 'delivered'].includes(currentStatus);
+  const isOutForDelivery = ['out_for_delivery', 'delivered'].includes(currentStatus) || trip?.status === 'in_transit' || trip?.status === 'arrived_at_site';
+  const isDelivered = currentStatus === 'delivered' || trip?.status === 'unloaded_completed';
+
+  const driverName = driver?.name || 'Manoj K';
+  const driverPhone = driver?.phone || '+919447098765';
+  const vehicleName = driver?.vehicleType || vehicle?.name || 'Mini Commercial Truck (3 Ton)';
+  const vehicleReg = driver?.regNumber || 'KL-07-CD-8921';
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="py-5 sm:py-10">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
-          
-          {/* Top Page Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-4 sm:pb-6">
+      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 sm:pb-3">
             <div>
               <div className="mb-2">
                 <button
                   onClick={onBackToSuccess}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
                 >
                   <FaChevronLeft className="h-3 w-3" />
                   <span>Back to Order Confirmation</span>
@@ -66,25 +142,30 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
               <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
                 Real-Time Order &amp; Delivery Tracking
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1">
-                Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong> &bull; Live GPS Telemetry &amp; Site Offloading Verification
+              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 flex flex-wrap items-center gap-2">
+                <span>Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong></span>
+                <span className="h-2.5 w-px bg-slate-300 inline-block" />
+                <span>Live Telemetry &amp; Site Offloading Verification</span>
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 shrink-0">
-              <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Google Maps Live Telemetry Active</span>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className={`text-xs font-semibold ${isWsConnected ? 'text-emerald-700' : 'text-slate-600'}`}>
+                {isWsConnected ? 'Live WebSocket Push' : 'Telemetry Sync'}
+              </span>
+
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+                <FaCircleCheck className={`h-3.5 w-3.5 ${isDelivered ? 'text-emerald-600' : 'text-[#FF6500]'}`} />
+                <span className="capitalize">{isDelivered ? 'Delivery Completed' : `Status: ${currentStatus.replace(/_/g, ' ')}`}</span>
+              </div>
             </div>
           </div>
 
-          {/* Master-Detail Split Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-            
-            {/* LEFT SIDE: Realistic Google Maps GPS View & Status Steps */}
+
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
-              
-              {/* Google Maps View Card */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
+
+              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-xs space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2.5">
                     <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
@@ -100,138 +181,123 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                     <span className="flex items-center gap-1.5">
                       <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" /> Live Traffic: Normal
                     </span>
-                    <span className="text-slate-300">&bull;</span>
+                    <span className="h-3 w-px bg-slate-200 inline-block" />
                     <span className="flex items-center gap-1.5 text-[#FF6500]">
-                      <FaClock className="h-3.5 w-3.5 text-[#FF6500]" /> ETA: ~12 Mins
+                      <FaClock className="h-3.5 w-3.5 text-[#FF6500]" /> ETA: ~{trip?.distanceKm ? Math.round(trip.distanceKm * 2.5) : 15} Mins
                     </span>
                   </div>
                 </div>
 
-                {/* Route Origin & Destination Telemetry Summary Bar */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-2xl bg-slate-50 text-xs">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="h-2.5 w-2.5 rounded-full bg-orange-500 shrink-0" />
+                    <div className="h-2.5 w-2.5 rounded-xs bg-orange-500 shrink-0" />
                     <span className="text-slate-500 font-normal">Origin Store:</span>
                     <span className="text-slate-900 font-semibold truncate">{merchant.name}</span>
                   </div>
                   <div className="flex items-center gap-2 sm:justify-end min-w-0">
-                    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 shrink-0" />
+                    <div className="h-2.5 w-2.5 rounded-xs bg-emerald-500 shrink-0" />
                     <span className="text-slate-500 font-normal">Unloading Site:</span>
                     <span className="text-slate-900 font-semibold truncate">{location.address || 'Site #14, Kakkanad Zone'}</span>
                   </div>
                 </div>
 
-                {/* Real Google Maps Canvas Container */}
-                <div className="relative h-80 sm:h-[460px] w-full rounded-2xl overflow-hidden shadow-inner border border-slate-200 flex flex-col justify-between p-4 sm:p-5">
-                  
-                  {/* REAL Interactive Google Maps Embed */}
+                <div className="relative h-80 sm:h-[460px] w-full rounded-2xl overflow-hidden shadow-xs border border-slate-200 bg-slate-100">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15715.922582429265!2d76.3475!3d9.9985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080c98f98a28db%3A0x6b107e3efeb1e428!2sKakkanad%2C%20Kochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                    className="absolute inset-0 w-full h-full border-0 z-0"
+                    src="https://maps.google.com/maps?q=9.9985,76.3475&hl=en&z=14&output=embed"
+                    className="absolute inset-0 w-full h-full border-0"
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     title="Real-Time Google Maps GPS Telemetry"
                   />
+                </div>
 
-                  {/* Moving Vehicle Live Driver Overlay Marker */}
-                  <div className="relative z-10 my-auto flex justify-center pointer-events-none">
-                    <div className="bg-slate-900/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl max-w-xs text-center text-white space-y-2 shadow-xl border border-white/10 pointer-events-auto">
-                      <div className="relative inline-flex items-center justify-center">
-                        <div className="absolute inset-0 rounded-full bg-[#FF6500] animate-ping opacity-50" />
-                        <div className="h-10 w-10 rounded-xl bg-[#FF6500] text-white flex items-center justify-center shadow-lg relative z-10">
-                          <FaTruckFast className="h-5 w-5" />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h4 className="text-xs font-semibold text-white">Rajesh Kumar (Delivery Partner)</h4>
-                        <p className="text-[10px] text-slate-300 font-normal mt-0.5">
-                          En-Route on Seaport-Airport Road &bull; 4.2 km away
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-center gap-2 pt-0.5 text-[9px] text-slate-300 font-medium">
-                        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-emerald-400 font-semibold border border-slate-700">
-                          GPS: 38 km/h
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-orange-400 font-semibold border border-slate-700">
-                          KL-07-CD-8921
+                <div className="bg-slate-50/90 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
+                      <FaTruckFast className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-slate-900 flex items-center gap-2">
+                        <span>{driverName}</span>
+                        <span className="font-mono text-[11px] text-slate-500">({vehicleReg})</span>
+                        <span className="h-3 w-px bg-slate-300 inline-block" />
+                        <span className="text-[11px] font-semibold text-emerald-600">
+                          {isDelivered ? 'Delivered' : isOutForDelivery ? 'En-Route' : 'Assigned'}
                         </span>
                       </div>
+                      <p className="text-slate-500 text-[11px] mt-0.5 flex flex-wrap items-center gap-2">
+                        <span>Vehicle: {vehicleName}</span>
+                        <span className="h-2.5 w-px bg-slate-200 inline-block" />
+                        <span>Route: {merchant.name} to {location.address || 'Kakkanad Zone'}</span>
+                      </p>
                     </div>
                   </div>
 
-                  {/* Google Maps Bottom Trip Navigation Overlay */}
-                  <div className="relative z-10 bg-white/95 backdrop-blur-md p-3 sm:p-3.5 rounded-xl border border-slate-200 shadow-lg flex items-center justify-between gap-3 pointer-events-auto">
-                    <div className="flex items-center gap-2.5">
-                      <div className="h-9 w-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                        <FaCompass className="h-4.5 w-4.5" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-slate-900">
-                          4.2 km &bull; 12 mins remaining
-                        </div>
-                        <p className="text-[10px] text-slate-500 font-normal">
-                          Google Maps fastest route via Seaport - Airport Rd
-                        </p>
-                      </div>
+                  <div className="flex items-center gap-3 sm:text-right shrink-0">
+                    <div>
+                      <p className="font-semibold text-slate-900">GPS: {trip?.currentGps ? `${trip.currentGps.lat.toFixed(4)}, ${trip.currentGps.lng.toFixed(4)}` : '10.0159, 76.3419'}</p>
+                      <p className="text-[11px] text-slate-500">{trip?.distanceKm || 3.5} km corridor</p>
                     </div>
-
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold shrink-0">
-                      Live Telemetry Synced
-                    </span>
+                    <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                      <FaCompass className="h-4 w-4" />
+                    </div>
                   </div>
-
                 </div>
               </div>
 
-              {/* Milestone Status Step Cards */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-4">
                 <h3 className="font-semibold text-sm sm:text-base text-slate-900 border-b border-slate-100 pb-3">
                   Order &amp; Delivery Status Milestone Steps
                 </h3>
 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1">
-                  
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
-                    <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
+
+                  <div className={`p-3.5 rounded-2xl space-y-1 transition-all ${isConfirmed ? 'bg-emerald-50/70 text-slate-900 shadow-2xs' : 'bg-slate-50/80 opacity-50'
+                    }`}>
+                    <div className="h-6 w-6 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
                     <h4 className="text-xs font-semibold text-slate-900">Confirmed</h4>
-                    <p className="text-[9px] text-slate-500 font-normal">11:50 AM</p>
+                    <p className="text-[9px] text-slate-500 font-normal">Verified</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
-                    <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
+                  <div className={`p-3.5 rounded-2xl space-y-1 transition-all ${isPacked ? 'bg-emerald-50/70 text-slate-900 shadow-2xs' : 'bg-slate-50/80 opacity-50'
+                    }`}>
+                    <div className="h-6 w-6 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
                     <h4 className="text-xs font-semibold text-slate-900">Packed</h4>
-                    <p className="text-[9px] text-slate-500 font-normal">11:52 AM</p>
+                    <p className="text-[9px] text-slate-500 font-normal">{isPacked ? 'Ready' : 'Pending'}</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
-                    <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
+                  <div className={`p-3.5 rounded-2xl space-y-1 transition-all ${isAssigned ? 'bg-emerald-50/70 text-slate-900 shadow-2xs' : 'bg-slate-50/80 opacity-50'
+                    }`}>
+                    <div className="h-6 w-6 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
                     <h4 className="text-xs font-semibold text-slate-900">Assigned</h4>
-                    <p className="text-[9px] text-slate-500 font-normal">11:53 AM</p>
+                    <p className="text-[9px] text-slate-500 font-normal">{isAssigned ? driverName : 'Matching'}</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1">
-                    <div className="h-6 w-6 rounded-full bg-[#FF6500] text-white flex items-center justify-center text-xs">
+                  <div className={`p-3.5 rounded-2xl space-y-1 transition-all ${isOutForDelivery ? 'bg-orange-50/70 text-slate-900 shadow-2xs' : 'bg-slate-50/80 opacity-50'
+                    }`}>
+                    <div className={`h-6 w-6 rounded-2xl text-white flex items-center justify-center text-xs ${isOutForDelivery ? 'bg-[#FF6500]' : 'bg-slate-300'
+                      }`}>
                       <FaTruckFast className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-900">Out for Delivery</h4>
-                    <p className="text-[9px] text-slate-500 font-normal">11:58 AM</p>
+                    <h4 className="text-xs font-semibold text-slate-900">In Transit</h4>
+                    <p className="text-[9px] text-slate-500 font-normal">{isOutForDelivery ? 'On the road' : 'Queued'}</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 space-y-1 opacity-50">
-                    <div className="h-6 w-6 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-xs">
-                      <FaLocationPin className="h-2.5 w-2.5" />
+                  <div className={`p-3.5 rounded-2xl space-y-1 transition-all ${isDelivered ? 'bg-emerald-50/70 text-slate-900 shadow-2xs' : 'bg-slate-50/80 opacity-50'
+                    }`}>
+                    <div className={`h-6 w-6 rounded-2xl text-white flex items-center justify-center text-xs ${isDelivered ? 'bg-emerald-500' : 'bg-slate-300'
+                      }`}>
+                      {isDelivered ? <FaCheck className="h-2.5 w-2.5" /> : <FaLocationPin className="h-2.5 w-2.5" />}
                     </div>
                     <h4 className="text-xs font-semibold text-slate-700">Delivered</h4>
-                    <p className="text-[9px] text-slate-400 font-normal">Pending</p>
+                    <p className="text-[9px] text-slate-400 font-normal">{isDelivered ? 'Completed' : 'Pending'}</p>
                   </div>
 
                 </div>
@@ -239,41 +305,38 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
             </div>
 
-            {/* RIGHT SIDE: Driver Contact, OTP Verification & Support */}
-            <div className="lg:col-span-4 space-y-5 sm:space-y-6">
-              
-              {/* Assigned Delivery Partner Card */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-4">
+            <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-24 self-start">
+
+              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <h3 className="font-semibold text-sm sm:text-base text-slate-900">Assigned Delivery Partner</h3>
-                  <span className="relative flex h-2.5 w-2.5" title="On-Duty Online Status">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-                  </span>
+                  <span className="inline-flex rounded-xs h-2.5 w-2.5 bg-emerald-500" title="On-Duty Online Status" />
                 </div>
 
                 <div className="flex items-center gap-3.5">
-                  <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold text-lg flex items-center justify-center shrink-0 shadow-xs border border-slate-700">
-                    RK
+                  <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold text-lg flex items-center justify-center shrink-0 shadow-xs">
+                    {driverName.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-xs sm:text-sm text-slate-900">Rajesh Kumar</h4>
-                    <p className="text-[11px] text-slate-500 font-normal mt-0.5">Reg: <strong className="text-slate-800">{vehicle?.name || 'Mahindra Bolero Pickup'} (KL-07-CD-8921)</strong></p>
+                    <h4 className="font-semibold text-xs sm:text-sm text-slate-900">{driverName}</h4>
+                    <p className="text-[11px] text-slate-500 font-normal mt-0.5">Reg: <strong className="text-slate-800">{vehicleName} ({vehicleReg})</strong></p>
                   </div>
                 </div>
 
-                {/* Standardized Platform Secondary Pill Buttons */}
                 <div className="grid grid-cols-2 gap-2.5 pt-1">
                   <a
-                    href="tel:+919876543210"
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    href={`tel:${driverPhone}`}
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaPhone className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Call Driver</span>
                   </a>
                   <button
-                    onClick={() => alert('Opening live chat with driver Rajesh Kumar...')}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    onClick={() => {
+                      setNoticeMsg(`Direct call/message line active to ${driverName} (${driverPhone})`);
+                      setTimeout(() => setNoticeMsg(null), 5000);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaCommentDots className="h-3.5 w-3.5 text-slate-500" />
                     <span>Chat</span>
@@ -281,40 +344,50 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 </div>
               </div>
 
-              {/* Delivery Verification OTP Box */}
-              <div className="bg-slate-900 p-5 sm:p-7 rounded-2xl sm:rounded-3xl text-white shadow-md space-y-3 relative overflow-hidden border border-slate-800">
+              <div className="bg-slate-900 p-5 sm:p-7 rounded-3xl text-white shadow-md space-y-3 relative overflow-hidden">
                 <div className="flex items-center justify-between relative z-10 border-b border-slate-800 pb-3">
                   <div className="flex items-center gap-2">
                     <FaKey className="h-4 w-4 text-[#FF6500]" />
                     <h4 className="font-semibold text-xs uppercase tracking-wider text-slate-300">Delivery Verification OTP</h4>
                   </div>
-                  <span className="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md font-normal">Site Gate Only</span>
+                  <span className="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md font-normal">
+                    {activeOtp ? 'Ready at Site' : 'Site Gate Code'}
+                  </span>
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-normal leading-relaxed relative z-10">
-                  Share this secure 4-digit code with driver Rajesh Kumar upon offloading materials at your site.
+                  {isDelivered
+                    ? 'Delivery confirmed and verified. Materials safely offloaded.'
+                    : activeOtp
+                      ? `Share this 6-digit verification code with driver ${driverName} upon material offloading.`
+                      : `Your driver will trigger this code upon arrival at your site gate.`}
                 </p>
 
-                <div className="bg-slate-800/90 border border-slate-700 rounded-2xl p-3.5 text-center tracking-[0.4em] font-mono text-2xl sm:text-3xl font-bold text-[#FF6500] shadow-inner relative z-10">
-                  {verificationOtp}
+                <div className="bg-slate-800/90 rounded-2xl p-3.5 text-center tracking-[0.4em] font-mono text-2xl sm:text-3xl font-bold text-[#FF6500] shadow-inner relative z-10">
+                  {isDelivered ? 'VERIFIED' : activeOtp || '------'}
                 </div>
               </div>
 
-              {/* Support & Actions Footer Box */}
-              <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md space-y-3.5">
+              <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-3.5">
                 <h3 className="font-semibold text-xs text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
                   Support &amp; Quick Actions
                 </h3>
 
+                {noticeMsg && (
+                  <div className="p-3 rounded-2xl bg-blue-50 text-blue-800 text-xs font-medium text-center shadow-xs">
+                    {noticeMsg}
+                  </div>
+                )}
+
                 {reportDelaySent ? (
-                  <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-800 text-xs font-medium text-center border border-emerald-200">
+                  <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-800 text-xs font-medium text-center shadow-xs">
                     <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600 inline mr-1.5" />
                     Delay alert sent to logistics supervisor!
                   </div>
                 ) : (
                   <button
                     onClick={() => setReportDelaySent(true)}
-                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaTriangleExclamation className="h-3.5 w-3.5 text-amber-600" />
                     <span>Report Unloading Delay</span>
@@ -323,16 +396,22 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => alert('Connecting to 24x7 Site Support Helpdesk...')}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    onClick={() => {
+                      setNoticeMsg('Direct 24x7 Site Logistics Helpline: 1800-425-9999');
+                      setTimeout(() => setNoticeMsg(null), 5000);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaHeadset className="h-3.5 w-3.5 text-slate-500" />
                     <span>Contact Support</span>
                   </button>
 
                   <button
-                    onClick={() => alert('GST Tax Invoice PDF Downloaded')}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    onClick={() => {
+                      setNoticeMsg(`GST Tax Invoice ${trackingData?.invoiceNumber || 'MH-INV-2026-9021'} generated.`);
+                      setTimeout(() => setNoticeMsg(null), 5000);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
                     <span>View Invoice</span>
@@ -343,10 +422,9 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   <Button
                     variant="primary"
                     size="md"
-                    onClick={onReturnHome}
-                    className="w-full mt-3 py-3"
+                    className="w-full justify-center text-xs py-3 mt-1"
                   >
-                    Return to Home Page
+                    Order More Materials
                   </Button>
                 </Link>
               </div>

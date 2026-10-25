@@ -39,12 +39,41 @@ yarn-error.log*
 
 # Local Environment Variables & Secrets
 .env
+.env.*
+**/.env
+**/.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 .env*.local
 *.pem
+*.key
+*.cert
+
+# Databases & Backups
+*.db
+**/*.db
+*.sqlite
+**/*.sqlite
+*.sqlite3
+**/*.sqlite3
+*.dump
+*.sql.gz
+backups/
+**/backups/
+
+# Python & Testing Cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+**/.pytest_cache/
+.venv/
+**/.venv/
+env/
+venv/
 
 # Vercel / Deployment Cache
 .vercel/

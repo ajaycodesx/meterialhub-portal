@@ -5,7 +5,7 @@ export interface LocationState {
   distanceKm: number;
   coordinates?: { lat: number; lng: number };
   siteConstraints?: {
-    roadWidth: string; // e.g. "12ft+", "Narrow < 10ft"
+    roadWidth: string;
     heavyVehicleAccess: boolean;
     craneNeeded: boolean;
     unloadingTimeSlot: string;
@@ -73,16 +73,18 @@ export interface UserProfile {
 export interface Product {
   id: string;
   title: string;
-  category: string; // cement, steel, pvc, paints, electricals, tools
+  category: string;
   brand: string;
   price: number;
   unit: string;
   moq: number;
   weightSpec: string;
   image: string;
-  grade?: string; // e.g. "53 Grade", "PPC", "Fe550D", "CPVC", "Flame Retardant"
-  gauge?: string; // e.g. "8mm", "12mm", "16mm", "110mm"
-  weightKg: number; // for tonnage barometer calculation
+  grade?: string;
+  gauge?: string;
+  weightKg: number;
+  stockQty?: number;
+  merchantId?: string;
 }
 
 export interface CartItem {

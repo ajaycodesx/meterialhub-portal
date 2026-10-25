@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  FaLocationDot, 
-  FaCircleCheck, 
-  FaTriangleExclamation, 
-  FaCompass, 
-  FaXmark, 
-  FaArrowRight, 
-  FaClock, 
-  FaShieldHalved 
+import React,{ useState } from 'react';
+import {
+FaLocationDot,
+FaCircleCheck,
+FaTriangleExclamation,
+FaCompass,
+FaXmark,
+FaArrowRight,
+FaClock,
+FaShieldHalved
 } from 'react-icons/fa6';
 import { LocationState } from '../../types/buyer';
 import { Input } from '../ui/Input';
@@ -94,13 +94,13 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
       <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 relative flex flex-col">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-6 right-6 h-8 w-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer shadow-xs"
         >
           <FaXmark className="h-4 w-4" />
         </button>
 
         <div className="mb-6 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0 shadow-xs">
             <FaLocationDot className="h-5 w-5" />
           </div>
           <div>
@@ -112,7 +112,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
         <div className="space-y-5 flex-1 overflow-y-auto max-h-[420px] mb-6 pr-1">
           {activeStep === 'check' && (
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-orange-50/70 flex items-start gap-3">
+              <div className="p-4 rounded-2xl bg-orange-50/70 shadow-xs flex items-start gap-3">
                 <FaShieldHalved className="h-4 w-4 text-[#FF6500] shrink-0 mt-0.5" />
                 <p className="text-xs text-slate-700 leading-relaxed font-normal">
                   Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-semibold">20 KM radius</strong>.
@@ -149,8 +149,8 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                   onClick={() => setSelectedRadius('10')}
                   className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                     selectedRadius === '10'
-                      ? 'bg-orange-50 text-[#FF6500] shadow-xs'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
+                      ? 'bg-orange-50/90 text-[#FF6500] shadow-xs ring-1 ring-orange-200'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -165,8 +165,8 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                   onClick={() => setSelectedRadius('20')}
                   className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                     selectedRadius === '20'
-                      ? 'bg-orange-50 text-[#FF6500] shadow-xs'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
+                      ? 'bg-orange-50/90 text-[#FF6500] shadow-xs ring-1 ring-orange-200'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -254,7 +254,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
 
               <div className="relative h-44 rounded-2xl bg-slate-100/70 overflow-hidden flex items-center justify-center">
                 <div className="relative text-center p-4 bg-white rounded-2xl max-w-xs shadow-sm">
-                  <div className="h-10 w-10 rounded-full bg-[#FF6500] text-white flex items-center justify-center mx-auto mb-2 shadow-xs">
+                  <div className="h-10 w-10 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center mx-auto mb-2 shadow-xs">
                     <FaLocationDot className="h-4 w-4" />
                   </div>
                   <h4 className="text-xs font-semibold text-slate-900">Pin Dropped: Site #402</h4>

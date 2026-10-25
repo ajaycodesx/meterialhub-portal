@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React,{ useState,useRef,useEffect } from 'react';
 import { FaChevronDown, FaCheck } from 'react-icons/fa6';
 
 export interface SelectOption {
@@ -58,9 +58,9 @@ export const Select: React.FC<SelectProps> = ({
   const selectedOption = options.find((opt) => opt.value === value);
 
   const sizeClasses = {
-    sm: 'h-9 px-3.5 text-xs font-semibold rounded-full',
-    md: 'h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-full',
-    lg: 'h-12 px-4 text-sm font-semibold rounded-full'
+    sm: 'h-9 px-3.5 text-xs font-semibold rounded-xl',
+    md: 'h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-xl',
+    lg: 'h-12 px-4 text-sm font-semibold rounded-xl'
   }[size];
 
   const labelSizeClasses = {
@@ -105,7 +105,7 @@ export const Select: React.FC<SelectProps> = ({
         <div 
           className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} ${
             popoverWidth === 'w-full' && !trigger ? 'left-0 right-0' : popoverWidth
-          } mt-1.5 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 animate-in fade-in duration-150 overflow-hidden`}
+          } mt-1.5 bg-white rounded-2xl shadow-xl z-50 animate-in fade-in duration-150 overflow-hidden`}
         >
           <div className="max-h-60 overflow-y-auto py-1.5 p-1">
             {children ? (
