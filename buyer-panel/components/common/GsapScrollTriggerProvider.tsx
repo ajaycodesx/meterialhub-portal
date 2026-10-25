@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,9 +14,30 @@ export const GsapScrollTriggerProvider: React.FC<{ children: React.ReactNode }> 
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    const lenis = new Lenis({
+      duration: 1.6,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 0.85,
+      touchMultiplier: 1.2
+    });
+    lenisRef.current = lenis;
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const updateRaf = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateRaf);
+    gsap.ticker.lagSmoothing(0);
 
     const ctx = gsap.context(() => {
       if (progressBarRef.current) {
@@ -87,11 +109,15 @@ export const GsapScrollTriggerProvider: React.FC<{ children: React.ReactNode }> 
     }, containerRef);
 
     const timer = setTimeout(() => {
+      lenis.resize();
       ScrollTrigger.refresh();
     }, 250);
 
     return () => {
       clearTimeout(timer);
+      gsap.ticker.remove(updateRaf);
+      lenis.destroy();
+      lenisRef.current = null;
       ctx.revert();
     };
   }, [pathname]);
