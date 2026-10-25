@@ -45,6 +45,7 @@ import { UserProfile, LocationState, HardwareMerchant } from '../../types/buyer'
 import { HARDWARE_MERCHANTS } from '../../data/mockBuyerData';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { PageBanner } from './PageBanner';
 
 interface ProfileSitesPageProps {
   user: UserProfile;
@@ -83,92 +84,79 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
+      <PageBanner
+        backHref="/"
+        backTitle="Back to Dashboard"
+        breadcrumbs={[
+          { label: 'Buyer Account', href: '/' },
+          { label: 'Profile & Sites Management' }
+        ]}
+        badge={
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+            <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
+            <span>Verified Class-A Contractor</span>
+          </span>
+        }
+        icon={
+          <div className="relative shrink-0">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-[#FF6500] text-white font-semibold text-lg sm:text-xl flex items-center justify-center shadow-xs">
+              {userName.charAt(0)}
+            </div>
+            <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-md bg-emerald-500 text-white flex items-center justify-center shadow-2xs">
+              <FaCheck className="h-2 w-2 stroke-[2]" />
+            </div>
+          </div>
+        }
+        title={userName}
+        subtitle={
+          <div className="flex flex-wrap items-center gap-2">
+            <span>Civil Contractor</span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">32AABCU9683R1ZM</strong></span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span className="flex items-center gap-1">
+              <FaPhone className="h-3 w-3 text-[#FF6500]" />
+              {userPhone}
+            </span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span className="flex items-center gap-1">
+              <FaEnvelope className="h-3 w-3 text-slate-400" />
+              {userEmail}
+            </span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span className="flex items-center gap-1">
+              <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
+              Primary Zone: <strong className="text-slate-800 font-medium">Kakkanad IT Zone</strong>
+            </span>
+          </div>
+        }
+        rightContent={
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
+              <FaIndianRupeeSign className="h-3.5 w-3.5 text-amber-500" />
+              <span>Procurement: <strong className="text-slate-900 font-semibold">₹14.80L</strong></span>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
+              <FaBuilding className="h-3.5 w-3.5 text-[#FF6500]" />
+              <span>Active Sites: <strong className="text-emerald-600 font-semibold">2 Pinned</strong></span>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
+              <FaCartShopping className="h-3.5 w-3.5 text-blue-500" />
+              <span>Orders: <strong className="text-slate-900 font-semibold">18 Placed</strong></span>
+            </div>
+            <button
+              onClick={() => setIsEditingUser(!isEditingUser)}
+              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-[#FF6500] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <FaPenToSquare className="h-3 w-3 text-[#FF6500]" />
+              <span>Edit Profile</span>
+            </button>
+          </div>
+        }
+      />
+
+      <section className="pt-4 sm:pt-6 pb-12 sm:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
-
-          <div className="space-y-3 sm:space-y-3.5">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-slate-500">
-                <Link href="/" className="hover:text-[#FF6500] transition-colors cursor-pointer">Buyer Account</Link>
-                <FaChevronRight className="h-2.5 w-2.5 text-slate-400" />
-                <span className="text-slate-800 font-semibold">Profile &amp; Sites Management</span>
-              </div>
-
-              <span className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-600">
-                <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
-                <span>Verified Class-A Contractor</span>
-              </span>
-            </div>
-
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60 text-center sm:text-left items-center sm:items-start">
-              <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4">
-                <div className="relative shrink-0">
-                  <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-[#FF6500] text-white font-semibold text-2xl sm:text-3xl flex items-center justify-center shadow-xs">
-                    {userName.charAt(0)}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-lg bg-emerald-500 text-white flex items-center justify-center shadow-2xs">
-                    <FaCheck className="h-2.5 w-2.5 stroke-[2]" />
-                  </div>
-                </div>
-
-                <div className="space-y-1 min-w-0">
-                  <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center justify-center sm:justify-start gap-1.5">
-                    <FaHelmetSafety className="h-3.5 w-3.5" />
-                    Contractor Account & Sites
-                  </p>
-
-                  <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
-                    {userName}
-                  </h1>
-
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
-                    <span>Civil Contractor</span>
-                    <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                    <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">32AABCU9683R1ZM</strong></span>
-                    <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                    <span className="flex items-center gap-1">
-                      <FaPhone className="h-3 w-3 text-[#FF6500]" />
-                      {userPhone}
-                    </span>
-                    <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                    <span className="flex items-center gap-1">
-                      <FaEnvelope className="h-3 w-3 text-slate-400" />
-                      {userEmail}
-                    </span>
-                    <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                    <span className="flex items-center gap-1">
-                      <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
-                      Primary Zone: <strong className="text-slate-800 font-medium">Kakkanad IT Zone</strong>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 shrink-0">
-                <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
-                  <FaIndianRupeeSign className="h-3.5 w-3.5 text-amber-500" />
-                  <span>Procurement: <strong className="text-slate-900 font-semibold">₹14.80L</strong></span>
-                </div>
-
-                <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
-                  <FaBuilding className="h-3.5 w-3.5 text-[#FF6500]" />
-                  <span>Active Sites: <strong className="text-emerald-600 font-semibold">2 Pinned</strong></span>
-                </div>
-
-                <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
-                  <FaCartShopping className="h-3.5 w-3.5 text-blue-500" />
-                  <span>Orders: <strong className="text-slate-900 font-semibold">18 Placed</strong></span>
-                </div>
-
-                <button
-                  onClick={() => setIsEditingUser(!isEditingUser)}
-                  className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-[#FF6500] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                >
-                  <FaPenToSquare className="h-3 w-3 text-[#FF6500]" />
-                  <span>Edit Profile</span>
-                </button>
-              </div>
-            </div>
 
             {isEditingUser && (
               <div className="mt-4 p-5 sm:p-6 rounded-2xl bg-white shadow-xs border border-slate-100 space-y-4">
@@ -202,7 +190,6 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                 </div>
               </div>
             )}
-          </div>
 
           <div className="bg-white rounded-2xl p-1.5 shadow-xs flex items-center gap-1 overflow-x-auto scrollbar-none no-scrollbar">
             <button

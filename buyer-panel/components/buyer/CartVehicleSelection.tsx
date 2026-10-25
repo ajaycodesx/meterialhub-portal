@@ -23,6 +23,7 @@ import {
 import { HardwareMerchant, CartItem } from '../../types/buyer';
 import { Button } from '../ui/Button';
 import { useAppContext } from '../../context/AppContext';
+import { PageBanner } from './PageBanner';
 
 export interface VehicleOption {
   id: string;
@@ -121,50 +122,32 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-            <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
-              <button
-                onClick={onBackToCatalog}
-                className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0"
-                title="Back to Store Catalog"
-                aria-label="Back to Catalog"
-              >
-                <FaChevronLeft className="h-4 w-4" />
-              </button>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
-                  <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBackToCatalog}>Store Catalog</span>
-                  <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
-                  <span className="text-slate-700 font-semibold">Cart &amp; Vehicle Allocation</span>
-                </div>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
-                  Store Cart &amp; Vehicle Allocation
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
-                  Review your construction material items, calculated payload weight, and select delivery vehicle
-                </p>
-              </div>
+      <PageBanner
+        onBack={onBackToCatalog}
+        backTitle="Back to Store Catalog"
+        breadcrumbs={[
+          { label: 'Store Catalog', onClick: onBackToCatalog },
+          { label: 'Cart & Vehicle Allocation' }
+        ]}
+        title="Store Cart & Vehicle Allocation"
+        subtitle="Review your construction material items, calculated payload weight, and select delivery vehicle"
+        rightContent={(
+          <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl shadow-xs">
+            <div className="h-9 w-9 rounded-xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
+              <FaWeightHanging className="h-4 w-4" />
             </div>
-
-            <div className="flex items-center self-start sm:self-center shrink-0">
-              <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl shadow-xs">
-                <div className="h-9 w-9 rounded-xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
-                  <FaWeightHanging className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Total Cart Weight</div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">
-                    {totalWeightTons.toFixed(2)} Tons <span className="text-[10px] text-slate-400 font-normal">({totalWeightKg.toLocaleString()} kg)</span>
-                  </div>
-                </div>
+            <div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Total Cart Weight</div>
+              <div className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">
+                {totalWeightTons.toFixed(2)} Tons <span className="text-[10px] text-slate-400 font-normal">({totalWeightKg.toLocaleString()} kg)</span>
               </div>
             </div>
           </div>
+        )}
+      />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
             
             <div className="lg:col-span-7 xl:col-span-8 space-y-5 sm:space-y-6">
               
@@ -451,9 +434,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
             </div>
 
           </div>
-
         </div>
-      </section>
-    </div>
+      </div>
   );
 };

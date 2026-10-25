@@ -20,6 +20,8 @@ import { HardwareMerchant, Product, CartItem } from '../../types/buyer';
 import { Button } from '../ui/Button';
 import { Select, SelectOption } from '../ui/Select';
 import { useAppContext } from '../../context/AppContext';
+import { PageBanner } from './PageBanner';
+import { FaXmark } from 'react-icons/fa6';
 
 interface ProductCatalogProps {
   merchant: HardwareMerchant;
@@ -191,79 +193,68 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   return (
     <div className="flex-1 bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-5 lg:pt-6 pb-0 space-y-5 sm:space-y-6">
-        <div className="space-y-4 sm:space-y-5">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-center sm:text-left">
-            <button
-              onClick={onBack}
-              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 shrink-0"
-            >
-              <FaChevronLeft className="h-3 w-3" />
-              <span>Back to Suppliers</span>
-            </button>
-
-            <span className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-600">
-              <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Verified Direct Depot Stockist</span>
+      <PageBanner
+        onBack={onBack}
+        backTitle="Back to Suppliers"
+        breadcrumbs={[
+          { label: 'Hardware Merchants', onClick: onBack },
+          { label: merchant.name }
+        ]}
+        badge={(
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+            <FaShieldHalved className="h-3 w-3 text-emerald-600" />
+            <span>Verified Direct Depot Stockist</span>
+          </span>
+        )}
+        title={`Explore ${merchant.name} Materials`}
+        subtitle={(
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-normal pt-0.5">
+            <span>{merchant.address}</span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span className="flex items-center gap-1">
+              <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
+              {merchant.distanceKm} KM Away (ETA: ~{merchant.deliveryEtaMinutes} Mins)
             </span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span>Managed by <strong className="font-semibold text-slate-800">{merchant.ownerName}</strong></span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span>Factory Brands: {merchant.brands.join(', ')}</span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span className="text-emerald-700 font-medium">★ {merchant.rating} ({merchant.reviewsCount} reviews)</span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span>Min. Order: <strong className="text-slate-900 font-semibold">₹{merchant.minOrderValue.toLocaleString()}</strong></span>
           </div>
-
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60 text-center sm:text-left items-center sm:items-start">
-            <div className="space-y-1.5 min-w-0 w-full lg:w-auto">
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] flex items-center justify-center sm:justify-start gap-1.5">
-                <FaBoxesStacked className="h-3.5 w-3.5" />
-                Store Inventory &amp; Direct Stock
-              </p>
-              
-              <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
-                Explore {merchant.name} Materials
-              </h1>
-
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
-                <span>{merchant.address}</span>
-                <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                <span className="flex items-center gap-1">
-                  <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
-                  {merchant.distanceKm} KM Away (ETA: ~{merchant.deliveryEtaMinutes} Mins)
-                </span>
-                <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                <span>Managed by <strong className="font-semibold text-slate-800">{merchant.ownerName}</strong></span>
-                <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                <span>Factory Brands: {merchant.brands.join(', ')}</span>
-                <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                <span className="text-emerald-700 font-medium">★ {merchant.rating} ({merchant.reviewsCount} reviews)</span>
-                <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                <span>Min. Order: <strong className="text-slate-900 font-semibold">₹{merchant.minOrderValue.toLocaleString()}</strong></span>
-              </div>
+        )}
+        rightContent={(
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64 md:w-72 h-10 sm:h-11 shrink-0">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products in inventory..."
+                className="w-full h-full pl-9.5 pr-4 py-2 text-xs font-normal rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 shadow-2xs"
+              />
+              <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-              <div className="relative w-full sm:w-72 md:w-80 h-10 sm:h-11 shrink-0">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products in store inventory"
-                  className="w-full h-full pl-9.5 pr-4 py-2 text-xs font-normal rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-slate-900 shadow-2xs"
-                />
-                <FaMagnifyingGlass className="absolute left-3.5 top-3.5 h-3.5 w-3.5 text-slate-400" />
-              </div>
-
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => {
-                  setQuoteSent(true);
-                  setTimeout(() => setQuoteSent(false), 4000);
-                }}
-                icon={quoteSent ? <FaCheck className="h-3.5 w-3.5" /> : <FaArrowRight className="h-3.5 w-3.5" />}
-                className="whitespace-nowrap px-4 py-2.5 h-10 sm:h-11"
-              >
-                {quoteSent ? 'Quote Sent' : 'Request Quote'}
-              </Button>
-            </div>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => {
+                setQuoteSent(true);
+                setTimeout(() => setQuoteSent(false), 4000);
+              }}
+              icon={quoteSent ? <FaCheck className="h-3.5 w-3.5" /> : <FaArrowRight className="h-3.5 w-3.5" />}
+              className="whitespace-nowrap px-4 py-2.5 h-10 sm:h-11 rounded-xl"
+            >
+              {quoteSent ? 'Quote Sent' : 'Request Quote'}
+            </Button>
           </div>
-        </div>
+        )}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 space-y-5 sm:space-y-6">
 
         <div className="space-y-3 sm:space-y-4">
           <div className="lg:hidden space-y-2 pt-1">

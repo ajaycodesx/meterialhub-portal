@@ -18,6 +18,7 @@ FaChevronRight
 import { LocationState } from '../../types/buyer';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { PageBanner } from './PageBanner';
 
 export interface SiteInstructionsState {
   accessOption: 'narrow' | 'no_heavy' | 'crane' | 'ground';
@@ -54,34 +55,19 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
-          
-          <div className="flex items-start sm:items-center gap-3 sm:gap-3.5">
-            <button
-              onClick={onBack}
-              className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#FF6500] shadow-xs hover:shadow-md flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0"
-              title="Back to Previous Setup"
-              aria-label="Back"
-            >
-              <FaChevronLeft className="h-4 w-4" />
-            </button>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-0.5">
-                <span className="hover:text-slate-600 transition-colors cursor-pointer" onClick={onBack}>Order Flow</span>
-                <FaChevronRight className="h-2.5 w-2.5 text-slate-300" />
-                <span className="text-slate-700 font-semibold">Site Instructions</span>
-              </div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
-                Site Delivery &amp; Access Instructions
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
-                Configure site access constraints, labor assistance, and site supervisor contact details
-              </p>
-            </div>
-          </div>
+      <PageBanner
+        onBack={onBack}
+        backTitle="Back to Previous Setup"
+        breadcrumbs={[
+          { label: 'Order Flow', onClick: onBack },
+          { label: 'Site Instructions' }
+        ]}
+        title="Site Delivery & Access Instructions"
+        subtitle="Configure site access constraints, labor assistance, and site supervisor contact details"
+      />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
               
@@ -342,7 +328,6 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
 
           </div>
         </div>
-      </section>
-    </div>
+      </div>
   );
 };

@@ -19,6 +19,7 @@ import {
   FaWeightHanging,
   FaChevronLeft
 } from 'react-icons/fa6';
+import { PageBanner } from './PageBanner';
 
 interface OrderSuccessProps {
   orderId?: string;
@@ -50,85 +51,73 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-[#F8FAFC] pt-4 sm:pt-5 lg:pt-6 pb-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
-        <div className="space-y-4 sm:space-y-5">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-center sm:text-left">
+    <div className="flex-1 bg-[#F8FAFC]">
+      <PageBanner
+        onBack={onReturnHome}
+        backTitle="Back to Dashboard"
+        breadcrumbs={[
+          { label: 'Checkout', onClick: onReturnHome },
+          { label: 'Order Confirmed' }
+        ]}
+        badge={
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+            <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
+            <span>Payment Verified &amp; Order Locked</span>
+          </span>
+        }
+        icon={
+          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <FaCheck className="h-5 w-5 stroke-[2]" />
+          </div>
+        }
+        title="Supply Order Confirmed"
+        subtitle={
+          <div className="flex flex-wrap items-center gap-2">
+            <span>Reference ID:</span>
             <button
-              onClick={onReturnHome}
-              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 shrink-0"
+              onClick={handleCopyOrderId}
+              title="Click to copy Order Reference ID"
+              className="font-mono font-semibold text-slate-800 hover:text-[#FF6500] inline-flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <FaChevronLeft className="h-3 w-3" />
-              <span>Back to Dashboard</span>
+              <span>{displayOrderId}</span>
+              <FaCopy className={`h-3 w-3 ${copied ? 'text-emerald-600' : 'text-slate-400'}`} />
+              {copied && <span className="text-[10px] text-emerald-600 font-sans font-semibold">Copied!</span>}
             </button>
-
-            <span className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-600">
-              <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Payment Verified &amp; Order Locked</span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span className="flex items-center gap-1">
+              <FaClock className="h-3 w-3 text-[#FF6500]" />
+              Est. Site Arrival: <strong className="text-slate-900 font-semibold">~45 Mins</strong>
             </span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span>GST Tax Invoice Ready</span>
           </div>
-
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 border-b border-slate-200/60 text-center sm:text-left items-center sm:items-start">
-            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-3.5">
-              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <FaCheck className="h-6 w-6 stroke-[2]" />
-              </div>
-
-              <div className="space-y-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-emerald-600 flex items-center justify-center sm:justify-start gap-1.5">
-                  <FaCircleCheck className="h-3.5 w-3.5" />
-                  Order Placed & Confirmed
-                </p>
-
-                <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
-                  Supply Order Confirmed
-                </h1>
-
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-500 font-normal pt-0.5">
-                  <span>Reference ID:</span>
-                  <button
-                    onClick={handleCopyOrderId}
-                    title="Click to copy Order Reference ID"
-                    className="font-mono font-semibold text-slate-800 hover:text-[#FF6500] inline-flex items-center gap-1 transition-colors cursor-pointer"
-                  >
-                    <span>{displayOrderId}</span>
-                    <FaCopy className={`h-3 w-3 ${copied ? 'text-emerald-600' : 'text-slate-400'}`} />
-                    {copied && <span className="text-[10px] text-emerald-600 font-sans font-semibold">Copied!</span>}
-                  </button>
-                  <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                  <span className="flex items-center gap-1">
-                    <FaClock className="h-3 w-3 text-[#FF6500]" />
-                    Est. Site Arrival: <strong className="text-slate-900 font-semibold">~45 Mins</strong>
-                  </span>
-                  <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                  <span>GST Tax Invoice Ready</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 shrink-0">
-              {onTrackOrderLive && (
-                <button
-                  onClick={onTrackOrderLive}
-                  className="px-4 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-xs font-semibold text-white flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-                >
-                  <FaTruckFast className="h-3.5 w-3.5" />
-                  <span>Live GPS Tracking</span>
-                </button>
-              )}
-              {onReturnHome && (
-                <button
-                  onClick={onReturnHome}
-                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
-                >
-                  <span>Continue Shopping</span>
-                </button>
-              )}
-            </div>
+        }
+        rightContent={
+          <div className="flex flex-wrap items-center gap-2.5">
+            {onTrackOrderLive && (
+              <button
+                onClick={onTrackOrderLive}
+                className="px-4 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-xs font-semibold text-white flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+              >
+                <FaTruckFast className="h-3.5 w-3.5" />
+                <span>Live GPS Tracking</span>
+              </button>
+            )}
+            {onReturnHome && (
+              <button
+                onClick={onReturnHome}
+                className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <span>Continue Shopping</span>
+              </button>
+            )}
           </div>
-        </div>
+        }
+      />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <section className="pt-4 sm:pt-6 pb-12 sm:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           <div className="lg:col-span-8 space-y-5">
             <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm space-y-4 sm:space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -410,6 +399,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
           </div>
         </div>
       </div>
-    </div>
-  );
+    </section>
+  </div>
+);
 };

@@ -22,6 +22,7 @@ import { HardwareMerchant, LocationState } from '../../types/buyer';
 import { VehicleOption } from './CartVehicleSelection';
 import { Button } from '../ui/Button';
 import { buyerApi } from '../../lib/api';
+import { PageBanner } from './PageBanner';
 
 interface LiveTrackingPageProps {
   orderId: string;
@@ -125,42 +126,36 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
   return (
     <div className="flex-1 bg-transparent">
-      <section className="pt-4 sm:pt-5 lg:pt-6 pb-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
-
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 sm:pb-3 text-center sm:text-left items-center sm:items-start">
-            <div className="w-full md:w-auto">
-              <div className="mb-2 flex justify-center sm:justify-start">
-                <button
-                  onClick={onBackToSuccess}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-2xs"
-                >
-                  <FaChevronLeft className="h-3 w-3" />
-                  <span>Back to Order Confirmation</span>
-                </button>
-              </div>
-              <h1 className="text-xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-                Real-Time Order &amp; Delivery Tracking
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                <span>Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong></span>
-                <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                <span>Live Telemetry &amp; Site Offloading Verification</span>
-              </p>
-            </div>
-
-            <div className="flex items-center justify-center sm:justify-start gap-3 shrink-0">
-              <span className={`text-xs font-semibold ${isWsConnected ? 'text-emerald-700' : 'text-slate-600'}`}>
-                {isWsConnected ? 'Live WebSocket Push' : 'Telemetry Sync'}
-              </span>
-
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
-                <FaCircleCheck className={`h-3.5 w-3.5 ${isDelivered ? 'text-emerald-600' : 'text-[#FF6500]'}`} />
-                <span className="capitalize">{isDelivered ? 'Delivery Completed' : `Status: ${currentStatus.replace(/_/g, ' ')}`}</span>
-              </div>
+      <PageBanner
+        onBack={onBackToSuccess}
+        backTitle="Back to Order Confirmation"
+        breadcrumbs={[
+          { label: 'Orders', onClick: onReturnHome },
+          { label: 'Live Tracking' }
+        ]}
+        title="Real-Time Order & Delivery Tracking"
+        subtitle={
+          <div className="flex flex-wrap items-center gap-2">
+            <span>Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong></span>
+            <span className="h-2.5 w-px bg-slate-300 inline-block" />
+            <span>Live Telemetry &amp; Site Offloading Verification</span>
+          </div>
+        }
+        rightContent={
+          <div className="flex items-center gap-3">
+            <span className={`text-xs font-semibold ${isWsConnected ? 'text-emerald-700' : 'text-slate-600'}`}>
+              {isWsConnected ? 'Live WebSocket Push' : 'Telemetry Sync'}
+            </span>
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+              <FaCircleCheck className={`h-3.5 w-3.5 ${isDelivered ? 'text-emerald-600' : 'text-[#FF6500]'}`} />
+              <span className="capitalize">{isDelivered ? 'Delivery Completed' : `Status: ${currentStatus.replace(/_/g, ' ')}`}</span>
             </div>
           </div>
+        }
+      />
 
+      <section className="pt-4 sm:pt-6 pb-12 sm:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
 
             <div className="lg:col-span-8 space-y-5 sm:space-y-6">
