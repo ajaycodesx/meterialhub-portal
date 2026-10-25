@@ -175,33 +175,49 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedRadius('10')}
-                className={`p-3.5 rounded-2xl text-left transition-all duration-200 cursor-pointer border ${
+                className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-200 cursor-pointer border ${
                   selectedRadius === '10'
-                    ? 'border-[#FF6500] bg-orange-500/10 text-white shadow-xs ring-1 ring-[#FF6500]/30'
-                    : 'border-slate-700/60 bg-[#162137] hover:bg-[#1c2842] text-slate-300'
+                    ? 'border-[#FF6500] bg-[#FF6500]/15 text-white shadow-xs ring-1 ring-[#FF6500]/40'
+                    : 'border-slate-700/70 bg-[#162137] hover:bg-[#1c2842] hover:border-slate-600 text-slate-300'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-white">10 KM Express</span>
-                  {selectedRadius === '10' && <FaCircleCheck className="h-3.5 w-3.5 text-[#FF6500]" />}
+                  <div
+                    className={`h-4 w-4 rounded-md flex items-center justify-center border transition-all ${
+                      selectedRadius === '10'
+                        ? 'bg-[#FF6500] border-[#FF6500] text-white'
+                        : 'border-slate-600 bg-[#0d1527]'
+                    }`}
+                  >
+                    {selectedRadius === '10' && <FaCircleCheck className="h-3 w-3" />}
+                  </div>
                 </div>
-                <p className="text-[11px] text-slate-400 font-normal">Same-Day Urgent Orders</p>
+                <p className="text-[11px] text-slate-400 font-normal leading-relaxed">Same-Day Urgent Orders</p>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSelectedRadius('20')}
-                className={`p-3.5 rounded-2xl text-left transition-all duration-200 cursor-pointer border ${
+                className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-200 cursor-pointer border ${
                   selectedRadius === '20'
-                    ? 'border-[#FF6500] bg-orange-500/10 text-white shadow-xs ring-1 ring-[#FF6500]/30'
-                    : 'border-slate-700/60 bg-[#162137] hover:bg-[#1c2842] text-slate-300'
+                    ? 'border-[#FF6500] bg-[#FF6500]/15 text-white shadow-xs ring-1 ring-[#FF6500]/40'
+                    : 'border-slate-700/70 bg-[#162137] hover:bg-[#1c2842] hover:border-slate-600 text-slate-300'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-white">20 KM Standard</span>
-                  {selectedRadius === '20' && <FaCircleCheck className="h-3.5 w-3.5 text-[#FF6500]" />}
+                  <div
+                    className={`h-4 w-4 rounded-md flex items-center justify-center border transition-all ${
+                      selectedRadius === '20'
+                        ? 'bg-[#FF6500] border-[#FF6500] text-white'
+                        : 'border-slate-600 bg-[#0d1527]'
+                    }`}
+                  >
+                    {selectedRadius === '20' && <FaCircleCheck className="h-3 w-3" />}
+                  </div>
                 </div>
-                <p className="text-[11px] text-slate-400 font-normal">Wholesale Price Direct</p>
+                <p className="text-[11px] text-slate-400 font-normal leading-relaxed">Wholesale Price Direct</p>
               </button>
             </div>
 
@@ -234,22 +250,14 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 Capture Unloading Site Constraints
               </h4>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Unloading Site Road Access Width
-                </label>
-                <select
-                  value={roadWidth}
-                  onChange={(e) => setRoadWidth(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-xs font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
-                >
-                  {ROAD_WIDTH_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-[#0d1527] text-white">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Unloading Site Road Access Width"
+                options={ROAD_WIDTH_OPTIONS}
+                value={roadWidth}
+                onChange={(val) => setRoadWidth(String(val))}
+                variant="dark"
+                size="md"
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <label className="flex items-center gap-2.5 p-3 rounded-xl bg-[#162137] border border-slate-700/60 cursor-pointer text-xs font-medium text-slate-300">
@@ -273,23 +281,15 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 </label>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <FaClock className="h-3 w-3 text-[#FF6500]" />
-                  <span>Preferred Delivery Slot</span>
-                </label>
-                <select
-                  value={unloadingTimeSlot}
-                  onChange={(e) => setUnloadingTimeSlot(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-xs font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
-                >
-                  {TIME_SLOT_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-[#0d1527] text-white">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Preferred Delivery Slot"
+                options={TIME_SLOT_OPTIONS}
+                value={unloadingTimeSlot}
+                onChange={(val) => setUnloadingTimeSlot(String(val))}
+                icon={<FaClock className="h-3 w-3 text-[#FF6500]" />}
+                variant="dark"
+                size="md"
+              />
             </div>
           </div>
         )}

@@ -20,6 +20,13 @@ import {
 } from 'react-icons/fa6';
 import { adminApi, authApi, apiClient } from '../lib/api';
 import { Modal } from './ui/Modal';
+import { Select, SelectOption } from './ui/Select';
+
+const TREND_OPTIONS: SelectOption[] = [
+  { label: 'Upward (Bullish)', value: 'up' },
+  { label: 'Downward (Bearish)', value: 'down' },
+  { label: 'Stable', value: 'stable' },
+];
 
 interface DashboardData {
   totalGmv: number;
@@ -511,20 +518,14 @@ export function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Market Trend
-                </label>
-                <select
-                  value={editTrend}
-                  onChange={(e) => setEditTrend(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#162137] border border-slate-700 text-xs font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500]"
-                >
-                  <option value="up" className="bg-[#0d1527] text-white">Upward (Bullish)</option>
-                  <option value="down" className="bg-[#0d1527] text-white">Downward (Bearish)</option>
-                  <option value="stable" className="bg-[#0d1527] text-white">Stable</option>
-                </select>
-              </div>
+              <Select
+                label="Market Trend"
+                options={TREND_OPTIONS}
+                value={editTrend}
+                onChange={(val) => setEditTrend(String(val))}
+                variant="dark"
+                size="md"
+              />
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
