@@ -304,8 +304,11 @@ async def seed_demo_data(force: bool = False) -> bool:
 
         for p in PRODUCTS_SEED:
             existing = await db.execute(select(Product).where(Product.id == p["id"]))
-            if not existing.scalars().first():
+            prod = existing.scalars().first()
+            if not prod:
                 db.add(Product(**p))
+            elif force or prod.stock_qty <= 10:
+                prod.stock_qty = 500
 
         existing_order = await db.execute(select(Order).where(Order.id == "ord_98241"))
         if not existing_order.scalars().first():

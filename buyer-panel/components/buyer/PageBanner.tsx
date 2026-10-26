@@ -48,7 +48,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
 
             <div className="min-w-0 flex-1">
               {breadcrumbs && breadcrumbs.length > 0 && (
-                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-slate-400 mb-0.5 flex-wrap">
+                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium text-slate-400 mb-0.5 flex-wrap">
                   {breadcrumbs.map((crumb, idx) => {
                     const isLast = idx === breadcrumbs.length - 1;
                     return (
@@ -68,7 +68,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
                             {crumb.label}
                           </span>
                         ) : (
-                          <span className={isLast ? 'text-slate-700 font-semibold' : ''}>
+                          <span className={isLast ? 'text-slate-700 font-medium' : ''}>
                             {crumb.label}
                           </span>
                         )}
@@ -80,7 +80,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
                 </div>
               )}
 
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight leading-snug">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-medium text-slate-900 tracking-tight leading-snug">
                 {title}
               </h1>
 

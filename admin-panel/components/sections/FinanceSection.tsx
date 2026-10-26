@@ -117,14 +117,14 @@ export const FinanceSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -134,23 +134,23 @@ export const FinanceSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Gross Captured Volume</p>
-          <p className="text-xl font-bold text-slate-900">INR {totalCaptured.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Gross Captured Volume</p>
+          <p className="text-xl font-medium text-slate-900">INR {totalCaptured.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Razorpay captured & online UPI</p>
         </div>
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Platform Take-Rate (5%)</p>
-          <p className="text-xl font-bold text-emerald-600">INR {totalCommissions.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Platform Take-Rate (5%)</p>
+          <p className="text-xl font-medium text-emerald-600">INR {totalCommissions.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Direct marketplace margin</p>
         </div>
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Payable Merchant Balance</p>
-          <p className="text-xl font-bold text-blue-600">INR {totalSettlements.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Payable Merchant Balance</p>
+          <p className="text-xl font-medium text-slate-900">INR {totalSettlements.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Net store escrow payout</p>
         </div>
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Total Processed Refunds</p>
-          <p className="text-xl font-bold text-rose-600">INR {totalRefunded.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Total Processed Refunds</p>
+          <p className="text-xl font-medium text-rose-600">INR {totalRefunded.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Reversed contractor payments</p>
         </div>
       </div>
@@ -185,7 +185,7 @@ export const FinanceSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Order ID & Invoice</th>
                 <th className="py-3.5">Payment Reference</th>
                 <th className="py-3.5">Method</th>
@@ -215,37 +215,37 @@ export const FinanceSection: React.FC = () => {
                 payments.map((p) => (
                   <tr key={p.orderId} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-bold text-slate-900">#{p.orderId}</p>
+                      <p className="font-medium text-slate-900">#{p.orderId}</p>
                       <p className="text-[11px] text-slate-400">{p.invoiceNumber || 'MH-INV-AUTO'}</p>
                     </td>
                     <td className="py-3.5">
                       <p className="font-mono text-slate-700 font-medium text-[11px]">{p.paymentId}</p>
                       <p className="text-[10px] text-slate-400">{p.paymentOrderId}</p>
                     </td>
-                    <td className="py-3.5 font-semibold text-slate-800">
+                    <td className="py-3.5 font-medium text-slate-800">
                       {p.paymentMode}
                     </td>
                     <td className="py-3.5 text-slate-600">
                       <p className="font-medium text-slate-900">{p.buyerName}</p>
                       <p className="text-[11px] text-slate-500">{p.merchantName}</p>
                     </td>
-                    <td className="py-3.5 text-right font-bold text-slate-900">
+                    <td className="py-3.5 text-right font-medium text-slate-900">
                       INR {(p.grandTotal || 0).toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3.5 text-right font-semibold text-emerald-600">
+                    <td className="py-3.5 text-right font-medium text-emerald-600">
                       INR {(p.platformFee || 0).toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3.5 text-right font-semibold text-blue-600">
+                    <td className="py-3.5 text-right font-medium text-slate-900">
                       INR {(p.netSettlement || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 text-center">
                       <span
-                        className={`px-2.5 py-0.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider ${
+                        className={`text-xs font-medium ${
                           p.paymentStatus === 'Captured'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            ? 'text-emerald-600'
                             : p.paymentStatus === 'Refunded'
-                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200'
+                            ? 'text-rose-600'
+                            : 'text-amber-600'
                         }`}
                       >
                         {p.paymentStatus}
@@ -284,7 +284,7 @@ export const FinanceSection: React.FC = () => {
             >
               Previous
             </Button>
-            <span className="font-semibold text-slate-700">
+            <span className="font-medium text-slate-700">
               Page {page} of {totalPages}
             </span>
             <Button

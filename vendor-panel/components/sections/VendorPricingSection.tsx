@@ -6,11 +6,8 @@ import {
   FaTag,
   FaPlus,
   FaArrowTrendUp,
-  FaArrowTrendDown,
-  FaPercent,
   FaCalendarDays,
-  FaBoxesStacked,
-  FaCheck
+  FaBoxesStacked
 } from 'react-icons/fa6';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
@@ -20,14 +17,13 @@ interface VendorPricingSectionProps {
   commodityRates: any[];
   deals: any[];
   onProposeDeal: (data: any) => Promise<void>;
-  onRefresh: () => void;
+  onRefresh?: () => void;
 }
 
 export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
   commodityRates,
   deals,
-  onProposeDeal,
-  onRefresh
+  onProposeDeal
 }) => {
   const [showDealModal, setShowDealModal] = useState(false);
   const [dealTitle, setDealTitle] = useState('');
@@ -63,14 +59,15 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-medium text-slate-900">
               Regional Commodity Spot Rate Benchmarks
             </h2>
             <p className="text-xs text-slate-500 font-medium">
               Daily wholesale exchange indices for Kerala construction materials
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700">
+          <span className="text-xs font-medium text-emerald-600 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-xs bg-emerald-500 inline-block" />
             Live Central Feed
           </span>
         </div>
@@ -89,22 +86,22 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-slate-500">
+                    <span className="text-xs font-medium text-slate-500">
                       {rate.category?.toUpperCase() || 'MATERIAL'}
                     </span>
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-0.5">
+                    <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-0.5">
                       <FaArrowTrendUp className="h-2.5 w-2.5" />
                       +{rate.changePercent || 0.8}%
                     </span>
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900 truncate">
+                  <h3 className="text-sm font-medium text-slate-900 truncate">
                     {rate.material || rate.title}
                   </h3>
                 </div>
 
                 <div className="mt-3 pt-3 border-t border-slate-100 flex items-baseline justify-between">
                   <div>
-                    <span className="text-lg font-bold text-slate-900">
+                    <span className="text-lg font-medium text-slate-900">
                       ₹{(rate.rate || rate.currentPrice || 0).toLocaleString('en-IN')}
                     </span>
                     <span className="text-xs text-slate-500"> / {rate.unit || 'unit'}</span>
@@ -120,9 +117,9 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-medium text-slate-900">
               Active Store Promotional Deals
             </h2>
             <p className="text-xs text-slate-500 font-medium">
@@ -133,9 +130,11 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
           <Button
             variant="primary"
             size="md"
+            icon={<FaPlus className="h-3.5 w-3.5" />}
+            iconPosition="left"
             onClick={() => setShowDealModal(true)}
+            className="shrink-0"
           >
-            <FaPlus className="mr-1.5 h-3.5 w-3.5" />
             Propose Deal
           </Button>
         </div>
@@ -154,15 +153,15 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-lg bg-orange-50 text-[#FF6500]">
+                    <span className="text-xs font-medium text-[#FF6500]">
                       {deal.discountPercent}% Wholesale OFF
                     </span>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700">
+                    <span className="text-xs font-medium text-emerald-600">
                       Active
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h3 className="text-sm font-medium text-slate-900">
                     {deal.title}
                   </h3>
 
@@ -177,7 +176,7 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
                     <span className="text-slate-400 line-through mr-1.5">
                       ₹{(deal.originalPrice || 420).toLocaleString('en-IN')}
                     </span>
-                    <span className="font-bold text-slate-900 text-sm">
+                    <span className="font-medium text-slate-900 text-sm">
                       ₹{(deal.dealPrice || 399).toLocaleString('en-IN')}
                     </span>
                   </div>
@@ -235,7 +234,7 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
               />
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Category</label>
                 <select
                   value={dealCategory}
                   onChange={(e) => setDealCategory(e.target.value)}

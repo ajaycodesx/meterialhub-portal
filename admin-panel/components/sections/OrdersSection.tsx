@@ -171,14 +171,14 @@ export const OrdersSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -216,7 +216,7 @@ export const OrdersSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Order ID & Date</th>
                 <th className="py-3.5">Contractor</th>
                 <th className="py-3.5">Merchant Store</th>
@@ -245,32 +245,40 @@ export const OrdersSection: React.FC = () => {
                 orders.map((o) => (
                   <tr key={o.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-bold text-slate-900">#{o.id}</p>
+                      <p className="font-medium text-slate-900">#{o.id}</p>
                       <p className="text-[11px] text-slate-400">
                         {o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
                       </p>
                     </td>
                     <td className="py-3.5">
-                      <p className="font-semibold text-slate-800">{o.buyer?.name || 'Contractor'}</p>
+                      <p className="font-medium text-slate-800">{o.buyer?.name || 'Contractor'}</p>
                       <p className="text-[11px] text-slate-500 truncate max-w-[150px]">{o.deliveryAddress}</p>
                     </td>
                     <td className="py-3.5 font-medium text-slate-700">
                       {o.merchant?.name || 'Store'}
                     </td>
                     <td className="py-3.5">
-                      <p className="font-semibold text-slate-800">{o.vehicleRecommended}</p>
+                      <p className="font-medium text-slate-800">{o.vehicleRecommended}</p>
                       <p className="text-[11px] text-slate-500">{(o.totalWeightKg || 0).toLocaleString()} KG</p>
                     </td>
-                    <td className="py-3.5 text-right font-bold text-slate-900">
+                    <td className="py-3.5 text-right font-medium text-slate-900">
                       INR {(o.grandTotal || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 text-center">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-700">
+                      <span className="text-xs font-medium text-slate-600">
                         {o.paymentMode}
                       </span>
                     </td>
                     <td className="py-3.5 text-center">
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-800">
+                      <span className={`text-xs font-medium ${
+                        o.status === 'delivered'
+                          ? 'text-emerald-600'
+                          : o.status === 'cancelled'
+                          ? 'text-rose-600'
+                          : o.status === 'in_transit' || o.status === 'out_for_delivery'
+                          ? 'text-[#F5A623]'
+                          : 'text-[#FF6500]'
+                      }`}>
                         {o.status}
                       </span>
                     </td>
@@ -322,7 +330,7 @@ export const OrdersSection: React.FC = () => {
             >
               Previous
             </Button>
-            <span className="font-semibold text-slate-700">
+            <span className="font-medium text-slate-700">
               Page {page} of {totalPages}
             </span>
             <Button
@@ -354,19 +362,19 @@ export const OrdersSection: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200">
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Invoice Number</p>
-                <p className="font-bold text-slate-900">{selectedOrder.invoiceNumber || 'MH-INV-AUTO'}</p>
+                <p className="font-medium text-slate-900">{selectedOrder.invoiceNumber || 'MH-INV-AUTO'}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Current Status</p>
-                <p className="font-bold text-[#FF6500] uppercase tracking-wider">{selectedOrder.status}</p>
+                <p className="font-medium text-[#FF6500] uppercase tracking-wider">{selectedOrder.status}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Payment Mode</p>
-                <p className="font-bold text-slate-900">{selectedOrder.paymentMode}</p>
+                <p className="font-medium text-slate-900">{selectedOrder.paymentMode}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Order Date</p>
-                <p className="font-bold text-slate-900">
+                <p className="font-medium text-slate-900">
                   {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('en-IN') : 'N/A'}
                 </p>
               </div>
@@ -374,8 +382,8 @@ export const OrdersSection: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Contractor & Site</p>
-                <p className="font-bold text-slate-900 text-sm">{selectedOrder.buyer?.name}</p>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Contractor & Site</p>
+                <p className="font-medium text-slate-900 text-sm">{selectedOrder.buyer?.name}</p>
                 <p className="text-slate-600 font-medium">{selectedOrder.buyer?.phone}</p>
                 <p className="text-slate-500 flex items-start gap-1">
                   <FaLocationDot className="h-3 w-3 text-slate-400 mt-0.5 shrink-0" />
@@ -384,8 +392,8 @@ export const OrdersSection: React.FC = () => {
               </div>
 
               <div className="p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Merchant Store</p>
-                <p className="font-bold text-slate-900 text-sm">{selectedOrder.merchant?.name}</p>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Merchant Store</p>
+                <p className="font-medium text-slate-900 text-sm">{selectedOrder.merchant?.name}</p>
                 <p className="text-slate-600 font-medium">Owner: {selectedOrder.merchant?.ownerName}</p>
                 <p className="text-slate-500">{selectedOrder.merchant?.address}</p>
                 <p className="text-slate-500">GSTIN: {selectedOrder.merchant?.gstin || '32AAACH7409R1ZZ'}</p>
@@ -393,7 +401,7 @@ export const OrdersSection: React.FC = () => {
             </div>
 
             <div>
-              <p className="font-bold text-slate-900 mb-2">Material Line Items</p>
+              <p className="font-medium text-slate-900 mb-2">Material Line Items</p>
               <div className="border border-slate-200 rounded-xl overflow-hidden">
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px]">
@@ -408,13 +416,13 @@ export const OrdersSection: React.FC = () => {
                     {(selectedOrder.items || []).map((it: any) => (
                       <tr key={it.id}>
                         <td className="py-2.5 pl-3 font-medium text-slate-900">{it.title}</td>
-                        <td className="py-2.5 text-center font-semibold text-slate-700">
+                        <td className="py-2.5 text-center font-medium text-slate-700">
                           {it.quantity} {it.unit}
                         </td>
                         <td className="py-2.5 text-right text-slate-700">
                           INR {it.unitPrice?.toLocaleString('en-IN')}
                         </td>
-                        <td className="py-2.5 pr-3 text-right font-bold text-slate-900">
+                        <td className="py-2.5 pr-3 text-right font-medium text-slate-900">
                           INR {it.subtotal?.toLocaleString('en-IN')}
                         </td>
                       </tr>
@@ -437,7 +445,7 @@ export const OrdersSection: React.FC = () => {
                 <span>Applicable GST (18%)</span>
                 <span>INR {(selectedOrder.gstAmount || 0).toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between font-bold text-slate-900 pt-1.5 border-t border-slate-200 text-sm">
+              <div className="flex justify-between font-medium text-slate-900 pt-1.5 border-t border-slate-200 text-sm">
                 <span>Grand Total</span>
                 <span className="text-[#FF6500]">INR {(selectedOrder.grandTotal || 0).toLocaleString('en-IN')}</span>
               </div>
@@ -445,12 +453,12 @@ export const OrdersSection: React.FC = () => {
 
             {selectedOrder.trip && (
               <div className="p-3.5 rounded-xl border border-slate-200 space-y-1">
-                <p className="font-bold text-slate-900">Assigned Delivery Logistics</p>
+                <p className="font-medium text-slate-900">Assigned Delivery Logistics</p>
                 <div className="grid grid-cols-2 gap-2 text-slate-600">
-                  <p>Driver: <span className="font-semibold text-slate-900">{selectedOrder.trip.driverName}</span> ({selectedOrder.trip.driverPhone})</p>
-                  <p>Vehicle: <span className="font-semibold text-slate-900">{selectedOrder.trip.vehicleType}</span> [{selectedOrder.trip.vehicleReg}]</p>
+                  <p>Driver: <span className="font-medium text-slate-900">{selectedOrder.trip.driverName}</span> ({selectedOrder.trip.driverPhone})</p>
+                  <p>Vehicle: <span className="font-medium text-slate-900">{selectedOrder.trip.vehicleType}</span> [{selectedOrder.trip.vehicleReg}]</p>
                   <p>Trip Fare: INR {selectedOrder.trip.tripFare}</p>
-                  <p>Trip Status: <span className="font-semibold text-emerald-600 uppercase">{selectedOrder.trip.status}</span></p>
+                  <p>Trip Status: <span className="font-medium text-emerald-600 uppercase">{selectedOrder.trip.status}</span></p>
                 </div>
               </div>
             )}

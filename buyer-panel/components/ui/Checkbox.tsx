@@ -44,7 +44,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
       {(label || description) && (
         <div className="text-xs">
-          {label && <div className="font-semibold text-slate-900 leading-tight">{label}</div>}
+          {label && <div className="font-medium text-slate-900 leading-tight">{label}</div>}
           {description && <div className="text-[11px] text-slate-500 font-normal mt-0.5">{description}</div>}
         </div>
       )}

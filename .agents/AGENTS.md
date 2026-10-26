@@ -21,7 +21,7 @@
 7. **Realistic Product Visuals**:
    - Use realistic high-quality product images for materials, categories, and store cards. Images must contain NO text or logos.
 8. **Typography & Font Weight Rules**:
-   - Do NOT use `font-extrabold` or heavy `font-bold` classes. Use `font-semibold`, `font-medium`, or `font-normal` for clean, professional elegance.
+   - Strictly do NOT use `font-extrabold`, `font-black`, or `font-bold` anywhere. `font-semibold` (600), `font-medium` (500), and `font-normal` (400) are permitted for clear visual hierarchy without heavy blocky weights.
 9. **No Section Divider Borders**:
    - Do NOT use section divider border lines (`border-t`, `border-b` between page sections). Rely on soft background shade changes (`bg-white` vs `bg-slate-50/50`) and clean whitespace gaps (`py-12 sm:py-16`).
 10. **Semantic Heading Hierarchy & Consistent Body Font Sizes**:
@@ -76,3 +76,6 @@
     - Strictly enforce compact, elegant spacing between any section header and the content below it.
     - Avoid oversized bottom margins or padding (prohibit `mb-8`, `mb-6`, `pb-4`, or `space-y-6` directly under section headings).
     - Standard header-to-content gap: Use `mb-3 sm:mb-4` on section header containers, `space-y-3 sm:space-y-4` on section wrapper containers, and `pb-2 mb-2` on filter/tab strips. Ensure grid cards and category lists align closely and proportionally to their section headers without awkward empty whitespace.
+26. **Full-Width Desktop Dashboard Layout (`w-full` Instead of `max-w-7xl`)**:
+    - Strictly prohibit artificial maximum widths (such as `max-w-7xl`, `max-w-6xl`, or centered fixed-width content containers with large empty horizontal margins) on desktop dashboard views.
+    - Always enforce full fluid width layouts (`w-full lg:max-w-none`) so dashboard grids, metric cards, telemetry displays, order feeds, and dispatch boards expand to utilize the full available canvas next to the navigation sidebar.

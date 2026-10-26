@@ -24,7 +24,19 @@ from app.models.product import Product
 from app.models.order import Order, OrderItem
 from app.models.delivery import DeliveryTrip, TripStatus
 
+import socket
+
 TEST_PG_URL = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5433/materialhub_staging"
+
+def _is_pg_available() -> bool:
+    try:
+        with socket.create_connection(("127.0.0.1", 5433), timeout=0.5):
+            return True
+    except (OSError, ConnectionRefusedError):
+        return False
+
+if not _is_pg_available():
+    pytest.skip("PostgreSQL staging container at 127.0.0.1:5433 is not running", allow_module_level=True)
 
 pg_engine = create_async_engine(TEST_PG_URL, echo=False)
 PgSessionLocal = async_sessionmaker(pg_engine, class_=AsyncSession, expire_on_commit=False)

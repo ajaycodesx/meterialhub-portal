@@ -77,14 +77,14 @@ export const DisputesSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -94,7 +94,7 @@ export const DisputesSection: React.FC = () => {
 
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Contractor Claims & Material Disputes</h2>
+          <h2 className="text-sm font-medium text-slate-900">Contractor Claims & Material Disputes</h2>
           <p className="text-xs text-slate-500">Damage reports, site unloading shortages, and merchant settlement adjustments</p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export const DisputesSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Dispute & Order ID</th>
                 <th className="py-3.5">Contractor</th>
                 <th className="py-3.5">Merchant Store</th>
@@ -131,24 +131,24 @@ export const DisputesSection: React.FC = () => {
                 disputes.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-bold text-slate-900">#{d.id}</p>
+                      <p className="font-medium text-slate-900">#{d.id}</p>
                       <p className="text-[11px] text-slate-400">Order: #{d.orderId}</p>
                     </td>
-                    <td className="py-3.5 font-semibold text-slate-800">
+                    <td className="py-3.5 font-medium text-slate-800">
                       {d.buyerName}
                     </td>
                     <td className="py-3.5 text-slate-700">
                       {d.merchantName}
                     </td>
                     <td className="py-3.5">
-                      <p className="font-semibold text-slate-900">{d.issueType}</p>
+                      <p className="font-medium text-slate-900">{d.issueType}</p>
                       <p className="text-[11px] text-slate-500 truncate max-w-[200px]">{d.resolutionNotes}</p>
                     </td>
-                    <td className="py-3.5 text-right font-bold text-slate-900">
+                    <td className="py-3.5 text-right font-medium text-slate-900">
                       INR {(d.amount || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 text-center">
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-800">
+                      <span className="text-xs font-medium uppercase tracking-wider text-slate-700">
                         {d.status}
                       </span>
                     </td>
@@ -189,7 +189,7 @@ export const DisputesSection: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-            <p className="font-semibold text-slate-800">{activeDispute?.issueType}</p>
+            <p className="font-medium text-slate-800">{activeDispute?.issueType}</p>
             <p className="text-slate-600">Claim Amount: INR {activeDispute?.amount?.toLocaleString('en-IN')}</p>
           </div>
 

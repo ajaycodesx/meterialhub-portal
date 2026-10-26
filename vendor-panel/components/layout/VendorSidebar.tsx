@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   FaStore,
   FaBuilding,
@@ -13,9 +14,9 @@ import {
   FaCoins,
   FaIndianRupeeSign,
   FaXmark,
-  FaCircleCheck,
   FaRightFromBracket,
-  FaPowerOff
+  FaShieldHalved,
+  FaStar
 } from 'react-icons/fa6';
 
 export type VendorTab =
@@ -30,8 +31,8 @@ export type VendorTab =
   | 'finance';
 
 interface VendorSidebarProps {
-  activeTab: VendorTab;
-  onTabChange: (tab: VendorTab) => void;
+  activeTab?: VendorTab;
+  onTabChange?: (tab: VendorTab) => void;
   isOpenMobile: boolean;
   onCloseMobile: () => void;
   isWsConnected: boolean;
@@ -43,8 +44,9 @@ interface VendorSidebarProps {
 
 interface NavItem {
   id: VendorTab;
+  href: string;
   label: string;
-  icon: React.ReactNode;
+  icon: React.ComponentType<{ className?: string }>;
   badge?: string | number;
 }
 
@@ -55,32 +57,32 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    group: 'Operations Pulse',
+    group: 'OPERATIONS PULSE',
     items: [
-      { id: 'overview', label: 'Depot Overview', icon: <FaStore className="h-4 w-4 shrink-0" /> },
-      { id: 'profile', label: 'Store Profile & KYC', icon: <FaBuilding className="h-4 w-4 shrink-0" /> }
+      { id: 'overview', href: '/overview', label: 'Depot Overview', icon: FaStore },
+      { id: 'profile', href: '/profile', label: 'Store Profile & KYC', icon: FaBuilding }
     ]
   },
   {
-    group: 'Order Fulfillment',
+    group: 'ORDER FULFILLMENT',
     items: [
-      { id: 'orders', label: 'Packing & Pick Lists', icon: <FaBoxesStacked className="h-4 w-4 shrink-0" /> },
-      { id: 'handover', label: 'Dispatch & Challans', icon: <FaTruckFast className="h-4 w-4 shrink-0" /> }
+      { id: 'orders', href: '/orders', label: 'Packing & Pick Lists', icon: FaBoxesStacked },
+      { id: 'handover', href: '/handover', label: 'Dispatch & Challans', icon: FaTruckFast }
     ]
   },
   {
-    group: 'Inventory & SKUs',
+    group: 'INVENTORY & SKUS',
     items: [
-      { id: 'products', label: 'Store Catalog SKUs', icon: <FaBoxOpen className="h-4 w-4 shrink-0" /> },
-      { id: 'stock', label: 'Stock Receipts & Ledger', icon: <FaWarehouse className="h-4 w-4 shrink-0" /> }
+      { id: 'products', href: '/products', label: 'Store Catalog SKUs', icon: FaBoxOpen },
+      { id: 'stock', href: '/stock', label: 'Stock Receipts & Ledger', icon: FaWarehouse }
     ]
   },
   {
-    group: 'Commercials & Finance',
+    group: 'COMMERCIALS & FINANCE',
     items: [
-      { id: 'boq', label: 'Contractor BOQ Quotes', icon: <FaFileContract className="h-4 w-4 shrink-0" /> },
-      { id: 'pricing', label: 'Spot Benchmark & Deals', icon: <FaCoins className="h-4 w-4 shrink-0" /> },
-      { id: 'finance', label: 'Settlement Ledgers', icon: <FaIndianRupeeSign className="h-4 w-4 shrink-0" /> }
+      { id: 'boq', href: '/boq', label: 'Contractor BOQ Quotes', icon: FaFileContract },
+      { id: 'pricing', href: '/pricing', label: 'Spot Benchmark & Deals', icon: FaCoins },
+      { id: 'finance', href: '/finance', label: 'Settlement Ledgers', icon: FaIndianRupeeSign }
     ]
   }
 ];
@@ -91,11 +93,23 @@ export const VendorSidebar: React.FC<VendorSidebarProps> = ({
   isOpenMobile,
   onCloseMobile,
   isWsConnected,
-  storeName,
-  isOnline,
+  storeName = 'Kakkanad Building Supplies',
+  isOnline = true,
   onToggleOnline,
   onLogout
 }) => {
+  const pathname = usePathname();
+
+  function isItemActive(item: NavItem): boolean {
+    if (activeTab) {
+      return activeTab === item.id;
+    }
+    if (item.href === '/overview' && (pathname === '/' || pathname === '/overview')) {
+      return true;
+    }
+    return pathname === item.href;
+  }
+
   return (
     <>
       {isOpenMobile && (
@@ -106,129 +120,161 @@ export const VendorSidebar: React.FC<VendorSidebarProps> = ({
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#0d1527] text-slate-300 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed lg:sticky top-0 bottom-0 left-0 z-50 lg:z-30 w-64 xl:w-72 bg-white border-r border-slate-200/80 h-screen shrink-0 overflow-hidden flex flex-col justify-between shadow-xs transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpenMobile ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="h-18 px-5 flex items-center justify-between border-b border-slate-800/80 shrink-0">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/images/logo.png"
-              alt="MaterialHub"
-              width={140}
-              height={36}
-              className="h-8 w-auto object-contain"
-              priority
-            />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-lg border border-orange-500/20">
-              Partner Depot
-            </span>
+        <div className="shrink-0 p-5 xl:p-6 pb-3 space-y-4">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/overview"
+              onClick={onCloseMobile}
+              className="flex items-center gap-3 cursor-pointer"
+            >
+              <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
+                <img
+                  src="/images/logo_dark.png"
+                  alt="MaterialHub Logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div>
+                <div className="text-base font-medium tracking-tight text-slate-900 leading-tight">
+                  Material<span className="text-[#FF6500]">Hub</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest block">
+                  Vendor Depot
+                </span>
+              </div>
+            </Link>
+
+            <button
+              onClick={onCloseMobile}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 lg:hidden cursor-pointer"
+            >
+              <FaXmark className="h-5 w-5" />
+            </button>
           </div>
 
-          <button
-            onClick={onCloseMobile}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 lg:hidden"
-          >
-            <FaXmark className="h-5 w-5" />
-          </button>
+          <div className="bg-[#0F172A] rounded-2xl p-4 text-white shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`w-2 h-2 rounded-xs inline-block ${
+                    isOnline ? 'bg-emerald-500' : 'bg-slate-400'
+                  }`}
+                />
+                <span className="text-[11px] font-medium uppercase tracking-wider text-slate-300">
+                  {isOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
+
+              {onToggleOnline && (
+                <button
+                  type="button"
+                  onClick={onToggleOnline}
+                  aria-label={isOnline ? 'Go Offline' : 'Go Online'}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-lg p-0.5 transition-colors duration-200 ${
+                    isOnline ? 'bg-emerald-600' : 'bg-slate-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-md bg-white shadow-xs transition duration-200 ${
+                      isOnline ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              )}
+            </div>
+
+            <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
+              {isOnline
+                ? 'Receiving contractor wholesale orders'
+                : 'Depot order intake paused'}
+            </p>
+          </div>
         </div>
 
-        <div className="px-5 py-3 border-b border-slate-800/60 bg-slate-900/40 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
-            <span
-              className={`h-2 w-2 rounded-xs inline-block ${
-                isWsConnected ? 'bg-emerald-400' : 'bg-amber-400'
-              }`}
-            />
-            <span className="text-[11px] font-medium text-slate-300">
-              {isWsConnected ? 'Order Dispatch Stream' : 'Syncing Stream...'}
-            </span>
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 xl:px-6 py-2 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+          <nav className="space-y-4">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.group} className="space-y-1">
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest px-3 block mb-1">
+                  {group.group}
+                </span>
+
+                <div className="space-y-1">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isItemActive(item);
+
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        onClick={() => {
+                          if (onTabChange) onTabChange(item.id);
+                          onCloseMobile();
+                        }}
+                        className={`w-full flex items-center justify-between py-2.5 px-3.5 rounded-2xl font-medium text-xs transition-all cursor-pointer ${
+                          active
+                            ? 'bg-[#0F172A] text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-[#FF6500]' : 'text-slate-400'}`} />
+                          <span>{item.label}</span>
+                        </div>
+
+                        {item.badge ? (
+                          <span
+                            className={`text-[10px] font-medium px-2 py-0.5 rounded-lg ${
+                              active ? 'bg-white/20 text-white' : 'bg-[#F5A623] text-slate-950'
+                            }`}
+                          >
+                            {item.badge}
+                          </span>
+                        ) : null}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        <div className="shrink-0 p-5 xl:p-6 pt-3 border-t border-slate-100 bg-white space-y-3">
+          <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-2xl">
+            <div className="w-10 h-10 rounded-xl bg-[#0F172A] text-white flex items-center justify-center font-medium text-sm shrink-0">
+              {storeName.charAt(0)}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium text-slate-900 truncate block">
+                  {storeName}
+                </span>
+                <FaShieldHalved className="h-3 w-3 text-emerald-600 shrink-0" />
+              </div>
+              <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+                <FaStar className="h-3 w-3 text-amber-500" />
+                <span>4.92</span>
+                <span className="text-slate-300">·</span>
+                <span className="truncate">Verified Depot</span>
+              </div>
+            </div>
           </div>
-          {onToggleOnline && (
+
+          {onLogout && (
             <button
-              onClick={onToggleOnline}
-              className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase transition-colors ${
-                isOnline
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-slate-800 text-slate-400'
-              }`}
+              onClick={onLogout}
+              className="w-full py-2.5 px-3 bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-700 font-medium rounded-xl flex items-center justify-center gap-2 text-xs border border-slate-200 transition-colors cursor-pointer"
             >
-              <FaPowerOff className="h-2.5 w-2.5" />
-              {isOnline ? 'Online' : 'Offline'}
+              <FaRightFromBracket className="h-3.5 w-3.5 text-rose-600" />
+              <span>Sign Out</span>
             </button>
           )}
-        </div>
-
-        <nav className="flex-1 overflow-y-auto px-3.5 py-4 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.group} className="space-y-1">
-              <p className="px-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                {group.group}
-              </p>
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const isActive = activeTab === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        onTabChange(item.id);
-                        onCloseMobile();
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
-                        isActive
-                          ? 'bg-[#FF6500] text-white shadow-md shadow-orange-500/25'
-                          : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className={isActive ? 'text-white' : 'text-slate-400'}>
-                          {item.icon}
-                        </span>
-                        <span>{item.label}</span>
-                      </div>
-                      {item.badge && (
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${
-                            isActive
-                              ? 'bg-white/20 text-white'
-                              : 'bg-slate-800 text-slate-300'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </nav>
-
-        <div className="p-3.5 border-t border-slate-800/80 bg-slate-900/60 shrink-0 space-y-2">
-          <div className="flex items-center justify-between px-2 py-1">
-            <div className="flex items-center gap-2.5 truncate max-w-[190px]">
-              <div className="h-8 w-8 rounded-xl bg-orange-500/20 text-[#FF6500] flex items-center justify-center font-bold text-xs border border-orange-500/30 shrink-0">
-                KD
-              </div>
-              <div className="truncate">
-                <p className="text-xs font-semibold text-white leading-tight truncate">
-                  {storeName || 'Kakkanad Supplies'}
-                </p>
-                <p className="text-[11px] text-slate-400 truncate">Ramesh Kumar</p>
-              </div>
-            </div>
-            {onLogout && (
-              <button
-                onClick={onLogout}
-                title="Sign Out"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
-              >
-                <FaRightFromBracket className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
         </div>
       </aside>
     </>

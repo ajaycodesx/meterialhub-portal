@@ -21,10 +21,10 @@ export const HeroSection: React.FC = () => {
           
           <div className="order-2 lg:order-1 lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-6">
             <div className="text-center sm:text-left">
-              <p className="font-heading text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1.5 sm:mb-2">
+              <p className="font-heading text-xs sm:text-sm font-medium uppercase tracking-wider text-[#FF6500] mb-1.5 sm:mb-2">
                 Wholesale Material Hub
               </p>
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-slate-900 tracking-tight leading-[1.2] mb-2.5 sm:mb-4">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-medium text-slate-900 tracking-tight leading-[1.2] mb-2.5 sm:mb-4">
                 Direct Factory &amp; Wholesale <span className="text-[#FF6500]">Construction Materials</span>
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-2xl mx-auto sm:mx-0">
@@ -39,7 +39,7 @@ export const HeroSection: React.FC = () => {
                     <FaTruckFast className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs font-semibold text-slate-900 truncate">20 KM Radius</h4>
+                    <h4 className="text-xs font-medium text-slate-900 truncate">20 KM Radius</h4>
                     <p className="text-xs text-slate-500 font-normal truncate">Same-Day Delivery</p>
                   </div>
                 </div>
@@ -49,7 +49,7 @@ export const HeroSection: React.FC = () => {
                     <FaShieldHalved className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs font-semibold text-slate-900 truncate">GST Invoice</h4>
+                    <h4 className="text-xs font-medium text-slate-900 truncate">GST Invoice</h4>
                     <p className="text-xs text-slate-500 font-normal truncate">100% Tax Credit</p>
                   </div>
                 </div>
@@ -59,7 +59,7 @@ export const HeroSection: React.FC = () => {
                     <FaStore className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs font-semibold text-slate-900 truncate">Local Stockists</h4>
+                    <h4 className="text-xs font-medium text-slate-900 truncate">Local Stockists</h4>
                     <p className="text-xs text-slate-500 font-normal truncate">Verified Yards</p>
                   </div>
                 </div>
@@ -68,14 +68,14 @@ export const HeroSection: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1">
                 <button
                   onClick={() => router.push('/catalog')}
-                  className="w-full justify-center px-4 py-3 sm:py-3.5 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                  className="w-full justify-center px-4 py-3 sm:py-3.5 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs sm:text-sm font-medium shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <span>Explore Materials</span>
                   <FaArrowRight className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => setIsLocationModalOpen(true)}
-                  className="w-full text-center px-4 py-3 sm:py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-center"
+                  className="w-full text-center px-4 py-3 sm:py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-medium shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-center"
                 >
                   <span>Add Customized Order</span>
                 </button>

@@ -33,8 +33,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${plusJakartaSans.variable} ${poppins.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50/60 text-slate-900">
+      <body className="min-h-full flex flex-col font-sans bg-slate-50/60 text-slate-900" suppressHydrationWarning>
         {children}
       </body>
     </html>

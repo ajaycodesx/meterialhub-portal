@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
-  FaSpinner,
   FaCircleCheck,
   FaTriangleExclamation,
   FaXmark,
@@ -22,8 +22,43 @@ import { VendorPricingSection } from './sections/VendorPricingSection';
 import { VendorFinanceSection } from './sections/VendorFinanceSection';
 import { VendorProfileSection } from './sections/VendorProfileSection';
 
-export function VendorDashboard() {
-  const [activeTab, setActiveTab] = useState<VendorTab>('overview');
+function resolveTabFromPath(path: string | null): VendorTab {
+  if (!path) return 'overview';
+  const stripped = path.startsWith('/') ? path.slice(1) : path;
+  const clean = stripped.split('/')[0];
+  const validTabs: VendorTab[] = [
+    'overview',
+    'profile',
+    'orders',
+    'handover',
+    'products',
+    'stock',
+    'boq',
+    'pricing',
+    'finance'
+  ];
+  return validTabs.includes(clean as VendorTab) ? (clean as VendorTab) : 'overview';
+}
+
+export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState<VendorTab>(() => initialSlug || resolveTabFromPath(pathname));
+
+  useEffect(() => {
+    const fromPath = resolveTabFromPath(pathname);
+    if (fromPath !== activeTab) {
+      setActiveTab(fromPath);
+    }
+  }, [pathname]);
+
+  const handleTabChange = (tab: VendorTab) => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined') {
+      router.push(`/${tab}`);
+    }
+  };
+
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -68,21 +103,15 @@ export function VendorDashboard() {
   const loadAllData = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsRefreshing(true);
     try {
-      if (typeof window !== 'undefined' && !localStorage.getItem('access_token')) {
+      let token = apiClient.getToken();
+      if (!token) {
         const auth: any = await authApi.login('vendor@materialhub.in', 'vendor123');
-        apiClient.setToken(auth.access_token);
+        if (auth?.access_token) {
+          apiClient.setToken(auth.access_token);
+        }
       }
 
-      const [
-        dashRes,
-        ordersRes,
-        prodRes,
-        quotesRes,
-        ratesRes,
-        dealsRes,
-        settleRes,
-        profRes
-      ] = await Promise.allSettled([
+      const results = await Promise.allSettled([
         vendorApi.getDashboard(),
         vendorApi.getOrders(),
         vendorApi.getProducts(),
@@ -93,12 +122,71 @@ export function VendorDashboard() {
         vendorApi.getProfile()
       ]);
 
+      const isAuthError = results.some(
+        (r) => r.status === 'rejected' && ((r.reason as any)?.status === 401 || (r.reason as any)?.status === 403)
+      );
+
+      let [
+        dashRes,
+        ordersRes,
+        prodRes,
+        quotesRes,
+        ratesRes,
+        dealsRes,
+        settleRes,
+        profRes
+      ] = results;
+
+      if (isAuthError) {
+        const auth: any = await authApi.login('vendor@materialhub.in', 'vendor123');
+        if (auth?.access_token) {
+          apiClient.setToken(auth.access_token);
+          const retriedResults = await Promise.allSettled([
+            vendorApi.getDashboard(),
+            vendorApi.getOrders(),
+            vendorApi.getProducts(),
+            vendorApi.getBoqQuotes(),
+            vendorApi.getCommodityRates(),
+            vendorApi.getDeals(),
+            vendorApi.getSettlements(),
+            vendorApi.getProfile()
+          ]);
+          [
+            dashRes,
+            ordersRes,
+            prodRes,
+            quotesRes,
+            ratesRes,
+            dealsRes,
+            settleRes,
+            profRes
+          ] = retriedResults;
+        }
+      }
+
       if (dashRes.status === 'fulfilled') setDashboardData(dashRes.value);
-      if (ordersRes.status === 'fulfilled') setOrders(ordersRes.value?.items || ordersRes.value || []);
-      if (prodRes.status === 'fulfilled') setProducts(prodRes.value?.items || prodRes.value || []);
-      if (quotesRes.status === 'fulfilled') setQuotes(quotesRes.value || []);
-      if (ratesRes.status === 'fulfilled') setCommodityRates(ratesRes.value || []);
-      if (dealsRes.status === 'fulfilled') setDeals(dealsRes.value || []);
+      if (ordersRes.status === 'fulfilled') {
+        const val = ordersRes.value;
+        const list = Array.isArray(val) ? val : (val?.orders || val?.items || []);
+        setOrders(list);
+      }
+      if (prodRes.status === 'fulfilled') {
+        const val = prodRes.value;
+        const list = Array.isArray(val) ? val : (val?.products || val?.items || []);
+        setProducts(list);
+      }
+      if (quotesRes.status === 'fulfilled') {
+        const val: any = quotesRes.value;
+        setQuotes(Array.isArray(val) ? val : (val?.quotes || val?.items || []));
+      }
+      if (ratesRes.status === 'fulfilled') {
+        const val: any = ratesRes.value;
+        setCommodityRates(Array.isArray(val) ? val : (val?.rates || val?.items || []));
+      }
+      if (dealsRes.status === 'fulfilled') {
+        const val: any = dealsRes.value;
+        setDeals(Array.isArray(val) ? val : (val?.deals || val?.items || []));
+      }
       if (settleRes.status === 'fulfilled') setSettlementData(settleRes.value);
       if (profRes.status === 'fulfilled') setProfile(profRes.value);
 
@@ -333,23 +421,12 @@ export function VendorDashboard() {
     }
   }
 
-  if (loading && !dashboardData) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
-        <FaSpinner className="h-10 w-10 animate-spin text-[#FF6500]" />
-        <p className="text-sm font-medium tracking-wide">
-          Connecting to MaterialHub Vendor Depot Network...
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row w-full relative">
       <VendorSidebar
         activeTab={activeTab}
         onTabChange={(tab) => {
-          setActiveTab(tab);
+          handleTabChange(tab);
           setIsMobileOpen(false);
         }}
         isOpenMobile={isMobileOpen}
@@ -374,9 +451,10 @@ export function VendorDashboard() {
           isRefreshing={isRefreshing}
           storeName={profile?.name || dashboardData?.storeName}
           isOnline={profile?.isOnline ?? dashboardData?.isOnline ?? true}
+          onToggleOnline={handleToggleOnline}
         />
 
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 w-full space-y-6">
           {newOrderAlert && (
             <div className="p-4 rounded-2xl bg-[#FF6500] text-white shadow-md flex items-center justify-between animate-in fade-in">
               <div className="flex items-center gap-3">
@@ -384,17 +462,17 @@ export function VendorDashboard() {
                   <FaBell className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold">New Wholesale Order Alert</h4>
+                  <h4 className="text-sm font-medium">New Wholesale Order Alert</h4>
                   <p className="text-xs text-orange-100 font-medium">{newOrderAlert}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
-                    setActiveTab('orders');
+                    handleTabChange('orders');
                     setNewOrderAlert(null);
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-white text-[#FF6500] text-xs font-bold hover:bg-orange-50 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-white text-[#FF6500] text-xs font-medium hover:bg-orange-50 transition-colors cursor-pointer"
                 >
                   View Packing Queue
                 </button>
@@ -410,13 +488,11 @@ export function VendorDashboard() {
 
           {feedbackToast && (
             <div
-              className={`p-4 rounded-2xl shadow-xs flex items-center justify-between border ${
-                feedbackToast.type === 'success'
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                  : 'bg-rose-50 border-rose-200 text-rose-900'
+              className={`p-4 rounded-2xl shadow-xs flex items-center justify-between border bg-slate-50 border-slate-200/80 ${
+                feedbackToast.type === 'success' ? 'text-emerald-700' : 'text-rose-700'
               }`}
             >
-              <div className="flex items-center gap-2.5 text-xs font-semibold">
+              <div className="flex items-center gap-2.5 text-xs font-medium">
                 {feedbackToast.type === 'success' ? (
                   <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
                 ) : (
@@ -434,11 +510,11 @@ export function VendorDashboard() {
           )}
 
           {error && (
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium flex items-center justify-between">
               <span>{error}</span>
               <button
                 onClick={() => loadAllData(false)}
-                className="underline hover:text-amber-950 font-bold"
+                className="underline hover:text-amber-950 font-medium"
               >
                 Retry
               </button>
@@ -448,9 +524,12 @@ export function VendorDashboard() {
           {activeTab === 'overview' && (
             <VendorOverviewSection
               data={dashboardData}
-              onNavigateTab={(tab) => setActiveTab(tab)}
+              orders={orders}
+              products={products}
+              loading={loading}
+              onNavigateTab={(tab) => handleTabChange(tab)}
               onOpenPackModal={(order) => {
-                setActiveTab('orders');
+                handleTabChange('orders');
               }}
             />
           )}

@@ -201,7 +201,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           { label: merchant.name }
         ]}
         badge={(
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
             <FaShieldHalved className="h-3 w-3 text-emerald-600" />
             <span>Verified Direct Depot Stockist</span>
           </span>
@@ -216,13 +216,13 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               {merchant.distanceKm} KM Away (ETA: ~{merchant.deliveryEtaMinutes} Mins)
             </span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
-            <span>Managed by <strong className="font-semibold text-slate-800">{merchant.ownerName}</strong></span>
+            <span>Managed by <strong className="font-medium text-slate-800">{merchant.ownerName}</strong></span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>Factory Brands: {merchant.brands.join(', ')}</span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span className="text-emerald-700 font-medium">★ {merchant.rating} ({merchant.reviewsCount} reviews)</span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
-            <span>Min. Order: <strong className="text-slate-900 font-semibold">₹{merchant.minOrderValue.toLocaleString()}</strong></span>
+            <span>Min. Order: <strong className="text-slate-900 font-medium">₹{merchant.minOrderValue.toLocaleString()}</strong></span>
           </div>
         )}
         rightContent={(
@@ -270,7 +270,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       setSelectedGrade('all');
                       setSelectedGauge('all');
                     }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer border ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all cursor-pointer border ${
                       isActive
                         ? 'bg-[#FF6500] text-white border-[#FF6500] shadow-xs'
                         : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
@@ -306,7 +306,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             
             <div className="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-3 lg:sticky lg:top-24 self-start">
               <div className="flex items-center justify-between px-1 h-6">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
                   Store Material Categories
                 </span>
 
@@ -318,7 +318,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       setSelectedGrade('all');
                       setSelectedGauge('all');
                     }}
-                    className="text-[11px] font-semibold text-[#FF6500] hover:underline cursor-pointer"
+                    className="text-[11px] font-medium text-[#FF6500] hover:underline cursor-pointer"
                   >
                     Reset Filters
                   </button>
@@ -348,11 +348,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-slate-900 text-white font-semibold text-xs flex items-center justify-center shrink-0">
+                        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-slate-900 text-white font-medium text-xs flex items-center justify-center shrink-0">
                           {tab === 'all' ? 'ALL' : tab.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <h3 className={`font-semibold text-xs sm:text-sm ${isActive ? 'text-[#FF6500]' : 'text-slate-900'}`}>
+                          <h3 className={`font-medium text-xs sm:text-sm ${isActive ? 'text-[#FF6500]' : 'text-slate-900'}`}>
                             {getCategoryLabel(tab)}
                           </h3>
                           <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal">
@@ -362,7 +362,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600">
                           {count} Items
                         </span>
                       </div>
@@ -372,7 +372,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               </div>
 
               <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-xs space-y-3.5 pt-4 mt-4">
-                <h3 className="font-semibold text-xs text-slate-900 uppercase tracking-wider text-slate-400">
+                <h3 className="font-medium text-xs text-slate-900 uppercase tracking-wider text-slate-400">
                   Technical Grade &amp; Brand Filters
                 </h3>
 
@@ -408,7 +408,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
             <div className="lg:col-span-8 xl:col-span-9 space-y-2.5">
               <div className="flex items-center justify-between px-1 h-6">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider flex items-center gap-1">
                   <FaShieldHalved className="h-3 w-3 text-emerald-600" />
                   Available Store Products ({filteredProducts.length})
                 </span>
@@ -417,7 +417,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-16 bg-white rounded-2xl p-8 shadow-xs">
                   <FaCartFlatbedSuitcase className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-                  <h3 className="text-base font-semibold text-slate-800">No Products Match Your Filters</h3>
+                  <h3 className="text-base font-medium text-slate-800">No Products Match Your Filters</h3>
                   <p className="text-xs text-slate-400 mt-1 font-normal">Try clearing category selection or technical filters</p>
                   <Button
                     onClick={() => {
@@ -452,11 +452,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                             
-                            <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-900/80 text-white backdrop-blur-xs shadow-xs">
+                            <span className="absolute bottom-2 left-2 text-[10px] font-medium px-2 py-0.5 rounded-lg bg-slate-900/80 text-white backdrop-blur-xs shadow-xs">
                               {product.weightSpec}
                             </span>
                             {typeof product.stockQty === 'number' && (
-                              <span className={`absolute top-2 right-2 text-[10px] font-semibold px-2.5 py-0.5 rounded-lg backdrop-blur-md shadow-xs ${
+                              <span className={`absolute top-2 right-2 text-[10px] font-medium px-2.5 py-0.5 rounded-lg backdrop-blur-md shadow-xs ${
                                 product.stockQty > 0 ? 'bg-emerald-600/90 text-white' : 'bg-rose-600/90 text-white'
                               }`}>
                                 {product.stockQty > 0 ? `${product.stockQty} in stock` : 'Out of stock'}
@@ -464,11 +464,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                             )}
                           </div>
 
-                          <h4 className="font-semibold text-xs sm:text-sm text-slate-900 leading-snug">
+                          <h4 className="font-medium text-xs sm:text-sm text-slate-900 leading-snug">
                             {product.title}
                           </h4>
                           <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[10px] font-medium text-slate-600">
-                            <span className="text-[#FF6500] font-semibold">
+                            <span className="text-[#FF6500] font-medium">
                               {product.brand}
                             </span>
                             {product.grade && (
@@ -492,8 +492,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
                         <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                           <div>
-                            <div className="text-[8px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Wholesale Price</div>
-                            <div className="text-xs sm:text-sm font-semibold text-slate-900">
+                            <div className="text-[8px] text-slate-400 font-medium uppercase tracking-wider leading-none mb-0.5">Wholesale Price</div>
+                            <div className="text-xs sm:text-sm font-medium text-slate-900">
                               ₹{product.price.toLocaleString()} <span className="text-[10px] text-slate-400 font-normal">/ {product.unit}</span>
                             </div>
                           </div>
@@ -510,7 +510,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                                 type="number"
                                 value={qty}
                                 onChange={(e) => handleQtyChange(product, parseInt(e.target.value))}
-                                className="w-8 text-center font-semibold text-xs bg-transparent focus:outline-none text-slate-900"
+                                className="w-8 text-center font-medium text-xs bg-transparent focus:outline-none text-slate-900"
                               />
                               <button
                                 onClick={() => handleIncrement(product)}
@@ -551,8 +551,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 <FaTruckFast className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div className="hidden xs:block">
-                <div className="text-[9px] sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Unloading Weight Check</div>
-                <div className="text-xs sm:text-base font-semibold leading-tight text-white flex items-center gap-1">
+                <div className="text-[9px] sm:text-[10px] text-slate-400 font-medium uppercase tracking-wider leading-none mb-0.5">Unloading Weight Check</div>
+                <div className="text-xs sm:text-base font-medium leading-tight text-white flex items-center gap-1">
                   {totalWeightTons.toFixed(2)} Tons
                   <span className="text-[9px] sm:text-[11px] font-normal text-slate-400">({totalWeightKg.toLocaleString()} kg)</span>
                 </div>
@@ -560,9 +560,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             </div>
 
             <div className="flex-1 max-w-[140px] xs:max-w-xs sm:max-w-md space-y-1">
-              <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-semibold text-slate-400">
+              <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-medium text-slate-400">
                 <span className="truncate">Recommended Vehicle</span>
-                <span className="text-[#FF6500] font-semibold uppercase tracking-wider truncate ml-1">{vehicleRecommendation.name}</span>
+                <span className="text-[#FF6500] font-medium uppercase tracking-wider truncate ml-1">{vehicleRecommendation.name}</span>
               </div>
               <div className="relative w-full h-1.5 sm:h-2 bg-slate-800 rounded-lg overflow-hidden">
                 <div 
@@ -574,8 +574,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
             <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               <div className="text-right">
-                <div className="text-[8px] sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Est. Material Total</div>
-                <div className="text-xs sm:text-lg font-semibold text-[#FF6500] leading-tight">
+                <div className="text-[8px] sm:text-[10px] text-slate-400 font-medium uppercase tracking-wider leading-none mb-0.5">Est. Material Total</div>
+                <div className="text-xs sm:text-lg font-medium text-[#FF6500] leading-tight">
                   ₹{totalPrice.toLocaleString()}
                   <span className="text-[8px] sm:text-[10px] text-slate-500 font-normal ml-0.5 hidden sm:inline">Excl. GST</span>
                 </div>
@@ -586,7 +586,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 size="sm"
                 onClick={() => onProceedToCheckout(cartItems)}
                 icon={<FaArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
-                className="px-3 sm:px-6 py-1.5 sm:py-3 rounded-xl text-xs font-semibold shrink-0"
+                className="px-3 sm:px-6 py-1.5 sm:py-3 rounded-xl text-xs font-medium shrink-0"
               >
                 <span className="hidden sm:inline">Checkout Supply Order</span>
                 <span className="sm:hidden">Checkout</span>

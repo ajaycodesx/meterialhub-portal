@@ -33,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
               <FaTruckFast className="h-4 w-4" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-900 leading-tight">20 KM Radius</h4>
+              <h4 className="text-xs font-medium text-slate-900 leading-tight">20 KM Radius</h4>
               <p className="text-xs text-slate-500 font-normal">Same-Day Site Unloading</p>
             </div>
           </div>
@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
               <FaShieldHalved className="h-4 w-4" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-900 leading-tight">GST Tax Invoice</h4>
+              <h4 className="text-xs font-medium text-slate-900 leading-tight">GST Tax Invoice</h4>
               <p className="text-xs text-slate-500 font-normal">100% Tax Credit Invoice</p>
             </div>
           </div>
@@ -53,7 +53,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
               <FaCircleCheck className="h-4 w-4 text-emerald-600" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-900 leading-tight">Verified Stores</h4>
+              <h4 className="text-xs font-medium text-slate-900 leading-tight">Verified Stores</h4>
               <p className="text-xs text-slate-500 font-normal">Direct Wholesale Stock</p>
             </div>
           </div>
@@ -67,7 +67,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
               <FaHeadset className="h-4 w-4 text-slate-800" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-900 leading-tight">24x7 Site Support</h4>
+              <h4 className="text-xs font-medium text-slate-900 leading-tight">24x7 Site Support</h4>
               <p className="text-xs text-slate-500 font-normal">Call 1800-425-9999</p>
             </div>
           </a>
@@ -85,7 +85,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                 />
               </div>
               <div className="text-left">
-                <span className="font-semibold text-lg sm:text-xl tracking-tight text-slate-900 leading-tight">
+                <span className="font-medium text-lg sm:text-xl tracking-tight text-slate-900 leading-tight">
                   Material<span className="text-[#FF6500]">Hub</span>
                 </span>
                 <p className="text-xs text-slate-500 font-normal leading-none mt-0.5">
@@ -99,7 +99,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
             </p>
 
             <div className="pt-1 space-y-2 w-full flex flex-col items-center sm:items-start">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block text-center sm:text-left">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider block text-center sm:text-left">
                 Get MaterialHub Mobile App
               </span>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full">
@@ -111,7 +111,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                   <FaDownload className="h-3 w-3 text-[#FF6500]" />
                   <div className="text-left">
                     <div className="text-[10px] text-slate-400 uppercase font-normal leading-none">Get it on</div>
-                    <div className="font-semibold text-xs leading-tight">Google Play</div>
+                    <div className="font-medium text-xs leading-tight">Google Play</div>
                   </div>
                 </button>
 
@@ -123,12 +123,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                   <FaDownload className="h-3 w-3 text-slate-300" />
                   <div className="text-left">
                     <div className="text-[10px] text-slate-400 uppercase font-normal leading-none">Download on</div>
-                    <div className="font-semibold text-xs leading-tight">App Store</div>
+                    <div className="font-medium text-xs leading-tight">App Store</div>
                   </div>
                 </button>
               </div>
               {appNotice && (
-                <div className="p-2 px-3 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 shadow-2xs">
+                <div className="p-2 px-3 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-medium flex items-center gap-1.5 shadow-2xs">
                   <FaCheck className="h-3 w-3 text-emerald-600 shrink-0" />
                   <span>{appNotice}</span>
                 </div>
@@ -137,7 +137,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
           </div>
 
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-semibold text-slate-900 uppercase tracking-wider">
+            <h4 className="text-xs font-medium text-slate-900 uppercase tracking-wider">
               Wholesale Materials
             </h4>
             <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 text-xs font-normal">
@@ -162,7 +162,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
           </div>
 
           <div className="lg:col-span-4 space-y-3">
-            <h4 className="text-xs font-semibold text-slate-900 uppercase tracking-wider">
+            <h4 className="text-xs font-medium text-slate-900 uppercase tracking-wider">
               Ecosystem Portals
             </h4>
             <div className="space-y-2">
@@ -177,7 +177,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                     <FaStore className="h-3.5 w-3.5" />
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-slate-900">Become a Vendor</div>
+                    <div className="text-xs font-medium text-slate-900">Become a Vendor</div>
                     <div className="text-xs text-slate-500 font-normal">Hardware Store Onboarding</div>
                   </div>
                 </div>
@@ -195,7 +195,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
                     <FaTruck className="h-3.5 w-3.5" />
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-slate-900">Logistics Partner</div>
+                    <div className="text-xs font-medium text-slate-900">Logistics Partner</div>
                     <div className="text-xs text-slate-500 font-normal">Driver &amp; Fleet Onboarding</div>
                   </div>
                 </div>
@@ -214,7 +214,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-normal text-slate-500">
             <button
               onClick={onOpenLanguageModal}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer shrink-0"
             >
               <FaGlobe className="h-3 w-3 text-[#FF6500]" />
               <span className="uppercase">{currentLanguage}</span>

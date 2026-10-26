@@ -1,13 +1,10 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import {
-  FaTruckFast,
   FaArrowsRotate,
   FaLocationCrosshairs,
-  FaRightFromBracket,
-  FaSignal
+  FaRightFromBracket
 } from 'react-icons/fa6';
 
 export type DriverTab = 'dispatch' | 'history' | 'profile';
@@ -43,7 +40,7 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
 }) => {
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+      <div className="w-full px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="relative h-9 w-9 flex items-center justify-center shrink-0">
             <img
@@ -55,10 +52,10 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm sm:text-base font-bold text-slate-900 leading-none">
+              <h1 className="text-sm sm:text-base font-medium text-slate-900 leading-none">
                 {driverName}
               </h1>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-orange-100 text-[#FF6500] hidden sm:inline-block">
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-orange-100 text-[#FF6500] hidden sm:inline-block">
                 Licensed Carrier
               </span>
             </div>
@@ -71,20 +68,31 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={onRequestGps}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
               gpsActive
-                ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
-            title="GPS Telemetry Sensor"
           >
-            <FaLocationCrosshairs className={`h-3.5 w-3.5 ${gpsActive ? 'text-blue-600' : 'text-slate-400'}`} />
+            <FaLocationCrosshairs className={`h-3.5 w-3.5 ${gpsActive ? 'text-emerald-600' : 'text-slate-400'}`} />
             <span className="hidden md:inline">{gpsActive ? 'GPS Fixed' : 'GPS Offline'}</span>
           </button>
 
+          <div
+            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-600"
+            title="Telemetry Socket Stream"
+          >
+            <span
+              className={`h-2 w-2 rounded-xs inline-block ${
+                isWsConnected ? 'bg-emerald-500' : 'bg-amber-500'
+              }`}
+            />
+            <span>{isWsConnected ? 'Live Dispatch Sync' : 'Polling Sync'}</span>
+          </div>
+
           <button
             onClick={onToggleOnline}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer ${
               isOnline
                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
                 : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
@@ -117,7 +125,7 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 border-t border-slate-100 text-xs font-semibold">
+      <div className="w-full px-4 sm:px-6 flex items-center gap-1 border-t border-slate-100 text-xs font-medium">
         <button
           onClick={() => onTabChange('dispatch')}
           className={`py-2.5 px-4 border-b-2 transition-colors cursor-pointer ${

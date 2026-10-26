@@ -107,7 +107,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
         <div className="lg:col-span-6 xl:col-span-6 bg-white rounded-3xl p-5 sm:p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
             <div className="space-y-3 flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-[1.2]">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-slate-900 tracking-tight leading-[1.2]">
                 Direct Factory &amp; Wholesale <br className="hidden sm:inline" />
                 <span className="text-[#FF6500]">Construction Materials</span>
               </h1>
@@ -118,13 +118,13 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
               <div className="flex flex-wrap items-center gap-2.5 pt-2">
                 <button
                   onClick={() => router.push('/catalog')}
-                  className="px-5 py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs sm:text-sm font-semibold shadow-xs transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs sm:text-sm font-medium shadow-xs transition-all cursor-pointer"
                 >
                   Explore Materials
                 </button>
                 <button
                   onClick={() => setIsLocationModalOpen(true)}
-                  className="px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-xs transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-medium shadow-xs transition-all cursor-pointer"
                 >
                   Add Customized Order
                 </button>
@@ -143,7 +143,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
         <div className="lg:col-span-3 xl:col-span-3 bg-[#1E293B] text-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-4">
           <div>
-            <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight leading-snug">
+            <h3 className="text-base sm:text-lg font-medium text-white tracking-tight leading-snug">
               Running low on Steel?
             </h3>
             <p className="text-xs text-slate-300 font-normal mt-0.5">
@@ -160,7 +160,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
               />
             </div>
             <div className="min-w-0 flex-1 leading-snug">
-              <h4 className="text-xs font-semibold text-white truncate">
+              <h4 className="text-xs font-medium text-white truncate">
                 TMT Steel Rods
               </h4>
               <p className="text-[10px] text-slate-300 font-normal truncate mt-0.5 flex items-center gap-1.5">
@@ -176,7 +176,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
           <button
             onClick={() => handleQuickReorder('TMT Steel Rods Fe550D', 10)}
-            className="w-full py-2.5 px-3 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs font-semibold text-center shadow-xs transition-all cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs font-medium text-center shadow-xs transition-all cursor-pointer"
           >
             Quick Reorder (10 Tons)
           </button>
@@ -184,12 +184,12 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
         <div className="lg:col-span-3 xl:col-span-3 bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs sm:text-sm font-semibold text-slate-900">
+            <h3 className="text-xs sm:text-sm font-medium text-slate-900">
               Recent Shipments Arrival
             </h3>
             <button
               onClick={() => router.push('/tracking')}
-              className="text-[11px] font-semibold text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
+              className="text-[11px] font-medium text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
             >
               <span>View More</span>
               <FaChevronRight className="h-2 w-2" />
@@ -206,20 +206,20 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   <img src="/images/tmt_steel_rods.png" alt="TMT Steel" className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
+                  <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
                     Torrent Fe550D Steel
                   </h4>
                   <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
                     <span className="truncate">TMT Steel Fastrods</span>
                     <span className="h-2 w-px bg-slate-300 inline-block" />
-                    <span className="text-emerald-600 font-semibold">
+                    <span className="text-emerald-600 font-medium">
                       In-Transit
                     </span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 shrink-0 text-right">
-                <span className="text-xs font-semibold text-slate-900">₹12,880</span>
+                <span className="text-xs font-medium text-slate-900">₹12,880</span>
                 <FaChevronRight className="h-2.5 w-2.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </div>
@@ -233,20 +233,20 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   <img src="/images/cement_aggregates.png" alt="Bricks" className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
+                  <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
                     Bricks &amp; Clay 7 Bags
                   </h4>
                   <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
                     <span className="truncate">Bricks Cement Direct</span>
                     <span className="h-2 w-px bg-slate-300 inline-block" />
-                    <span className="text-emerald-600 font-semibold">
+                    <span className="text-emerald-600 font-medium">
                       In-Transit
                     </span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 shrink-0 text-right">
-                <span className="text-xs font-semibold text-slate-900">₹6,480</span>
+                <span className="text-xs font-medium text-slate-900">₹6,480</span>
                 <FaChevronRight className="h-2.5 w-2.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </div>
@@ -260,20 +260,20 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   <img src="/images/cement_aggregates.png" alt="Cement" className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
+                  <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
                     Cement Bags Fast Transit
                   </h4>
                   <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
                     <span className="truncate">UltraTech 53G Bags</span>
                     <span className="h-2 w-px bg-slate-300 inline-block" />
-                    <span className="text-emerald-600 font-semibold">
+                    <span className="text-emerald-600 font-medium">
                       In-Transit
                     </span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 shrink-0 text-right">
-                <span className="text-xs font-semibold text-slate-900">₹1,288</span>
+                <span className="text-xs font-medium text-slate-900">₹1,288</span>
                 <FaChevronRight className="h-2.5 w-2.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </div>
@@ -287,13 +287,13 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
         <div className="lg:col-span-5 xl:col-span-5 bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3.5">
             <div>
-              <h3 className="text-xs sm:text-sm font-semibold text-slate-900">
+              <h3 className="text-xs sm:text-sm font-medium text-slate-900">
                 Trending Wholesale Deals
               </h3>
             </div>
             <button
               onClick={() => router.push('/catalog')}
-              className="text-[11px] font-semibold text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
+              className="text-[11px] font-medium text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
             >
               <span>View More</span>
               <FaChevronRight className="h-2 w-2" />
@@ -311,21 +311,21 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   alt="Aggregates"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
-                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-medium">
                   Live Stock
                 </span>
-                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-medium">
                   Save 13%
                 </span>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500]">
+                <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500]">
                   Aggregates
                 </h4>
                 <p className="text-[10px] text-slate-500 truncate">20mm Granite</p>
                 <div className="mt-1 flex items-baseline justify-between gap-1">
-                  <span className="text-[11px] font-semibold text-slate-900">₹83.0<span className="text-[9px] text-slate-400 font-normal">/ton</span></span>
-                  <span className="text-[9px] font-semibold text-[#FF6500] bg-orange-100 px-1 py-0.2 rounded">-13%</span>
+                  <span className="text-[11px] font-medium text-slate-900">₹83.0<span className="text-[9px] text-slate-400 font-normal">/ton</span></span>
+                  <span className="text-[9px] font-medium text-[#FF6500] bg-orange-100 px-1 py-0.2 rounded">-13%</span>
                 </div>
               </div>
             </div>
@@ -340,21 +340,21 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   alt="TMT Steel"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
-                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-medium">
                   Live Stock
                 </span>
-                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-medium">
                   Save 15%
                 </span>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500]">
+                <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500]">
                   Bricks &amp; Steel
                 </h4>
                 <p className="text-[10px] text-slate-500 truncate">Fe550 Fe500</p>
                 <div className="mt-1 flex items-baseline justify-between gap-1">
-                  <span className="text-[11px] font-semibold text-slate-900">₹48,160<span className="text-[9px] text-slate-400 font-normal">/ton</span></span>
-                  <span className="text-[9px] font-semibold text-[#FF6500]">-12%</span>
+                  <span className="text-[11px] font-medium text-slate-900">₹48,160<span className="text-[9px] text-slate-400 font-normal">/ton</span></span>
+                  <span className="text-[9px] font-medium text-[#FF6500]">-12%</span>
                 </div>
               </div>
             </div>
@@ -369,21 +369,21 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   alt="Cement"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
-                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-medium">
                   Live Stock
                 </span>
-                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-medium">
                   Save 12%
                 </span>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500]">
+                <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500]">
                   Cement Bags
                 </h4>
                 <p className="text-[10px] text-slate-500 truncate">UltraTech 53G</p>
                 <div className="mt-1 flex items-baseline justify-between gap-1">
-                  <span className="text-[11px] font-semibold text-slate-900">₹1,350<span className="text-[9px] text-slate-400 font-normal">/bag</span></span>
-                  <span className="text-[9px] font-semibold text-[#FF6500] bg-orange-100 px-1 py-0.2 rounded">-12%</span>
+                  <span className="text-[11px] font-medium text-slate-900">₹1,350<span className="text-[9px] text-slate-400 font-normal">/bag</span></span>
+                  <span className="text-[9px] font-medium text-[#FF6500] bg-orange-100 px-1 py-0.2 rounded">-12%</span>
                 </div>
               </div>
             </div>
@@ -398,21 +398,21 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   alt="Solid Bricks"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
-                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[8px] font-medium">
                   Live Stock
                 </span>
-                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-semibold">
+                <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[8px] font-medium">
                   Save 10%
                 </span>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-900 truncate group-hover:text-[#FF6500]">
+                <h4 className="text-xs font-medium text-slate-900 truncate group-hover:text-[#FF6500]">
                   Solid Bricks
                 </h4>
                 <p className="text-[10px] text-slate-500 truncate">Red Clay 1st</p>
                 <div className="mt-1 flex items-baseline justify-between gap-1">
-                  <span className="text-[11px] font-semibold text-slate-900">₹46.9<span className="text-[9px] text-slate-400 font-normal">/pc</span></span>
-                  <span className="text-[9px] font-semibold text-[#FF6500] bg-orange-100 px-1 py-0.2 rounded">-12%</span>
+                  <span className="text-[11px] font-medium text-slate-900">₹46.9<span className="text-[9px] text-slate-400 font-normal">/pc</span></span>
+                  <span className="text-[9px] font-medium text-[#FF6500] bg-orange-100 px-1 py-0.2 rounded">-12%</span>
                 </div>
               </div>
             </div>
@@ -421,12 +421,12 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
         <div className="lg:col-span-4 xl:col-span-4 bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2.5">
-            <h3 className="text-xs sm:text-sm font-semibold text-slate-900">
+            <h3 className="text-xs sm:text-sm font-medium text-slate-900">
               Live Market Rates by Tonnage
             </h3>
             <button
               onClick={() => router.push('/catalog')}
-              className="text-[11px] font-semibold text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
+              className="text-[11px] font-medium text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
             >
               <span>View More</span>
               <FaChevronRight className="h-2 w-2" />
@@ -438,7 +438,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
               <button
                 key={tab}
                 onClick={() => setRatesTab(tab)}
-                className={`px-3 py-1 rounded-2xl text-xs font-semibold capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-2xl text-xs font-medium capitalize transition-all cursor-pointer ${
                   ratesTab === tab
                     ? 'bg-[#FF6500] text-white shadow-xs'
                     : 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80'
@@ -450,7 +450,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
           </div>
 
           <div className="w-full text-xs">
-            <div className="grid grid-cols-4 pb-2 border-b border-slate-100 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="grid grid-cols-4 pb-2 border-b border-slate-100 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
               <span>Name</span>
               <span className="text-center">Trade Index</span>
               <span className="text-right">Rate</span>
@@ -460,10 +460,10 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
             <div className="divide-y divide-slate-50">
               {currentRates.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-4 py-2 items-center hover:bg-slate-50/50 transition-colors">
-                  <span className="font-semibold text-slate-900 truncate pr-1">{item.name}</span>
+                  <span className="font-medium text-slate-900 truncate pr-1">{item.name}</span>
                   <span className="text-[10px] text-slate-400 text-center truncate">{item.tradeIndex}</span>
-                  <span className="font-semibold text-slate-800 text-right">₹{item.rate}</span>
-                  <span className={`text-[10px] font-semibold text-right flex items-center justify-end gap-0.5 ${
+                  <span className="font-medium text-slate-800 text-right">₹{item.rate}</span>
+                  <span className={`text-[10px] font-medium text-right flex items-center justify-end gap-0.5 ${
                     item.trend === 'up' ? 'text-emerald-600' : 'text-[#FF6500]'
                   }`}>
                     {item.trend === 'up' ? <FaArrowTrendUp className="h-2 w-2" /> : <FaArrowTrendDown className="h-2 w-2" />}
@@ -477,7 +477,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
         <div className="lg:col-span-3 xl:col-span-3 bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
           <div className="mb-2">
-            <h3 className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">
+            <h3 className="text-xs sm:text-sm font-medium text-slate-900 leading-tight">
               Nearest Hardware Suppliers &amp; Categories
             </h3>
             <p className="text-[10px] text-slate-400 mt-0.5 font-normal">
@@ -491,7 +491,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 <button
                   key={i}
                   onClick={() => router.push('/catalog')}
-                  className="w-full text-left px-2 py-1.5 rounded-xl bg-slate-50 hover:bg-orange-50 text-[10px] font-semibold text-slate-700 hover:text-[#FF6500] truncate transition-colors cursor-pointer"
+                  className="w-full text-left px-2 py-1.5 rounded-xl bg-slate-50 hover:bg-orange-50 text-[10px] font-medium text-slate-700 hover:text-[#FF6500] truncate transition-colors cursor-pointer"
                 >
                   {c}
                 </button>
@@ -505,8 +505,8 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   className="p-2 rounded-xl bg-slate-50/80 hover:bg-white shadow-2xs hover:shadow-xs transition-all space-y-1"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-slate-900 truncate max-w-[100px]">{m.name}</span>
-                    <span className="flex items-center gap-0.5 text-[9px] font-semibold text-amber-500">
+                    <span className="text-[11px] font-medium text-slate-900 truncate max-w-[100px]">{m.name}</span>
+                    <span className="flex items-center gap-0.5 text-[9px] font-medium text-amber-500">
                       <FaStar className="h-2 w-2" /> {m.rating}
                     </span>
                   </div>
@@ -517,13 +517,13 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   <div className="grid grid-cols-2 gap-1 pt-0.5">
                     <button
                       onClick={() => onSelectMerchant(m)}
-                      className="py-1 rounded-lg bg-[#FF6500] hover:bg-[#E05800] text-white text-[9px] font-semibold text-center transition-all cursor-pointer"
+                      className="py-1 rounded-lg bg-[#FF6500] hover:bg-[#E05800] text-white text-[9px] font-medium text-center transition-all cursor-pointer"
                     >
                       Visit Store
                     </button>
                     <button
                       onClick={() => showToast(`Connecting you with ${m.name}...`)}
-                      className="py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-semibold text-center transition-all cursor-pointer"
+                      className="py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-medium text-center transition-all cursor-pointer"
                     >
                       Contact
                     </button>
@@ -545,12 +545,12 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
         <div className="lg:col-span-5 xl:col-span-5 bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs sm:text-sm font-semibold text-slate-900">
+              <h3 className="text-xs sm:text-sm font-medium text-slate-900">
                 Authorized Manufacturer Brands
               </h3>
               <button
                 onClick={() => router.push('/catalog')}
-                className="text-[11px] font-semibold text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
+                className="text-[11px] font-medium text-slate-400 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-0.5"
               >
                 <span>All Brands</span>
                 <FaChevronRight className="h-2 w-2" />
@@ -568,7 +568,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 <button
                   key={pill.id}
                   onClick={() => setBrandsTab(pill.id)}
-                  className={`px-2.5 py-1 rounded-2xl text-[10px] font-semibold shrink-0 transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-2xl text-[10px] font-medium shrink-0 transition-all cursor-pointer ${
                     brandsTab === pill.id
                       ? 'bg-[#FF6500] text-white shadow-xs'
                       : 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80'
@@ -587,15 +587,15 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   className="p-2.5 rounded-2xl bg-slate-50/70 hover:bg-slate-100/70 transition-all cursor-pointer flex flex-col justify-between group"
                 >
                   <div className="flex items-start justify-between gap-1 mb-1.5">
-                    <div className="h-7 w-7 rounded-lg bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center shadow-2xs">
+                    <div className="h-7 w-7 rounded-lg bg-slate-900 text-white font-medium text-[10px] flex items-center justify-center shadow-2xs">
                       {brand.initials}
                     </div>
-                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-semibold ${brand.tagColor}`}>
+                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-medium ${brand.tagColor}`}>
                       {brand.tag}
                     </span>
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-semibold text-slate-900 truncate group-hover:text-[#FF6500]">
+                    <h4 className="text-[11px] font-medium text-slate-900 truncate group-hover:text-[#FF6500]">
                       {brand.name}
                     </h4>
                     <p className="text-[9px] text-slate-400 font-normal truncate mt-0.5">
@@ -604,7 +604,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   </div>
                   <div className="mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[8px] text-slate-400">
                     <span>{brand.stores} Stores</span>
-                    <span className="text-[#FF6500] font-semibold flex items-center gap-0.5">
+                    <span className="text-[#FF6500] font-medium flex items-center gap-0.5">
                       Rates <FaChevronRight className="h-1.5 w-1.5" />
                     </span>
                   </div>
@@ -628,7 +628,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <div>
-                <h3 className="text-xs sm:text-sm font-semibold text-slate-900">
+                <h3 className="text-xs sm:text-sm font-medium text-slate-900">
                   Nearest Hardware Suppliers &amp; Categories
                 </h3>
                 <p className="text-[10px] text-slate-400 mt-0.5 font-normal">
@@ -641,7 +641,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   <button
                     key={r}
                     onClick={() => setSelectedRadius(r)}
-                    className={`px-2 py-0.5 rounded-xl text-[9px] font-semibold transition-all cursor-pointer ${
+                    className={`px-2 py-0.5 rounded-xl text-[9px] font-medium transition-all cursor-pointer ${
                       selectedRadius === r
                         ? 'bg-[#FF6500] text-white'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -660,11 +660,11 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   className="p-3 rounded-2xl bg-slate-50/70 hover:bg-slate-100/70 transition-all flex items-center justify-between gap-2.5 shadow-2xs"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="h-9 w-9 rounded-xl bg-slate-900 text-white font-semibold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    <div className="h-9 w-9 rounded-xl bg-slate-900 text-white font-medium text-xs flex items-center justify-center shrink-0 shadow-2xs">
                       {m.name.charAt(0)}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-xs font-semibold text-slate-900 truncate">{m.name}</h4>
+                      <h4 className="text-xs font-medium text-slate-900 truncate">{m.name}</h4>
                       <p className="text-[10px] text-slate-400 truncate flex items-center gap-1.5 mt-0.5">
                         <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500]" />
                         <span>{m.distanceKm} KM Away</span>
@@ -678,7 +678,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => onSelectMerchant(m)}
-                      className="px-2.5 py-1.5 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white text-[10px] font-semibold transition-all cursor-pointer shadow-xs"
+                      className="px-2.5 py-1.5 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white text-[10px] font-medium transition-all cursor-pointer shadow-xs"
                     >
                       View Store
                     </button>
@@ -720,7 +720,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 <circle cx="160" cy="55" r="2" fill="#FFFFFF" />
               </svg>
 
-              <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/90 backdrop-blur-xs text-[9px] font-semibold text-slate-800 shadow-2xs">
+              <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/90 backdrop-blur-xs text-[9px] font-medium text-slate-800 shadow-2xs">
                 <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500]" />
                 <span>Site #14 Kakkanad</span>
               </div>
@@ -734,7 +734,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
           <div className="flex items-center justify-between pt-2.5 text-[9px] text-slate-400">
             <span>Direct Merchant Dispatch</span>
-            <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+            <span className="font-medium text-slate-700 flex items-center gap-1.5">
               <span>Bolero Pickup</span>
               <span className="h-2 w-px bg-slate-300 inline-block" />
               <span>16T Trucks</span>
@@ -750,7 +750,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 Ordered 200 bags UltraTech... on-site in 40 mins via Bolero pickup.
               </p>
               <div className="pt-1 border-t border-slate-100">
-                <p className="text-[10px] font-semibold text-slate-900 truncate">Jayesh Shah</p>
+                <p className="text-[10px] font-medium text-slate-900 truncate">Jayesh Shah</p>
                 <p className="text-[8px] text-slate-400 truncate flex items-center gap-1">
                   <span>Site Engineer</span>
                   <span className="h-1.5 w-px bg-slate-300 inline-block" />
@@ -765,7 +765,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 Wholesale rate index saved ₹18,000 on single steel bulk order.
               </p>
               <div className="pt-1 border-t border-slate-100">
-                <p className="text-[10px] font-semibold text-slate-900 truncate">M. Suresh</p>
+                <p className="text-[10px] font-medium text-slate-900 truncate">M. Suresh</p>
                 <p className="text-[8px] text-slate-400 truncate flex items-center gap-1">
                   <span>Civil Contractor</span>
                   <span className="h-1.5 w-px bg-slate-300 inline-block" />
@@ -780,7 +780,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 On-time GPS driver tracking eliminated work crew idle time.
               </p>
               <div className="pt-1 border-t border-slate-100">
-                <p className="text-[10px] font-semibold text-slate-900 truncate">Aniket R.</p>
+                <p className="text-[10px] font-medium text-slate-900 truncate">Aniket R.</p>
                 <p className="text-[8px] text-slate-400 truncate flex items-center gap-1">
                   <span>Project Lead</span>
                   <span className="h-1.5 w-px bg-slate-300 inline-block" />
@@ -795,7 +795,7 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
                 Accurate GST tax invoices and seamless BOQ quotation support.
               </p>
               <div className="pt-1 border-t border-slate-100">
-                <p className="text-[10px] font-semibold text-slate-900 truncate">Ajay Das</p>
+                <p className="text-[10px] font-medium text-slate-900 truncate">Ajay Das</p>
                 <p className="text-[8px] text-slate-400 truncate flex items-center gap-1">
                   <span>Builder</span>
                   <span className="h-1.5 w-px bg-slate-300 inline-block" />
@@ -807,11 +807,11 @@ export const BuyerDashboardGrid: React.FC<BuyerDashboardGridProps> = ({
 
           <div className="p-2.5 rounded-2xl bg-slate-50 flex items-center justify-between gap-2 border border-slate-100/80 text-[10px]">
             <div className="flex items-center gap-1.5 min-w-0">
-              <div className="h-6 w-6 rounded-lg bg-[#FF6500] text-white flex items-center justify-center font-bold text-xs shrink-0">
+              <div className="h-6 w-6 rounded-lg bg-[#FF6500] text-white flex items-center justify-center font-medium text-xs shrink-0">
                 M
               </div>
               <div className="min-w-0">
-                <p className="font-semibold text-slate-900 leading-tight truncate">MaterialHub</p>
+                <p className="font-medium text-slate-900 leading-tight truncate">MaterialHub</p>
                 <p className="text-[8px] text-slate-400 truncate">Wholesale Platform</p>
               </div>
             </div>

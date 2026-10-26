@@ -6,17 +6,13 @@ import {
   FaMapLocationDot,
   FaClock,
   FaIndianRupeeSign,
-  FaBox,
   FaRoute,
   FaCheck,
   FaKey,
   FaShieldHalved,
-  FaSpinner,
   FaTriangleExclamation,
   FaLocationCrosshairs,
-  FaPhone,
-  FaBuilding,
-  FaCompass
+  FaBuilding
 } from 'react-icons/fa6';
 import { Button } from '../ui/Button';
 
@@ -85,10 +81,10 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Today's Net Earnings
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              Today&apos;s Net Earnings
             </span>
-            <div className="text-2xl font-bold text-slate-900 mt-1">
+            <div className="text-2xl font-medium text-slate-900 mt-1">
               ₹{todayEarnings.toLocaleString('en-IN')}
             </div>
             <span className="text-xs text-slate-500">Credited to wallet</span>
@@ -100,30 +96,30 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Completed Jobs
             </span>
-            <div className="text-2xl font-bold text-slate-900 mt-1">
+            <div className="text-2xl font-medium text-slate-900 mt-1">
               {todayTripsCount} Trips
             </div>
             <span className="text-xs text-slate-500">Offloaded &amp; verified</span>
           </div>
-          <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
+          <div className="p-3 rounded-xl bg-[#FFF7F2] text-[#FF6500]">
             <FaRoute className="h-5 w-5" />
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Commercial Carrier
             </span>
-            <div className="text-base font-bold text-slate-900 mt-1 truncate max-w-[170px]">
+            <div className="text-base font-medium text-slate-900 mt-1 truncate max-w-[170px]">
               {vehicleType}
             </div>
             <span className="text-xs text-slate-500">Reg: KL-07-CD-8921</span>
           </div>
-          <div className="p-3 rounded-xl bg-purple-50 text-purple-600">
+          <div className="p-3 rounded-xl bg-slate-100 text-[#F5A623]">
             <FaTruckFast className="h-5 w-5" />
           </div>
         </div>
@@ -134,18 +130,18 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
           <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg bg-orange-100 text-[#FF6500]">
+                <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-lg bg-orange-100 text-[#FF6500]">
                   Active Field Mission
                 </span>
                 <span className="text-xs text-slate-400">Order #{activeTrip.orderId}</span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 mt-1">
+              <h2 className="text-base sm:text-lg font-medium text-slate-900 mt-1">
                 Commercial Transport Transit
               </h2>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-emerald-600 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-100">
+              <span className="text-xs font-medium text-emerald-600 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-100">
                 Guaranteed Payout: ₹{(activeTrip.tripFare || 750).toLocaleString('en-IN')}
               </span>
               <button
@@ -173,7 +169,7 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
                     <span
                       className={`text-[10px] block truncate font-medium ${
                         isCurrent
-                          ? 'text-[#FF6500] font-bold'
+                          ? 'text-[#FF6500] font-medium'
                           : isPassed
                           ? 'text-slate-800'
                           : 'text-slate-400'
@@ -194,10 +190,10 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
                   <FaBuilding className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[11px] font-bold text-slate-500 block uppercase">
+                  <span className="text-[11px] font-medium text-slate-500 block uppercase">
                     Pickup Depot (Merchant Hardware Yard)
                   </span>
-                  <p className="text-xs font-semibold text-slate-900 leading-snug">
+                  <p className="text-xs font-medium text-slate-900 leading-snug">
                     {activeTrip.pickupAddress}
                   </p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
@@ -213,10 +209,10 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
                   <FaMapLocationDot className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[11px] font-bold text-slate-500 block uppercase">
+                  <span className="text-[11px] font-medium text-slate-500 block uppercase">
                     Destination Site (Contractor Unloading Zone)
                   </span>
-                  <p className="text-xs font-semibold text-slate-900 leading-snug">
+                  <p className="text-xs font-medium text-slate-900 leading-snug">
                     {activeTrip.dropAddress}
                   </p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
@@ -228,7 +224,7 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
 
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
               <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1 font-semibold text-slate-800">
+                <span className="flex items-center gap-1 font-medium text-slate-800">
                   <FaClock className="h-3.5 w-3.5 text-slate-400" />
                   {activeTrip.distanceKm} KM Estimated Route
                 </span>
@@ -237,7 +233,7 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
               </div>
 
               {gpsCoords && (
-                <div className="text-[11px] text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-medium">
+                <div className="text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-medium">
                   <FaLocationCrosshairs className="h-3 w-3" />
                   <span>GPS: {gpsCoords.lat.toFixed(4)}, {gpsCoords.lng.toFixed(4)}</span>
                 </div>
@@ -246,7 +242,7 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
 
             <div className="p-4 rounded-xl bg-orange-50/70 border border-orange-100 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div>
-                <span className="text-xs font-bold text-slate-900 block">
+                <span className="text-xs font-medium text-slate-900 block">
                   Workflow Execution Target
                 </span>
                 <p className="text-xs text-slate-600 font-medium mt-0.5">
@@ -341,7 +337,7 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-10 text-center space-y-2">
           <FaTruckFast className="h-10 w-10 text-slate-300 mx-auto mb-2" />
-          <h3 className="text-base font-bold text-slate-900">No Active Mission</h3>
+          <h3 className="text-base font-medium text-slate-900">No Active Mission</h3>
           <p className="text-xs text-slate-500 font-medium max-w-sm mx-auto">
             You are ready for dispatch. Review eligible delivery jobs in the pool below and accept to claim exclusive transport.
           </p>
@@ -351,14 +347,14 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-medium text-slate-900">
               Nearby Dispatch Pool ({availableTrips.length})
             </h2>
             <p className="text-xs text-slate-500 font-medium">
               Server-authoritative allocations matched to your 3-ton commercial vehicle
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-orange-50 text-[#FF6500]">
+          <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-orange-50 text-[#FF6500]">
             Instant Claim
           </span>
         </div>
@@ -380,11 +376,11 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
                 >
                   <div className="space-y-1.5 flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900">
+                      <span className="font-medium text-slate-900">
                         Order #{trip.orderId}
                       </span>
                       <span className="h-2 w-px bg-slate-300 inline-block" />
-                      <span className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-semibold text-[11px]">
+                      <span className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-medium text-[11px]">
                         {trip.vehicleType || 'Mini Truck'}
                       </span>
                     </div>
@@ -402,7 +398,7 @@ export const DriverDispatchSection: React.FC<DriverDispatchSectionProps> = ({
 
                   <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                     <div className="text-left sm:text-right">
-                      <div className="text-base font-bold text-slate-900">
+                      <div className="text-base font-medium text-slate-900">
                         ₹{(trip.tripFare || 750).toLocaleString('en-IN')}
                       </div>
                       <span className="text-[11px] text-emerald-600 font-medium">

@@ -4,12 +4,9 @@ import React, { useState } from 'react';
 import {
   FaWarehouse,
   FaArrowsRotate,
-  FaPlus,
-  FaMinus,
   FaMagnifyingGlass,
   FaTriangleExclamation,
   FaCircleCheck,
-  FaBoxesStacked,
   FaClipboardList
 } from 'react-icons/fa6';
 import { Modal } from '../ui/Modal';
@@ -36,18 +33,21 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
   const [customReason, setCustomReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const totalStockUnits = products.reduce(
+  const safeProducts = Array.isArray(products) ? products : [];
+  const totalStockUnits = safeProducts.reduce(
     (acc, p) => acc + (p.stockQty ?? p.stock ?? 0),
     0
   );
-  const lowStockCount = products.filter(
+  const lowStockCount = safeProducts.filter(
     (p) => (p.stockQty ?? p.stock ?? 0) <= (p.reorderThreshold ?? 10)
   ).length;
 
-  const filteredProducts = products.filter((p) =>
-    p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (p.sku && p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredProducts = safeProducts.filter((p) => {
+    const title = p.title || '';
+    const sku = p.sku || '';
+    return title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sku.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   async function handleAdjustSubmit() {
     if (!adjustingProduct || adjustmentQty === 0) return;
@@ -74,45 +74,45 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Total Yard Inventory
             </span>
-            <div className="text-2xl font-bold text-slate-900 mt-1">
+            <div className="text-2xl font-medium text-slate-900 mt-1">
               {totalStockUnits.toLocaleString('en-IN')} units
             </div>
             <span className="text-xs text-slate-500">Across {products.length} material SKUs</span>
           </div>
-          <div className="p-3 rounded-xl bg-orange-50 text-[#FF6500]">
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-[#FF6500]">
             <FaWarehouse className="h-5 w-5" />
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Healthy SKUs
             </span>
-            <div className="text-2xl font-bold text-emerald-600 mt-1">
+            <div className="text-2xl font-medium text-emerald-600 mt-1">
               {products.length - lowStockCount} SKUs
             </div>
             <span className="text-xs text-slate-500">Above reorder safety thresholds</span>
           </div>
-          <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-emerald-600">
             <FaCircleCheck className="h-5 w-5" />
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Critical Reorder Alerts
             </span>
-            <div className="text-2xl font-bold text-rose-600 mt-1">
+            <div className="text-2xl font-medium text-rose-600 mt-1">
               {lowStockCount} SKUs
             </div>
             <span className="text-xs text-slate-500">Immediate depot restocking required</span>
           </div>
-          <div className="p-3 rounded-xl bg-rose-50 text-rose-600">
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-rose-600">
             <FaTriangleExclamation className="h-5 w-5" />
           </div>
         </div>
@@ -128,8 +128,14 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
           />
         </div>
 
-        <Button variant="secondary" size="md" onClick={onRefresh}>
-          <FaArrowsRotate className="mr-1.5 h-3.5 w-3.5" />
+        <Button
+          variant="secondary"
+          size="md"
+          icon={<FaArrowsRotate className="h-3.5 w-3.5" />}
+          iconPosition="left"
+          onClick={onRefresh}
+          className="shrink-0"
+        >
           Sync Depot Ledger
         </Button>
       </div>
@@ -137,7 +143,7 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider">
+            <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-medium uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">Material SKU & Title</th>
                 <th className="py-3 px-4">Physical Stock</th>
@@ -164,15 +170,17 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
                   const isOut = stock === 0;
 
                   return (
-                    <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={p.id || p.productId} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 px-4 max-w-xs">
-                        <div className="font-bold text-slate-900 truncate">{p.title}</div>
-                        <div className="text-[11px] text-slate-400">
-                          SKU: {p.sku || p.id.slice(0, 8)} • Unit: {p.unit || 'Bag'}
+                        <div className="font-medium text-slate-900 truncate">{p.title}</div>
+                        <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
+                          <span>SKU: {p.sku || (p.id || p.productId || '').slice(0, 8)}</span>
+                          <span className="h-2 w-px bg-slate-300 inline-block" />
+                          <span>Unit: {p.unit || 'Bag'}</span>
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-4 font-bold text-slate-900">
+                      <td className="py-3.5 px-4 font-medium text-slate-900">
                         {stock} {p.unit || 'units'}
                       </td>
 
@@ -180,7 +188,7 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
                         0 {p.unit || 'units'}
                       </td>
 
-                      <td className="py-3.5 px-4 font-bold text-emerald-600">
+                      <td className="py-3.5 px-4 font-medium text-emerald-600">
                         {stock} {p.unit || 'units'}
                       </td>
 
@@ -190,15 +198,15 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
 
                       <td className="py-3.5 px-4">
                         {isOut ? (
-                          <span className="px-2.5 py-1 text-xs font-semibold bg-rose-100 text-rose-800 rounded-lg">
+                          <span className="text-xs font-medium text-rose-600">
                             Out of Stock
                           </span>
                         ) : isLow ? (
-                          <span className="px-2.5 py-1 text-xs font-semibold bg-amber-100 text-amber-800 rounded-lg">
+                          <span className="text-xs font-medium text-amber-600">
                             Low Stock Alert
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-lg">
+                          <span className="text-xs font-medium text-emerald-600">
                             Optimal Level
                           </span>
                         )}
@@ -208,14 +216,16 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
                         <Button
                           variant="secondary"
                           size="sm"
+                          icon={<FaClipboardList className="h-3 w-3" />}
+                          iconPosition="left"
                           onClick={() => {
                             setAdjustingProduct(p);
                             setAdjustmentQty(0);
                             setAdjustmentReason('Physical yard shipment arrival from manufacturer');
                             setCustomReason('');
                           }}
+                          className="shrink-0"
                         >
-                          <FaClipboardList className="mr-1 h-3 w-3" />
                           Adjust Stock
                         </Button>
                       </td>
@@ -256,13 +266,13 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex justify-between items-center">
               <div>
                 <span className="text-slate-500">Current Depot Stock: </span>
-                <span className="font-bold text-slate-900">
+                <span className="font-medium text-slate-900">
                   {adjustingProduct.stockQty ?? adjustingProduct.stock ?? 0} {adjustingProduct.unit || 'units'}
                 </span>
               </div>
               <div>
                 <span className="text-slate-500">Updated Balance: </span>
-                <span className="font-bold text-[#FF6500]">
+                <span className="font-medium text-[#FF6500]">
                   {(adjustingProduct.stockQty ?? adjustingProduct.stock ?? 0) + adjustmentQty} {adjustingProduct.unit || 'units'}
                 </span>
               </div>
@@ -278,7 +288,7 @@ export const VendorStockSection: React.FC<VendorStockSectionProps> = ({
             />
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-slate-700 mb-1">
                 Mandatory Operational Reason
               </label>
               <select

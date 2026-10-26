@@ -70,14 +70,14 @@ export const NotificationsSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -87,7 +87,7 @@ export const NotificationsSection: React.FC = () => {
 
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">SMS, WhatsApp & Email Communication Templates</h2>
+          <h2 className="text-sm font-medium text-slate-900">SMS, WhatsApp & Email Communication Templates</h2>
           <p className="text-xs text-slate-500">Configure transactional text copy for site deliveries, driver dispatches, and OTP verification</p>
         </div>
       </div>
@@ -96,7 +96,7 @@ export const NotificationsSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Template Name</th>
                 <th className="py-3.5">Channel</th>
                 <th className="py-3.5">Subject / Header</th>
@@ -123,11 +123,11 @@ export const NotificationsSection: React.FC = () => {
                 templates.map((t) => (
                   <tr key={t.templateId} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-bold text-slate-900">{t.name}</p>
+                      <p className="font-medium text-slate-900">{t.name}</p>
                       <p className="text-[11px] font-mono text-slate-400">{t.templateId}</p>
                     </td>
                     <td className="py-3.5">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-700">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium uppercase tracking-wider bg-slate-100 text-slate-700">
                         {t.channel}
                       </span>
                     </td>
@@ -141,10 +141,10 @@ export const NotificationsSection: React.FC = () => {
                     </td>
                     <td className="py-3.5 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold ${
+                        className={`text-xs font-medium ${
                           t.isActive
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-slate-100 text-slate-500'
+                            ? 'text-emerald-600'
+                            : 'text-slate-500'
                         }`}
                       >
                         {t.isActive ? 'Active' : 'Disabled'}
@@ -195,7 +195,7 @@ export const NotificationsSection: React.FC = () => {
           )}
 
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-medium text-slate-700">
               Message Body Template
             </label>
             <textarea

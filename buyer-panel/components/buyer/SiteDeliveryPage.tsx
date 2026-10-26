@@ -2,18 +2,16 @@
 
 import React,{ useState } from 'react';
 import {
-FaChevronLeft,
-FaLocationDot,
-FaArrowRight,
-FaTruckFast,
-FaUserCheck,
-FaPhone,
-FaPeopleCarryBox,
-FaRoad,
-FaCircleCheck,
-FaShieldHalved,
-FaBuilding,
-FaChevronRight
+  FaLocationDot,
+  FaArrowRight,
+  FaTruckFast,
+  FaUserCheck,
+  FaPhone,
+  FaPeopleCarryBox,
+  FaRoad,
+  FaCircleCheck,
+  FaShieldHalved,
+  FaBuilding
 } from 'react-icons/fa6';
 import { LocationState } from '../../types/buyer';
 import { Input } from '../ui/Input';
@@ -77,7 +75,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     <FaRoad className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Site Access Options</h2>
+                    <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">Site Access Options</h2>
                     <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5 leading-relaxed">Select road access width and unloading vehicle constraints</p>
                   </div>
                 </div>
@@ -94,7 +92,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaRoad className="h-4 w-4 text-[#FF6500]" />
                         Narrow Lane (&lt; 10ft)
                       </span>
@@ -115,7 +113,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaTruckFast className="h-4 w-4 text-[#FF6500]" />
                         No Heavy Vehicles
                       </span>
@@ -136,7 +134,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaShieldHalved className="h-4 w-4 text-emerald-600" />
                         Crane Offloading Required
                       </span>
@@ -157,7 +155,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaLocationDot className="h-4 w-4 text-emerald-600" />
                         Ground Floor Unloading
                       </span>
@@ -177,7 +175,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     <FaPeopleCarryBox className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-slate-900">Unloading Labor Assistance Option</h3>
+                    <h3 className="font-medium text-base text-slate-900">Unloading Labor Assistance Option</h3>
                     <p className="text-xs text-slate-500 font-normal">Option to request extra unloading labor helpers for heavy construction goods</p>
                   </div>
                 </div>
@@ -194,7 +192,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-1.5">
                         <FaPeopleCarryBox className="h-4 w-4 text-emerald-600" />
                         2 Unloading Helpers
                       </span>
@@ -213,7 +211,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-1.5">
                         <FaPeopleCarryBox className="h-4 w-4 text-emerald-600" />
                         4 Unloading Helpers
                       </span>
@@ -232,7 +230,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-slate-900">No Extra Labor</span>
+                      <span className="text-xs font-medium text-slate-900">No Extra Labor</span>
                       {laborAssistance === 'none' && <FaCircleCheck className="h-4 w-4 text-slate-600" />}
                     </div>
                     <p className="text-[10px] text-slate-500 font-normal mt-1">Self/Site Contractor Labor</p>
@@ -247,7 +245,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     <FaUserCheck className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Site Contact Person Details</h2>
+                    <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">Site Contact Person Details</h2>
                     <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5 leading-relaxed">Site supervisor name and phone number for driver contact and delivery OTP verification</p>
                   </div>
                 </div>
@@ -276,20 +274,20 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
             <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-24 self-start">
               
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
-                <h3 className="font-semibold text-base text-slate-900 border-b border-slate-100 pb-3.5">Delivery Instructions Summary</h3>
+                <h3 className="font-medium text-base text-slate-900 border-b border-slate-100 pb-3.5">Delivery Instructions Summary</h3>
 
                 <div className="space-y-3 text-xs text-slate-600 font-normal">
                   <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Target Site</span>
-                    <p className="font-semibold text-slate-900 flex items-center gap-1.5">
+                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Target Site</span>
+                    <p className="font-medium text-slate-900 flex items-center gap-1.5">
                       <FaBuilding className="h-3 w-3 text-[#FF6500]" />
                       {location.address || 'Site #14, Kakkanad Zone'}
                     </p>
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Access Constraints</span>
-                    <p className="font-semibold text-slate-900">
+                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Access Constraints</span>
+                    <p className="font-medium text-slate-900">
                       {accessOption === 'narrow' && 'Narrow Road (< 10ft Mini Truck Only)'}
                       {accessOption === 'no_heavy' && 'No Heavy Vehicles Allowed'}
                       {accessOption === 'crane' && 'Crane Required for Offloading'}
@@ -298,8 +296,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Unloading Helpers</span>
-                    <p className="font-semibold text-slate-900 text-emerald-700">
+                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Unloading Helpers</span>
+                    <p className="font-medium text-slate-900 text-emerald-700">
                       {laborAssistance === 'two_helpers' && '2 Unloading Helpers (+₹400)'}
                       {laborAssistance === 'four_helpers' && '4 Unloading Helpers (+₹800)'}
                       {laborAssistance === 'none' && 'No Extra Labor (Self Offloading)'}
@@ -307,8 +305,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-slate-50/80 space-y-1">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Supervisor Contact</span>
-                    <p className="font-semibold text-slate-900">{supervisorName}</p>
+                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Supervisor Contact</span>
+                    <p className="font-medium text-slate-900">{supervisorName}</p>
                     <p className="text-slate-500 font-medium">{supervisorPhone}</p>
                   </div>
                 </div>

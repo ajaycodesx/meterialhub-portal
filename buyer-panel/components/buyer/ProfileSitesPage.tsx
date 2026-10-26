@@ -92,14 +92,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           { label: 'Profile & Sites Management' }
         ]}
         badge={
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
             <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
             <span>Verified Class-A Contractor</span>
           </span>
         }
         icon={
           <div className="relative shrink-0">
-            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-[#FF6500] text-white font-semibold text-lg sm:text-xl flex items-center justify-center shadow-xs">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-[#FF6500] text-white font-medium text-lg sm:text-xl flex items-center justify-center shadow-xs">
               {userName.charAt(0)}
             </div>
             <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-md bg-emerald-500 text-white flex items-center justify-center shadow-2xs">
@@ -132,21 +132,21 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         }
         rightContent={
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-slate-700">
               <FaIndianRupeeSign className="h-3.5 w-3.5 text-amber-500" />
-              <span>Procurement: <strong className="text-slate-900 font-semibold">₹14.80L</strong></span>
+              <span>Procurement: <strong className="text-slate-900 font-medium">₹14.80L</strong></span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-slate-700">
               <FaBuilding className="h-3.5 w-3.5 text-[#FF6500]" />
-              <span>Active Sites: <strong className="text-emerald-600 font-semibold">2 Pinned</strong></span>
+              <span>Active Sites: <strong className="text-emerald-600 font-medium">2 Pinned</strong></span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-700">
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-slate-700">
               <FaCartShopping className="h-3.5 w-3.5 text-blue-500" />
-              <span>Orders: <strong className="text-slate-900 font-semibold">18 Placed</strong></span>
+              <span>Orders: <strong className="text-slate-900 font-medium">18 Placed</strong></span>
             </div>
             <button
               onClick={() => setIsEditingUser(!isEditingUser)}
-              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-[#FF6500] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 hover:text-[#FF6500] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <FaPenToSquare className="h-3 w-3 text-[#FF6500]" />
               <span>Edit Profile</span>
@@ -161,7 +161,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
             {isEditingUser && (
               <div className="mt-4 p-5 sm:p-6 rounded-2xl bg-white shadow-xs border border-slate-100 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-slate-900">Update Contractor Account Details</h3>
+                  <h3 className="text-sm font-medium text-slate-900">Update Contractor Account Details</h3>
                   <button onClick={() => setIsEditingUser(false)} className="text-slate-400 hover:text-slate-700 cursor-pointer">
                     <FaXmark className="h-4 w-4" />
                   </button>
@@ -194,7 +194,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           <div className="bg-white rounded-2xl p-1.5 shadow-xs flex items-center gap-1.5 w-full overflow-x-auto no-scrollbar scrollbar-none">
             <button
               onClick={() => setActiveTab('sites')}
-              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'sites'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -206,7 +206,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('orders')}
-              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'orders'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -218,7 +218,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('payments')}
-              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'payments'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -230,7 +230,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('wishlist')}
-              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'wishlist'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -242,7 +242,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
             <button
               onClick={() => setActiveTab('settings')}
-              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
                 activeTab === 'settings'
                   ? 'bg-[#0F172A] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -264,7 +264,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaHelmetSafety className="h-5 w-5" />
                     </div>
                     <div>
-                      <h2 className="text-lg sm:text-xl font-semibold text-slate-900 tracking-tight leading-snug">
+                      <h2 className="text-lg sm:text-xl font-medium text-slate-900 tracking-tight leading-snug">
                         My Construction Sites
                       </h2>
                       <p className="text-xs text-slate-500 font-normal mt-0.5">
@@ -276,7 +276,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                   <Link href="/site-delivery">
                     <button
                       onClick={onOpenSiteModal}
-                      className="px-4 py-2 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white font-semibold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+                      className="px-4 py-2 rounded-2xl bg-[#FF6500] hover:bg-[#E05800] text-white font-medium text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
                     >
                       <FaPlus className="h-3 w-3" />
                       <span>Add New Construction Site</span>
@@ -296,7 +296,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                             className="h-12 w-14 rounded-xl object-cover shrink-0 shadow-2xs"
                           />
                           <div className="min-w-0">
-                            <h3 className="font-semibold text-sm sm:text-base text-slate-900 truncate">
+                            <h3 className="font-medium text-sm sm:text-base text-slate-900 truncate">
                               Kakkanad Commercial Tower
                             </h3>
                             <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
@@ -305,7 +305,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           </div>
                         </div>
 
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 shrink-0">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 shrink-0">
                           <FaLocationDot className="h-2.5 w-2.5 text-emerald-600" />
                           <span>GPS Pinned</span>
                         </span>
@@ -316,7 +316,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500]" /> Physical Address
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             Site #14, Kakkanad Zone, Kochi (682030)
                           </p>
                         </div>
@@ -325,7 +325,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaUser className="h-2.5 w-2.5 text-slate-500" /> Site Supervisor
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             Suresh Nair (+91 98765 43210)
                           </p>
                         </div>
@@ -334,7 +334,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaTruckFast className="h-2.5 w-2.5 text-slate-500" /> Truck Compatibility
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             12ft+ Standard Multi-Axle Ready
                           </p>
                         </div>
@@ -343,14 +343,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaClock className="h-2.5 w-2.5 text-slate-500" /> Unloading Time Window
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             08:00 AM - 01:00 PM
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer">
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer">
                       <span className="flex items-center gap-1.5">
                         <FaPenToSquare className="h-3 w-3 text-slate-400" />
                         Edit Delivery Protocol
@@ -369,7 +369,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                             className="h-12 w-14 rounded-xl object-cover shrink-0 shadow-2xs"
                           />
                           <div className="min-w-0">
-                            <h3 className="font-semibold text-sm sm:text-base text-slate-900 truncate">
+                            <h3 className="font-medium text-sm sm:text-base text-slate-900 truncate">
                               Palariyattom Residential Villa
                             </h3>
                             <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
@@ -388,7 +388,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500]" /> Physical Address
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             Plot #402, Palariyattom, Kochi (682025)
                           </p>
                         </div>
@@ -397,7 +397,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaUser className="h-2.5 w-2.5 text-slate-500" /> Site Supervisor
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             Rajesh Menon (+91 94471 22334)
                           </p>
                         </div>
@@ -406,7 +406,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaTruckFast className="h-2.5 w-2.5 text-slate-500" /> Truck Compatibility
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             Narrow Road (&lt; 10ft Mini Truck)
                           </p>
                         </div>
@@ -415,14 +415,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
                             <FaClock className="h-2.5 w-2.5 text-slate-500" /> Unloading Time Window
                           </p>
-                          <p className="text-slate-800 font-semibold leading-snug">
+                          <p className="text-slate-800 font-medium leading-snug">
                             01:00 PM - 06:00 PM
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer">
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer">
                       <span className="flex items-center gap-1.5">
                         <FaPenToSquare className="h-3 w-3 text-slate-400" />
                         Edit Delivery Protocol
@@ -439,7 +439,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaTruckFast className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-900 leading-tight">20 KM Radius</h4>
+                      <h4 className="text-xs font-medium text-slate-900 leading-tight">20 KM Radius</h4>
                       <p className="text-[11px] text-slate-500 font-normal">Same-Day Site Unloading</p>
                     </div>
                   </div>
@@ -449,7 +449,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaShieldHalved className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-900 leading-tight">GST Tax Invoice</h4>
+                      <h4 className="text-xs font-medium text-slate-900 leading-tight">GST Tax Invoice</h4>
                       <p className="text-[11px] text-slate-500 font-normal">100% Tax Credit Invoice</p>
                     </div>
                   </div>
@@ -459,7 +459,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaCircleCheck className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-900 leading-tight">Verified Stores</h4>
+                      <h4 className="text-xs font-medium text-slate-900 leading-tight">Verified Stores</h4>
                       <p className="text-[11px] text-slate-500 font-normal">Direct Wholesale Stock</p>
                     </div>
                   </div>
@@ -469,7 +469,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaHeadset className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-900 leading-tight">24x7 Site Support</h4>
+                      <h4 className="text-xs font-medium text-slate-900 leading-tight">24x7 Site Support</h4>
                       <p className="text-[11px] text-slate-500 font-normal">Call 1800-425-9999</p>
                     </div>
                   </div>
@@ -485,13 +485,13 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                             <FaFileLines className="h-4 w-4" />
                           </div>
                           <div>
-                            <h3 className="font-semibold text-sm text-slate-900">Recent Orders</h3>
+                            <h3 className="font-medium text-sm text-slate-900">Recent Orders</h3>
                             <p className="text-[10px] text-slate-500">Track your latest material orders and delivery status.</p>
                           </div>
                         </div>
                         <button
                           onClick={() => setActiveTab('orders')}
-                          className="text-[11px] font-semibold text-slate-600 hover:text-[#FF6500] transition-colors cursor-pointer shrink-0 inline-flex items-center gap-1"
+                          className="text-[11px] font-medium text-slate-600 hover:text-[#FF6500] transition-colors cursor-pointer shrink-0 inline-flex items-center gap-1"
                         >
                           <span>View All</span>
                           <FaChevronRight className="h-2.5 w-2.5" />
@@ -507,14 +507,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-slate-900 group-hover:text-[#FF6500] transition-colors">{ord.id}</span>
+                                <span className="font-medium text-slate-900 group-hover:text-[#FF6500] transition-colors">{ord.id}</span>
                                 <span className="text-[10px] text-slate-400">{ord.date}</span>
                               </div>
                               <p className="text-[10px] text-slate-500 truncate mt-0.5">{ord.items}</p>
                             </div>
                             <div className="flex items-center gap-2 shrink-0 text-right">
-                              <span className="font-semibold text-slate-900">{ord.amount}</span>
-                              <span className={`px-2 py-0.5 rounded-lg text-[9px] font-semibold ${ord.statusColor}`}>
+                              <span className="font-medium text-slate-900">{ord.amount}</span>
+                              <span className={`px-2 py-0.5 rounded-lg text-[9px] font-medium ${ord.statusColor}`}>
                                 {ord.status}
                               </span>
                               <FaChevronRight className="h-2.5 w-2.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -532,7 +532,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                           <FaBolt className="h-4 w-4" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-slate-900">Quick Actions</h3>
+                          <h3 className="font-medium text-sm text-slate-900">Quick Actions</h3>
                         </div>
                       </div>
 
@@ -546,7 +546,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                               <FaCompass className="h-4 w-4" />
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-slate-900 group-hover:text-[#FF6500] transition-colors">Browse Full Catalog</p>
+                              <p className="text-xs font-medium text-slate-900 group-hover:text-[#FF6500] transition-colors">Browse Full Catalog</p>
                               <p className="text-[10px] text-slate-400">Explore construction materials</p>
                             </div>
                           </div>
@@ -562,7 +562,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                               <FaCalculator className="h-4 w-4" />
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-slate-900 group-hover:text-[#FF6500] transition-colors">Calculate Order</p>
+                              <p className="text-xs font-medium text-slate-900 group-hover:text-[#FF6500] transition-colors">Calculate Order</p>
                               <p className="text-[10px] text-slate-400">Get instant cost estimate</p>
                             </div>
                           </div>
@@ -578,7 +578,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                               <FaTruckFast className="h-4 w-4" />
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-slate-900 group-hover:text-[#FF6500] transition-colors">Track Delivery</p>
+                              <p className="text-xs font-medium text-slate-900 group-hover:text-[#FF6500] transition-colors">Track Delivery</p>
                               <p className="text-[10px] text-slate-400">Live shipment tracking</p>
                             </div>
                           </div>
@@ -594,7 +594,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                               <FaFileArrowUp className="h-4 w-4" />
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-slate-900 group-hover:text-[#FF6500] transition-colors">Request BOQ Quote</p>
+                              <p className="text-xs font-medium text-slate-900 group-hover:text-[#FF6500] transition-colors">Request BOQ Quote</p>
                               <p className="text-[10px] text-slate-400">Upload &amp; get quotation</p>
                             </div>
                           </div>
@@ -613,7 +613,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                 <div className="bg-white p-5 rounded-3xl shadow-xs space-y-4">
                   <div className="flex items-center gap-2">
                     <FaChartColumn className="h-4 w-4 text-[#FF6500]" />
-                    <h3 className="text-sm font-semibold text-slate-900">Quick Stats</h3>
+                    <h3 className="text-sm font-medium text-slate-900">Quick Stats</h3>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -623,9 +623,9 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaCartShopping className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-semibold text-slate-900 leading-none">18</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">18</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Total Orders</p>
-                        <button onClick={() => setActiveTab('orders')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-semibold mt-1 inline-flex items-center gap-0.5 cursor-pointer">
+                        <button onClick={() => setActiveTab('orders')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>View Details</span>
                           <FaChevronRight className="h-2 w-2" />
                         </button>
@@ -637,9 +637,9 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaIndianRupeeSign className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-semibold text-slate-900 leading-none">₹14.80L</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">₹14.80L</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Total Procurement</p>
-                        <button onClick={() => setActiveTab('payments')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-semibold mt-1 inline-flex items-center gap-0.5 cursor-pointer">
+                        <button onClick={() => setActiveTab('payments')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>View Details</span>
                           <FaChevronRight className="h-2 w-2" />
                         </button>
@@ -651,9 +651,9 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaBuilding className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-semibold text-slate-900 leading-none">2</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">2</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Active Sites</p>
-                        <button onClick={() => setActiveTab('sites')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-semibold mt-1 inline-flex items-center gap-0.5 cursor-pointer">
+                        <button onClick={() => setActiveTab('sites')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>Manage Sites</span>
                           <FaChevronRight className="h-2 w-2" />
                         </button>
@@ -665,9 +665,9 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaHeart className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-semibold text-slate-900 leading-none">5</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">5</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Favorite Merchants</p>
-                        <button onClick={() => setActiveTab('wishlist')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-semibold mt-1 inline-flex items-center gap-0.5 cursor-pointer">
+                        <button onClick={() => setActiveTab('wishlist')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>View Merchants</span>
                           <FaChevronRight className="h-2 w-2" />
                         </button>
@@ -688,7 +688,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaHelmetSafety className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-white">Need Help with Bulk Orders?</h4>
+                      <h4 className="text-sm font-medium text-white">Need Help with Bulk Orders?</h4>
                       <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">
                         Our team is here to support you with better rates and faster delivery.
                       </p>
@@ -696,7 +696,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                     <div className="pt-1">
                       <button
                         onClick={() => router.push('/catalog')}
-                        className="w-full py-2 px-3 rounded-xl border border-slate-700 bg-white/5 hover:bg-white/10 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                        className="w-full py-2 px-3 rounded-xl border border-slate-700 bg-white/5 hover:bg-white/10 text-xs font-medium text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
                       >
                         <span>Contact Support</span>
                         <FaArrowRight className="h-3 w-3" />
@@ -711,7 +711,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaHeadset className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-900">Need Assistance?</h3>
+                      <h3 className="text-sm font-medium text-slate-900">Need Assistance?</h3>
                       <p className="text-[10px] text-slate-400">Our support team is available 24/7 for all your queries.</p>
                     </div>
                   </div>
@@ -726,8 +726,8 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaPhone className="h-3.5 w-3.5" />
                       </div>
                       <div>
-                        <p className="text-[10px] text-slate-400 uppercase font-semibold">Call Us</p>
-                        <p className="font-semibold text-slate-900">1800-425-9999</p>
+                        <p className="text-[10px] text-slate-400 uppercase font-medium">Call Us</p>
+                        <p className="font-medium text-slate-900">1800-425-9999</p>
                       </div>
                     </a>
 
@@ -741,8 +741,8 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaWhatsapp className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-[10px] text-slate-400 uppercase font-semibold">WhatsApp</p>
-                        <p className="font-semibold text-slate-900">+91 98765 43210</p>
+                        <p className="text-[10px] text-slate-400 uppercase font-medium">WhatsApp</p>
+                        <p className="font-medium text-slate-900">+91 98765 43210</p>
                       </div>
                     </a>
 
@@ -754,8 +754,8 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaEnvelope className="h-3.5 w-3.5" />
                       </div>
                       <div>
-                        <p className="text-[10px] text-slate-400 uppercase font-semibold">Email Us</p>
-                        <p className="font-semibold text-slate-900 truncate">support@materialhub.in</p>
+                        <p className="text-[10px] text-slate-400 uppercase font-medium">Email Us</p>
+                        <p className="font-medium text-slate-900 truncate">support@materialhub.in</p>
                       </div>
                     </a>
 
@@ -771,7 +771,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xs space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-900">Material Procurement Order History</h2>
+                  <h2 className="text-xl font-medium text-slate-900">Material Procurement Order History</h2>
                   <p className="text-xs text-slate-500 mt-0.5">Comprehensive audit trail of factory-direct orders, GST tax invoices, and site dispatch status</p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => router.push('/catalog')}>
@@ -784,14 +784,14 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                   <div key={ord.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 p-2 rounded-2xl transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2.5">
-                        <span className="font-semibold text-slate-900 text-sm">{ord.id}</span>
-                        <span className={`px-2.5 py-0.5 rounded-lg text-xs font-semibold ${ord.statusColor}`}>{ord.status}</span>
+                        <span className="font-medium text-slate-900 text-sm">{ord.id}</span>
+                        <span className={`px-2.5 py-0.5 rounded-lg text-xs font-medium ${ord.statusColor}`}>{ord.status}</span>
                       </div>
                       <p className="text-xs text-slate-600 font-medium">{ord.items}</p>
                       <p className="text-[11px] text-slate-400">Placed on {ord.date} <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Unloading at Kakkanad Zone</p>
                     </div>
                     <div className="flex items-center gap-3 self-end sm:self-center">
-                      <span className="text-sm font-semibold text-slate-900">{ord.amount}</span>
+                      <span className="text-sm font-medium text-slate-900">{ord.amount}</span>
                       <Button variant="primary" size="sm" onClick={() => router.push('/tracking')}>
                         Track Delivery
                       </Button>
@@ -805,7 +805,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           {activeTab === 'payments' && (
             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xs space-y-6">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">B2B Banking &amp; Procurement Credit</h2>
+                <h2 className="text-xl font-medium text-slate-900">B2B Banking &amp; Procurement Credit</h2>
                 <p className="text-xs text-slate-500 mt-0.5">Approved contractor credit terms, payment receipts, and settlement bank accounts</p>
               </div>
 
@@ -816,12 +816,12 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaLandmark className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm text-slate-900">HDFC Corporate Bank Account</h4>
+                      <h4 className="font-medium text-sm text-slate-900">HDFC Corporate Bank Account</h4>
                       <p className="text-xs text-slate-400">Primary settlement account for GST refunds</p>
                     </div>
                   </div>
-                  <p className="text-sm font-semibold text-slate-800">A/C: *******8491 (IFSC: HDFC0001824)</p>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                  <p className="text-sm font-medium text-slate-800">A/C: *******8491 (IFSC: HDFC0001824)</p>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                     <FaCircleCheck className="h-3 w-3" /> Auto-Debit &amp; Refunds Active
                   </span>
                 </div>
@@ -832,11 +832,11 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <FaFileInvoiceDollar className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm text-slate-900">B2B Wholesale Credit Limit</h4>
+                      <h4 className="font-medium text-sm text-slate-900">B2B Wholesale Credit Limit</h4>
                       <p className="text-xs text-slate-400">Contractor 30-Day revolving terms</p>
                     </div>
                   </div>
-                  <p className="text-xl font-semibold text-slate-900">₹25,00,000 <span className="text-xs text-slate-400 font-normal">Approved</span></p>
+                  <p className="text-xl font-medium text-slate-900">₹25,00,000 <span className="text-xs text-slate-400 font-normal">Approved</span></p>
                   <p className="text-xs text-slate-500">Available: <strong className="text-emerald-600">₹10,20,000</strong> <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Used: ₹14,80,000</p>
                 </div>
               </div>
@@ -846,7 +846,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           {activeTab === 'wishlist' && (
             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xs space-y-6">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">Verified Hardware Merchants</h2>
+                <h2 className="text-xl font-medium text-slate-900">Verified Hardware Merchants</h2>
                 <p className="text-xs text-slate-500 mt-0.5">Your pinned suppliers with pre-negotiated wholesale pricing</p>
               </div>
 
@@ -855,8 +855,8 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                   <div key={m.id} className="p-4 rounded-2xl bg-slate-50/80 space-y-3 flex flex-col justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-slate-900 text-sm">{m.name}</h4>
-                        <span className="text-xs font-semibold text-amber-500 flex items-center gap-1"><FaStar className="h-3 w-3" /> {m.rating}</span>
+                        <h4 className="font-medium text-slate-900 text-sm">{m.name}</h4>
+                        <span className="text-xs font-medium text-amber-500 flex items-center gap-1"><FaStar className="h-3 w-3" /> {m.rating}</span>
                       </div>
                       <p className="text-xs text-slate-500">{m.address}</p>
                       <p className="text-[11px] text-slate-400">{m.distanceKm} KM Away <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> {m.deliveryEtaMinutes} Mins Dispatch</p>
@@ -873,7 +873,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           {activeTab === 'settings' && (
             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xs space-y-6 max-w-2xl">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">Security &amp; Language Settings</h2>
+                <h2 className="text-xl font-medium text-slate-900">Security &amp; Language Settings</h2>
                 <p className="text-xs text-slate-500 mt-0.5">Manage portal credentials and app preferences</p>
               </div>
 
@@ -882,7 +882,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                   <div className="flex items-center gap-3">
                     <FaGlobe className="h-5 w-5 text-slate-600" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-900">Regional Language</p>
+                      <p className="text-xs font-medium text-slate-900">Regional Language</p>
                       <p className="text-[11px] text-slate-400">English / Malayalam / Hindi</p>
                     </div>
                   </div>
@@ -895,13 +895,13 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                   <div className="flex items-center gap-3">
                     <FaRightFromBracket className="h-5 w-5 text-red-500" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-900">End Active Session</p>
+                      <p className="text-xs font-medium text-slate-900">End Active Session</p>
                       <p className="text-[11px] text-slate-400">Sign out of this contractor workstation</p>
                     </div>
                   </div>
                   <button
                     onClick={onLogout}
-                    className="px-3.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition-all cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium transition-all cursor-pointer"
                   >
                     Logout Session
                   </button>

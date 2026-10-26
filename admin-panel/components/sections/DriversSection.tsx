@@ -69,14 +69,14 @@ export const DriversSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -106,7 +106,7 @@ export const DriversSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Driver Name</th>
                 <th className="py-3.5">Contact</th>
                 <th className="py-3.5">Vehicle Type</th>
@@ -135,31 +135,31 @@ export const DriversSection: React.FC = () => {
                 drivers.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-bold text-slate-900">{d.name}</p>
+                      <p className="font-medium text-slate-900">{d.name}</p>
                       <p className="text-[11px] text-slate-400">ID: {d.id}</p>
                     </td>
                     <td className="py-3.5">
                       <p className="font-medium text-slate-800">{d.phone}</p>
                       <p className="text-[11px] text-slate-500">{d.email}</p>
                     </td>
-                    <td className="py-3.5 font-semibold text-slate-800">
+                    <td className="py-3.5 font-medium text-slate-800">
                       {d.vehicleType || 'Commercial Mini Truck (3T)'}
                     </td>
                     <td className="py-3.5 font-medium text-slate-700">
                       {d.driverLicense || 'KL-07-2019-004521'}
                     </td>
-                    <td className="py-3.5 text-center font-bold text-slate-900">
+                    <td className="py-3.5 text-center font-medium text-slate-900">
                       {d.completedTripsCount || 0}
                     </td>
-                    <td className="py-3.5 text-right font-bold text-slate-900">
+                    <td className="py-3.5 text-right font-medium text-slate-900">
                       INR {(d.totalEarnings || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${
+                        className={`text-xs font-medium ${
                           d.isBusy
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            ? 'text-amber-600'
+                            : 'text-emerald-600'
                         }`}
                       >
                         {d.isBusy ? 'On Trip' : 'Available'}
@@ -194,7 +194,7 @@ export const DriversSection: React.FC = () => {
             >
               Previous
             </Button>
-            <span className="font-semibold text-slate-700">
+            <span className="font-medium text-slate-700">
               Page {page} of {totalPages}
             </span>
             <Button

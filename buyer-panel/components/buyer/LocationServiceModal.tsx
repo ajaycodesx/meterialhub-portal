@@ -95,7 +95,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           if (activeStep !== 'check') setActiveStep('check');
           else onClose();
         }}
-        className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
+        className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-medium transition-all cursor-pointer"
       >
         {activeStep === 'check' ? 'Skip for Now' : 'Back'}
       </button>
@@ -106,7 +106,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           size="md"
           onClick={handleCheckAvailability}
           icon={<FaArrowRight className="h-3.5 w-3.5" />}
-          className="px-6 rounded-xl text-xs font-semibold"
+          className="px-6 rounded-xl text-xs font-medium"
         >
           Next
         </Button>
@@ -116,7 +116,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
           size="md"
           onClick={handleSaveConstraints}
           icon={<FaArrowRight className="h-3.5 w-3.5" />}
-          className="px-6 rounded-xl text-xs font-semibold"
+          className="px-6 rounded-xl text-xs font-medium"
         >
           Save &amp; Continue
         </Button>
@@ -142,12 +142,12 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
             <div className="p-3.5 sm:p-4 rounded-2xl bg-[#141d33] border border-slate-700/60 flex items-start gap-3 shadow-2xs">
               <FaShieldHalved className="h-4.5 w-4.5 text-[#FF6500] shrink-0 mt-0.5" />
               <p className="text-xs text-slate-300 leading-relaxed font-normal">
-                Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-semibold text-white">20 KM radius</strong>.
+                Bulk construction materials (Cement bags, TMT Steel, PVC pipes) require quick delivery from verified local merchants within a <strong className="font-medium text-white">20 KM radius</strong>.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">
                 Enter Pincode or Delivery City
               </label>
               <div className="flex gap-2 items-center">
@@ -156,7 +156,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                   value={pinCode}
                   onChange={(e) => setPinCode(e.target.value)}
                   placeholder="e.g. 682030"
-                  className="w-full px-4 py-2.5 text-xs font-semibold rounded-xl bg-[#162137] border border-slate-700/80 text-white placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] transition-all"
+                  className="w-full px-4 py-2.5 text-xs font-medium rounded-xl bg-[#162137] border border-slate-700/80 text-white placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] transition-all"
                 />
                 <Button
                   onClick={handleCheckAvailability}
@@ -164,7 +164,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                   variant="primary"
                   size="md"
                   icon={<FaArrowRight className="h-3 w-3" />}
-                  className="shrink-0 rounded-xl px-4 text-xs font-semibold"
+                  className="shrink-0 rounded-xl px-4 text-xs font-medium"
                 >
                   Verify 20KM
                 </Button>
@@ -182,7 +182,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-semibold text-white">10 KM Express</span>
+                  <span className="text-xs font-medium text-white">10 KM Express</span>
                   <div
                     className={`h-4 w-4 rounded-md flex items-center justify-center border transition-all ${
                       selectedRadius === '10'
@@ -206,7 +206,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-semibold text-white">20 KM Standard</span>
+                  <span className="text-xs font-medium text-white">20 KM Standard</span>
                   <div
                     className={`h-4 w-4 rounded-md flex items-center justify-center border transition-all ${
                       selectedRadius === '20'
@@ -227,7 +227,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 setPinCode('682024');
                 handleCheckAvailability();
               }}
-              className="w-full py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/80 text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+              className="w-full py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/80 text-xs font-medium text-slate-200 hover:text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
             >
               <FaCompass className="h-3.5 w-3.5 text-[#FF6500]" />
               <span>Use GPS Location Pinning</span>
@@ -240,13 +240,13 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
             <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 flex items-center gap-3">
               <FaCircleCheck className="h-5 w-5 text-emerald-400 shrink-0" />
               <div>
-                <h4 className="text-xs font-semibold text-emerald-200">Service Available in Your Area</h4>
+                <h4 className="text-xs font-medium text-emerald-200">Service Available in Your Area</h4>
                 <p className="text-[11px] text-emerald-400 font-normal mt-0.5">14 Verified Hardware Merchants within 8.5 km</p>
               </div>
             </div>
 
             <div className="space-y-3.5">
-              <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              <h4 className="text-xs font-medium text-slate-300 uppercase tracking-wider">
                 Capture Unloading Site Constraints
               </h4>
 
@@ -301,7 +301,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
             <div className="p-3.5 rounded-2xl bg-amber-950/40 border border-amber-800/60 flex items-center gap-3">
               <FaTriangleExclamation className="h-5 w-5 text-amber-400 shrink-0" />
               <div>
-                <h4 className="text-xs font-semibold text-amber-200">Outside Standard 20KM Radius</h4>
+                <h4 className="text-xs font-medium text-amber-200">Outside Standard 20KM Radius</h4>
                 <p className="text-[11px] text-amber-400 font-normal mt-0.5">Drop a pin on map to request custom logistics quote.</p>
               </div>
             </div>
@@ -311,7 +311,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 <div className="h-10 w-10 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center mx-auto mb-2 shadow-xs">
                   <FaLocationDot className="h-4 w-4" />
                 </div>
-                <h4 className="text-xs font-semibold text-white">Pin Dropped: Site #402</h4>
+                <h4 className="text-xs font-medium text-white">Pin Dropped: Site #402</h4>
                 <p className="text-[11px] text-slate-400 font-normal mt-0.5">Lat: 10.0124 | Lng: 76.3150</p>
               </div>
             </div>

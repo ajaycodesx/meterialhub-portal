@@ -63,9 +63,11 @@ class VendorService:
             items_res = await db.execute(select(OrderItem).where(OrderItem.order_id == o.id))
             items = items_res.scalars().all()
             recent_orders_list.append({
+                "id": o.id,
                 "orderId": o.id,
                 "invoiceNumber": o.invoice_number,
                 "grandTotal": o.grand_total,
+                "totalAmount": o.grand_total,
                 "itemsTotal": o.items_total,
                 "status": o.status.value if hasattr(o.status, "value") else str(o.status),
                 "deliveryAddress": o.delivery_address,
@@ -76,6 +78,7 @@ class VendorService:
 
         inventory_list = [
             {
+                "id": p.id,
                 "productId": p.id,
                 "title": p.title,
                 "category": p.category,

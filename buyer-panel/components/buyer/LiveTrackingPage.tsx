@@ -136,17 +136,17 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
         title="Real-Time Order & Delivery Tracking"
         subtitle={
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <span>Order ID: <strong className="text-slate-900 font-semibold">{orderId || 'MH-839210'}</strong></span>
+            <span>Order ID: <strong className="text-slate-900 font-medium">{orderId || 'MH-839210'}</strong></span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>Live Telemetry &amp; Site Offloading Verification</span>
           </div>
         }
         rightContent={
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-            <span className={`text-xs font-semibold ${isWsConnected ? 'text-emerald-700' : 'text-slate-600'}`}>
+            <span className={`text-xs font-medium ${isWsConnected ? 'text-emerald-700' : 'text-slate-600'}`}>
               {isWsConnected ? 'Live WebSocket Push' : 'Telemetry Sync'}
             </span>
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+            <div className="flex items-center gap-2 text-xs font-medium text-slate-800">
               <FaCircleCheck className={`h-3.5 w-3.5 ${isDelivered ? 'text-emerald-600' : 'text-[#FF6500]'}`} />
               <span className="capitalize">{isDelivered ? 'Delivery Completed' : `Status: ${currentStatus.replace(/_/g, ' ')}`}</span>
             </div>
@@ -167,12 +167,12 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       <FaMapLocationDot className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Google Maps Live GPS Navigation</h3>
+                      <h3 className="font-medium text-sm sm:text-base text-slate-900">Google Maps Live GPS Navigation</h3>
                       <p className="text-xs text-slate-500 font-normal">Real-time driver location on Seaport-Airport Road</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs font-semibold text-slate-700">
+                  <div className="flex items-center gap-3 text-xs font-medium text-slate-700">
                     <span className="flex items-center gap-1.5">
                       <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" /> Live Traffic: Normal
                     </span>
@@ -187,12 +187,12 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="h-2.5 w-2.5 rounded-xs bg-orange-500 shrink-0" />
                     <span className="text-slate-500 font-normal">Origin Store:</span>
-                    <span className="text-slate-900 font-semibold truncate">{merchant.name}</span>
+                    <span className="text-slate-900 font-medium truncate">{merchant.name}</span>
                   </div>
                   <div className="flex items-center gap-2 sm:justify-end min-w-0">
                     <div className="h-2.5 w-2.5 rounded-xs bg-emerald-500 shrink-0" />
                     <span className="text-slate-500 font-normal">Unloading Site:</span>
-                    <span className="text-slate-900 font-semibold truncate">{location.address || 'Site #14, Kakkanad Zone'}</span>
+                    <span className="text-slate-900 font-medium truncate">{location.address || 'Site #14, Kakkanad Zone'}</span>
                   </div>
                 </div>
 
@@ -213,11 +213,11 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       <FaTruckFast className="h-5 w-5" />
                     </div>
                     <div>
-                      <div className="font-semibold text-slate-900 flex items-center gap-2">
+                      <div className="font-medium text-slate-900 flex items-center gap-2">
                         <span>{driverName}</span>
                         <span className="font-mono text-[11px] text-slate-500">({vehicleReg})</span>
                         <span className="h-3 w-px bg-slate-300 inline-block" />
-                        <span className="text-[11px] font-semibold text-emerald-600">
+                        <span className="text-[11px] font-medium text-emerald-600">
                           {isDelivered ? 'Delivered' : isOutForDelivery ? 'En-Route' : 'Assigned'}
                         </span>
                       </div>
@@ -231,7 +231,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
                   <div className="flex items-center gap-3 sm:text-right shrink-0">
                     <div>
-                      <p className="font-semibold text-slate-900">GPS: {trip?.currentGps ? `${trip.currentGps.lat.toFixed(4)}, ${trip.currentGps.lng.toFixed(4)}` : '10.0159, 76.3419'}</p>
+                      <p className="font-medium text-slate-900">GPS: {trip?.currentGps ? `${trip.currentGps.lat.toFixed(4)}, ${trip.currentGps.lng.toFixed(4)}` : '10.0159, 76.3419'}</p>
                       <p className="text-[11px] text-slate-500">{trip?.distanceKm || 3.5} km corridor</p>
                     </div>
                     <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -242,7 +242,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
               </div>
 
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-4">
-                <h3 className="font-semibold text-sm sm:text-base text-slate-900 border-b border-slate-100 pb-3">
+                <h3 className="font-medium text-sm sm:text-base text-slate-900 border-b border-slate-100 pb-3">
                   Order &amp; Delivery Status Milestone Steps
                 </h3>
 
@@ -253,7 +253,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                     <div className="h-6 w-6 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-900">Confirmed</h4>
+                    <h4 className="text-xs font-medium text-slate-900">Confirmed</h4>
                     <p className="text-[9px] text-slate-500 font-normal">Verified</p>
                   </div>
 
@@ -262,7 +262,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                     <div className="h-6 w-6 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-900">Packed</h4>
+                    <h4 className="text-xs font-medium text-slate-900">Packed</h4>
                     <p className="text-[9px] text-slate-500 font-normal">{isPacked ? 'Ready' : 'Pending'}</p>
                   </div>
 
@@ -271,7 +271,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                     <div className="h-6 w-6 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xs">
                       <FaCheck className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-900">Assigned</h4>
+                    <h4 className="text-xs font-medium text-slate-900">Assigned</h4>
                     <p className="text-[9px] text-slate-500 font-normal">{isAssigned ? driverName : 'Matching'}</p>
                   </div>
 
@@ -281,7 +281,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       }`}>
                       <FaTruckFast className="h-2.5 w-2.5" />
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-900">In Transit</h4>
+                    <h4 className="text-xs font-medium text-slate-900">In Transit</h4>
                     <p className="text-[9px] text-slate-500 font-normal">{isOutForDelivery ? 'On the road' : 'Queued'}</p>
                   </div>
 
@@ -291,7 +291,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       }`}>
                       {isDelivered ? <FaCheck className="h-2.5 w-2.5" /> : <FaLocationPin className="h-2.5 w-2.5" />}
                     </div>
-                    <h4 className="text-xs font-semibold text-slate-700">Delivered</h4>
+                    <h4 className="text-xs font-medium text-slate-700">Delivered</h4>
                     <p className="text-[9px] text-slate-400 font-normal">{isDelivered ? 'Completed' : 'Pending'}</p>
                   </div>
 
@@ -304,16 +304,16 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
               <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <h3 className="font-semibold text-sm sm:text-base text-slate-900">Assigned Delivery Partner</h3>
+                  <h3 className="font-medium text-sm sm:text-base text-slate-900">Assigned Delivery Partner</h3>
                   <span className="inline-flex rounded-xs h-2.5 w-2.5 bg-emerald-500" title="On-Duty Online Status" />
                 </div>
 
                 <div className="flex items-center gap-3.5">
-                  <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold text-lg flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-medium text-lg flex items-center justify-center shrink-0 shadow-xs">
                     {driverName.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-xs sm:text-sm text-slate-900">{driverName}</h4>
+                    <h4 className="font-medium text-xs sm:text-sm text-slate-900">{driverName}</h4>
                     <p className="text-[11px] text-slate-500 font-normal mt-0.5">Reg: <strong className="text-slate-800">{vehicleName} ({vehicleReg})</strong></p>
                   </div>
                 </div>
@@ -321,7 +321,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 <div className="grid grid-cols-2 gap-2.5 pt-1">
                   <a
                     href={`tel:${driverPhone}`}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-medium text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaPhone className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Call Driver</span>
@@ -331,7 +331,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       setNoticeMsg(`Direct call/message line active to ${driverName} (${driverPhone})`);
                       setTimeout(() => setNoticeMsg(null), 5000);
                     }}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-medium text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaCommentDots className="h-3.5 w-3.5 text-slate-500" />
                     <span>Chat</span>
@@ -343,7 +343,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 <div className="flex items-center justify-between relative z-10 border-b border-slate-800 pb-3">
                   <div className="flex items-center gap-2">
                     <FaKey className="h-4 w-4 text-[#FF6500]" />
-                    <h4 className="font-semibold text-xs uppercase tracking-wider text-slate-300">Delivery Verification OTP</h4>
+                    <h4 className="font-medium text-xs uppercase tracking-wider text-slate-300">Delivery Verification OTP</h4>
                   </div>
                   <span className="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md font-normal">
                     {activeOtp ? 'Ready at Site' : 'Site Gate Code'}
@@ -358,13 +358,13 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       : `Your driver will trigger this code upon arrival at your site gate.`}
                 </p>
 
-                <div className="bg-slate-800/90 rounded-2xl p-3.5 text-center tracking-[0.4em] font-mono text-2xl sm:text-3xl font-bold text-[#FF6500] shadow-inner relative z-10">
+                <div className="bg-slate-800/90 rounded-2xl p-3.5 text-center tracking-[0.4em] font-mono text-2xl sm:text-3xl font-medium text-[#FF6500] shadow-inner relative z-10">
                   {isDelivered ? 'VERIFIED' : activeOtp || '------'}
                 </div>
               </div>
 
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-3.5">
-                <h3 className="font-semibold text-xs text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
+                <h3 className="font-medium text-xs text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
                   Support &amp; Quick Actions
                 </h3>
 
@@ -382,7 +382,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                 ) : (
                   <button
                     onClick={() => setReportDelaySent(true)}
-                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-medium text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaTriangleExclamation className="h-3.5 w-3.5 text-amber-600" />
                     <span>Report Unloading Delay</span>
@@ -395,7 +395,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       setNoticeMsg('Direct 24x7 Site Logistics Helpline: 1800-425-9999');
                       setTimeout(() => setNoticeMsg(null), 5000);
                     }}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-medium text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaHeadset className="h-3.5 w-3.5 text-slate-500" />
                     <span>Contact Support</span>
@@ -406,7 +406,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       setNoticeMsg(`GST Tax Invoice ${trackingData?.invoiceNumber || 'MH-INV-2026-9021'} generated.`);
                       setTimeout(() => setNoticeMsg(null), 5000);
                     }}
-                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-medium text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"
                   >
                     <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
                     <span>View Invoice</span>

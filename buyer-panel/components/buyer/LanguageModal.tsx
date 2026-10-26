@@ -40,7 +40,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
       <button
         type="button"
         onClick={onClose}
-        className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
+        className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-medium transition-all cursor-pointer"
       >
         Cancel
       </button>
@@ -50,7 +50,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         size="md"
         onClick={handleSave}
         icon={<FaArrowRight className="h-3.5 w-3.5" />}
-        className="px-6 rounded-xl text-xs font-semibold"
+        className="px-6 rounded-xl text-xs font-medium"
       >
         Save Language
       </Button>
@@ -84,7 +84,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
               }`}
             >
               <div className="flex items-center justify-between w-full mb-2.5">
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-[#1c2638] border border-slate-700/50 text-slate-300">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-[#1c2638] border border-slate-700/50 text-slate-300">
                   {lang.flag}
                 </span>
                 {isSelected && (
@@ -92,7 +92,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
                 )}
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-white">{lang.nativeName}</h4>
+                <h4 className="text-xs font-medium text-white">{lang.nativeName}</h4>
                 <p className="text-[11px] text-slate-400 font-normal mt-0.5">{lang.name}</p>
               </div>
             </button>

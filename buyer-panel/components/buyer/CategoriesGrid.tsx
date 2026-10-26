@@ -88,11 +88,11 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 text-center sm:text-left items-center sm:items-start">
           <div className="w-full md:w-auto">
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
+            <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
               <FaBoxesStacked className="h-3.5 w-3.5" />
               Wholesale Material Marketplace
             </p>
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">
+            <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">
               Select Category &amp; Nearby Hardware Suppliers
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
@@ -123,7 +123,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-xl text-xs font-semibold transition-all h-9 sm:h-9 cursor-pointer shadow-xs ${
+              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-xl text-xs font-medium transition-all h-9 sm:h-9 cursor-pointer shadow-xs ${
                 onlyVerified
                   ? 'bg-white text-emerald-600 ring-1 ring-emerald-500/20'
                   : 'bg-white hover:bg-slate-50 text-slate-700'
@@ -143,7 +143,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             <button
               onClick={() => handleCategoryClick('all')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all cursor-pointer ${
                 internalSelectedId === 'all'
                   ? 'bg-[#FF6500] text-white shadow-md shadow-orange-500/20'
                   : 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 shadow-xs'
@@ -158,7 +158,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                 <button
                   key={cat.id}
                   onClick={() => handleCategoryClick(cat.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-[#FF6500] text-white shadow-md shadow-orange-500/20'
                       : 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 shadow-xs'
@@ -178,7 +178,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                   onClick={() => setSelectedSubCategory(sub === selectedSubCategory ? null : sub)}
                   className={`px-3 py-1 rounded-xl text-[11px] font-medium shrink-0 transition-all cursor-pointer ${
                     selectedSubCategory === sub
-                      ? 'bg-orange-100 text-[#FF6500] font-semibold shadow-xs ring-1 ring-orange-200'
+                      ? 'bg-orange-100 text-[#FF6500] font-medium shadow-xs ring-1 ring-orange-200'
                       : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
                   }`}
                 >
@@ -193,14 +193,14 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
           <div className="hidden lg:block lg:col-span-5 space-y-2.5">
             <div className="flex items-center justify-between px-1 h-6">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Material Categories
               </span>
 
               {internalSelectedId !== 'all' && (
                 <button
                   onClick={() => handleCategoryClick('all')}
-                  className="text-xs font-semibold text-[#FF6500] hover:underline cursor-pointer"
+                  className="text-xs font-medium text-[#FF6500] hover:underline cursor-pointer"
                 >
                   Reset Filter
                 </button>
@@ -217,11 +217,11 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-slate-900 text-white font-semibold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-slate-900 text-white font-medium text-xs flex items-center justify-center shrink-0 shadow-xs">
                     ALL
                   </div>
                   <div>
-                    <h3 className={`font-semibold text-sm ${internalSelectedId === 'all' ? 'text-[#FF6500]' : 'text-slate-900'}`}>
+                    <h3 className={`font-medium text-sm ${internalSelectedId === 'all' ? 'text-[#FF6500]' : 'text-slate-900'}`}>
                       All Hardware Materials
                     </h3>
                     <p className="text-xs text-slate-500 font-normal">
@@ -231,7 +231,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600">
+                  <span className="text-xs font-medium px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600">
                     1000+
                   </span>
                   <FaChevronRight className={`h-3 w-3 transition-transform ${internalSelectedId === 'all' ? 'text-[#FF6500] translate-x-1' : 'text-slate-300'}`} />
@@ -258,11 +258,11 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <h3 className={`font-semibold text-sm ${isSelected ? 'text-[#FF6500]' : 'text-slate-900'}`}>
+                          <h3 className={`font-medium text-sm ${isSelected ? 'text-[#FF6500]' : 'text-slate-900'}`}>
                             {cat.title}
                           </h3>
                           {cat.trendingBadge && (
-                            <span className="text-[#FF6500] text-xs font-semibold">
+                            <span className="text-[#FF6500] text-xs font-medium">
                               ({cat.trendingBadge})
                             </span>
                           )}
@@ -274,7 +274,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs font-semibold px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600">
+                      <span className="text-xs font-medium px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600">
                         {cat.itemCount}+
                       </span>
                       <FaChevronRight className={`h-3 w-3 transition-transform ${isSelected ? 'text-[#FF6500] translate-x-1' : 'text-slate-300'}`} />
@@ -287,7 +287,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
 
           <div className="lg:col-span-7 space-y-2.5">
             <div className="flex items-center justify-between px-1 h-6">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider flex items-center gap-1">
                 <FaCircleCheck className="h-3 w-3 text-emerald-600" />
                 Nearby Hardware Suppliers ({filteredMerchants.length})
               </span>
@@ -296,7 +296,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
             {filteredMerchants.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-3xl p-6 shadow-sm">
                 <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
-                <h3 className="text-sm font-semibold text-slate-800">No Hardware Suppliers Found</h3>
+                <h3 className="text-sm font-medium text-slate-800">No Hardware Suppliers Found</h3>
                 <p className="text-xs text-slate-400 mt-0.5 font-normal">Try clearing category selection or expanding radius to 20 KM</p>
                 <div className="flex items-center justify-center gap-2 mt-3">
                   <Button onClick={() => handleCategoryClick('all')} variant="secondary" size="sm">
@@ -318,7 +318,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5">
                           <div className="relative shrink-0">
-                            <div className="h-10 w-10 rounded-xl bg-slate-900 text-white font-semibold text-sm flex items-center justify-center shadow-xs">
+                            <div className="h-10 w-10 rounded-xl bg-slate-900 text-white font-medium text-sm flex items-center justify-center shadow-xs">
                               {merchant.name.charAt(0)}
                             </div>
                             {merchant.verified && (
@@ -328,7 +328,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                             )}
                           </div>
                           <div>
-                            <h3 className="font-semibold text-sm text-slate-900 leading-tight">
+                            <h3 className="font-medium text-sm text-slate-900 leading-tight">
                               {merchant.name}
                             </h3>
                             <p className="text-xs text-slate-500 mt-0.5 font-normal leading-snug flex items-center gap-1">
@@ -338,7 +338,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                           </div>
                         </div>
 
-                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white text-slate-800 text-xs font-semibold shrink-0 shadow-xs">
+                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white text-slate-800 text-xs font-medium shrink-0 shadow-xs">
                           <FaStar className="h-2.5 w-2.5 text-amber-400" />
                           {merchant.rating}
                         </span>
@@ -352,8 +352,8 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                             <FaLocationDot className="h-2.5 w-2.5" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Distance</div>
-                            <div className="text-xs font-semibold text-slate-800">{merchant.distanceKm} KM Away</div>
+                            <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Distance</div>
+                            <div className="text-xs font-medium text-slate-800">{merchant.distanceKm} KM Away</div>
                           </div>
                         </div>
                         
@@ -362,14 +362,14 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                             <FaClock className="h-2.5 w-2.5" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Delivery ETA</div>
-                            <div className="text-xs font-semibold text-slate-800">{merchant.deliveryEtaMinutes} Mins</div>
+                            <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Delivery ETA</div>
+                            <div className="text-xs font-medium text-slate-800">{merchant.deliveryEtaMinutes} Mins</div>
                           </div>
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                        <div className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">
                           Featured Stocked Brands
                         </div>
                         <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-600">
@@ -386,11 +386,11 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                     <div className="p-3.5 pt-0 space-y-2">
                       <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
                         <span className="text-slate-500 font-normal">Min Order Value</span>
-                        <span className="font-semibold text-slate-900">₹{merchant.minOrderValue.toLocaleString()}</span>
+                        <span className="font-medium text-slate-900">₹{merchant.minOrderValue.toLocaleString()}</span>
                       </div>
 
                       {quoteSuccessId === merchant.id ? (
-                        <div className="w-full py-2 px-3 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                        <div className="w-full py-2 px-3 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-medium text-center flex items-center justify-center gap-1.5">
                           <FaCircleCheck className="h-3.5 w-3.5 text-emerald-500" />
                           <span>Quote Sent to Merchant!</span>
                         </div>
@@ -402,7 +402,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                             onClick={() => handleRequestQuote(merchant.id)}
                             icon={<FaPhone className="h-3 w-3 text-[#FF6500]" />}
                             iconPosition="left"
-                            className="w-full text-xs py-1.5 font-semibold"
+                            className="w-full text-xs py-1.5 font-medium"
                           >
                             Direct Quote
                           </Button>
@@ -412,7 +412,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                             onClick={() => onSelectMerchant(merchant)}
                             icon={<FaBagShopping className="h-3 w-3" />}
                             iconPosition="left"
-                            className="w-full text-xs py-1.5 font-semibold"
+                            className="w-full text-xs py-1.5 font-medium"
                           >
                             View Store
                           </Button>

@@ -49,7 +49,7 @@ export const AuditLogsSection: React.FC = () => {
     <div className="space-y-6">
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Security Audit Trail & Administrative Telemetry</h2>
+          <h2 className="text-sm font-medium text-slate-900">Security Audit Trail & Administrative Telemetry</h2>
           <p className="text-xs text-slate-500">Immutable operations log tracking role changes, price overrides, and fulfillment events</p>
         </div>
 
@@ -67,7 +67,7 @@ export const AuditLogsSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Timestamp & ID</th>
                 <th className="py-3.5">Action Code</th>
                 <th className="py-3.5">Actor Identity</th>
@@ -94,22 +94,22 @@ export const AuditLogsSection: React.FC = () => {
                 filteredLogs.map((l) => (
                   <tr key={l.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-medium text-slate-900">
                         {l.createdAt ? new Date(l.createdAt).toLocaleString('en-IN') : 'N/A'}
                       </p>
                       <p className="text-[10px] font-mono text-slate-400">{l.id?.slice(0, 8)}...</p>
                     </td>
-                    <td className="py-3.5 font-mono text-[11px] font-bold text-slate-800">
+                    <td className="py-3.5 font-mono text-[11px] font-medium text-slate-800">
                       {l.action}
                     </td>
                     <td className="py-3.5">
-                      <p className="font-semibold text-slate-900">{l.actorId || 'u_admin_1'}</p>
-                      <span className="text-[10px] font-semibold uppercase text-orange-600">
+                      <p className="font-medium text-slate-900">{l.actorId || 'u_admin_1'}</p>
+                      <span className="text-[10px] font-medium uppercase text-orange-600">
                         {l.actorRole || 'admin'}
                       </span>
                     </td>
                     <td className="py-3.5 text-slate-700">
-                      <p className="font-semibold capitalize text-slate-900">{l.targetType || 'system'}</p>
+                      <p className="font-medium capitalize text-slate-900">{l.targetType || 'system'}</p>
                       <p className="text-[10px] font-mono text-slate-400">#{l.targetId}</p>
                     </td>
                     <td className="py-3.5 max-w-[280px]">
@@ -123,10 +123,8 @@ export const AuditLogsSection: React.FC = () => {
                     </td>
                     <td className="py-3.5 pr-4 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider ${
-                          l.status === 'success'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
+                        className={`text-xs font-medium uppercase tracking-wider ${
+                          l.status === 'success' ? 'text-emerald-600' : 'text-rose-600'
                         }`}
                       >
                         {l.status || 'success'}

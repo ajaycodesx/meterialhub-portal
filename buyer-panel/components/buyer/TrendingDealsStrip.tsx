@@ -123,14 +123,14 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
           />
 
           <div className="absolute top-2 left-2 flex items-center gap-1.5">
-            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-white text-xs font-semibold tracking-wider shadow-xs ${deal.badgeColor}`}>
+            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-white text-xs font-medium tracking-wider shadow-xs ${deal.badgeColor}`}>
               <FaBolt className="h-2.5 w-2.5 text-yellow-300" />
               {deal.badge}
             </span>
           </div>
 
           <div className="absolute top-2 right-2">
-            <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500 text-white text-xs font-semibold shadow-xs">
+            <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500 text-white text-xs font-medium shadow-xs">
               -{deal.discountPct}%
             </span>
           </div>
@@ -140,7 +140,7 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
               <FaClock className="h-2.5 w-2.5 text-orange-400" />
               <span>Ends in</span>
             </div>
-            <span className="font-semibold tabular-nums text-white">
+            <span className="font-medium tabular-nums text-white">
               {h}:{m}:{s}
             </span>
           </div>
@@ -154,7 +154,7 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
             </span>
           </div>
 
-          <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[#FF6500] transition-colors line-clamp-1 leading-snug">
+          <h3 className="text-sm font-medium text-slate-900 group-hover:text-[#FF6500] transition-colors line-clamp-1 leading-snug">
             {deal.material}
           </h3>
         </div>
@@ -167,7 +167,7 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
           </p>
           <div className="flex items-baseline gap-1">
             <span className="text-xs text-slate-500 font-medium">Price:</span>
-            <span className="text-sm sm:text-base font-semibold text-slate-900 leading-none">
+            <span className="text-sm sm:text-base font-medium text-slate-900 leading-none">
               ₹{deal.dealRate.toLocaleString('en-IN')}
             </span>
             <span className="text-xs font-normal text-slate-500">
@@ -176,7 +176,7 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
           </div>
         </div>
 
-        <span className="text-xs font-semibold text-[#FF6500]">
+        <span className="text-xs font-medium text-[#FF6500]">
           -{deal.discountPct}%
         </span>
       </div>
@@ -193,11 +193,11 @@ export function TrendingDealsStrip({ deals = DEFAULT_DEALS }: { deals?: Deal[] }
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-3.5 mb-3 sm:mb-4 text-center sm:text-left items-center sm:items-start">
           <div className="w-full sm:w-auto">
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
+            <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
               <FaFire className="h-3.5 w-3.5" />
               Live Flash Pricing
             </p>
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">
+            <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">
               Trending Wholesale Deals
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
@@ -207,7 +207,7 @@ export function TrendingDealsStrip({ deals = DEFAULT_DEALS }: { deals?: Deal[] }
 
           <button
             onClick={() => router.push('/catalog')}
-            className="self-center sm:self-auto text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+            className="self-center sm:self-auto text-xs sm:text-sm font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
           >
             <span>View More</span>
             <FaChevronRight className="h-3 w-3" />

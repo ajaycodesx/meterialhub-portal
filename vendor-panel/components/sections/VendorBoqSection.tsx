@@ -33,7 +33,8 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
   const [quoteNotes, setQuoteNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filteredQuotes = quotes.filter((q) => {
+  const safeQuotes = Array.isArray(quotes) ? quotes : [];
+  const filteredQuotes = safeQuotes.filter((q) => {
     const titleMatch = (q.title || '').toLowerCase().includes(searchTerm.toLowerCase());
     const siteMatch = (q.deliveryAddress || '').toLowerCase().includes(searchTerm.toLowerCase());
     return titleMatch || siteMatch;
@@ -56,11 +57,11 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
     <div className="space-y-6">
       <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
+          <div className="p-3 rounded-xl bg-[#FFF7F2] text-[#FF6500]">
             <FaFileContract className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-900">
+            <h2 className="text-sm font-medium text-slate-900">
               Contractor BOQ Estimates & Bulk Project Quotes
             </h2>
             <p className="text-xs text-slate-500 font-medium">
@@ -91,16 +92,16 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
 
             return (
               <div
-                key={q.id}
+                key={q.id || q.quoteId}
                 className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-md transition-all"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900">
-                      Ref: {q.id.slice(0, 8).toUpperCase()}
+                    <span className="text-xs font-medium text-slate-900">
+                      Ref: {(q.id || q.quoteId || '').slice(0, 8).toUpperCase()}
                     </span>
                     <span
-                      className={`text-xs font-semibold px-2.5 py-0.5 rounded-lg ${
+                      className={`text-xs font-medium px-2.5 py-0.5 rounded-lg ${
                         isQuoted
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-amber-100 text-amber-800'
@@ -111,7 +112,7 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-medium text-slate-900">
                       {q.title || 'Bulk Construction Materials Requisition'}
                     </h3>
                     <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-1">
@@ -123,13 +124,13 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
                   <div className="p-3 rounded-xl bg-slate-50 text-xs space-y-1.5 border border-slate-100">
                     <div className="flex justify-between text-slate-600">
                       <span>Target Supply Slot:</span>
-                      <span className="font-semibold text-slate-900">
+                      <span className="font-medium text-slate-900">
                         {q.targetDate || 'Within 10 days'}
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-600">
                       <span>Contractor Requisition:</span>
-                      <span className="font-semibold text-slate-900">
+                      <span className="font-medium text-slate-900">
                         {q.materialSummary || 'OPC 53 Grade (400 Bags), 16mm Fe550D TMT (5 Tons)'}
                       </span>
                     </div>
@@ -137,7 +138,7 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
                     {isQuoted && (
                       <div className="flex justify-between pt-1 border-t border-slate-200 text-slate-600">
                         <span>Your Depot Wholesale Bid:</span>
-                        <span className="font-bold text-emerald-600">
+                        <span className="font-medium text-emerald-600">
                           ₹{(q.estimatedTotal || 0).toLocaleString('en-IN')}
                         </span>
                       </div>
@@ -153,13 +154,15 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
                   <Button
                     variant={isQuoted ? 'secondary' : 'primary'}
                     size="sm"
+                    icon={<FaPaperPlane className="h-3 w-3" />}
+                    iconPosition="left"
                     onClick={() => {
                       setSelectedQuote(q);
                       setQuoteAmount(q.estimatedTotal || 0);
                       setQuoteNotes(q.notes || 'Includes 18% GST and hydraulic crane unloading at site');
                     }}
+                    className="shrink-0"
                   >
-                    <FaPaperPlane className="mr-1.5 h-3 w-3" />
                     {isQuoted ? 'Revise Bid' : 'Submit Wholesale Bid'}
                   </Button>
                 </div>
@@ -195,7 +198,7 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
         >
           <div className="space-y-4 text-xs">
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
-              <span className="font-bold text-slate-900">Project Location: </span>
+              <span className="font-medium text-slate-900">Project Location: </span>
               <p className="text-slate-600">{selectedQuote.deliveryAddress || 'Kakkanad Site'}</p>
             </div>
 

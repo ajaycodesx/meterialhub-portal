@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./materialhub.db"
 
     AUTO_SEED_DEV_DATA: bool = True
-    DEV_ALLOW_MOCK_AUTH: bool = True
+    DEV_ALLOW_MOCK_AUTH: bool = False
 
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:3000",

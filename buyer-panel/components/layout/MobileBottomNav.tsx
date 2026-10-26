@@ -79,14 +79,14 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               onClick={item.onClick}
               className={`relative flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all cursor-pointer ${
                 isActive 
-                  ? 'text-[#FF6500] font-semibold' 
+                  ? 'text-[#FF6500] font-medium' 
                   : 'text-slate-500 font-normal hover:text-slate-800'
               }`}
             >
               <div className="relative">
                 <IconComponent className={`h-5 w-5 ${isActive ? 'scale-110' : ''} transition-transform`} />
                 {item.badge && (
-                  <span className="absolute -top-1.5 -right-2.5 h-4 min-w-[16px] px-1 rounded-md bg-[#FF6500] text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
+                  <span className="absolute -top-1.5 -right-2.5 h-4 min-w-[16px] px-1 rounded-md bg-[#FF6500] text-white text-[9px] font-medium flex items-center justify-center shadow-xs">
                     {item.badge}
                   </span>
                 )}

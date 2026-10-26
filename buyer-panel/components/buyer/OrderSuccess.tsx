@@ -60,7 +60,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
           { label: 'Order Confirmed' }
         ]}
         badge={
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
             <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
             <span>Payment Verified &amp; Order Locked</span>
           </span>
@@ -77,16 +77,16 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
             <button
               onClick={handleCopyOrderId}
               title="Click to copy Order Reference ID"
-              className="font-mono font-semibold text-slate-800 hover:text-[#FF6500] inline-flex items-center gap-1 transition-colors cursor-pointer"
+              className="font-mono font-medium text-slate-800 hover:text-[#FF6500] inline-flex items-center gap-1 transition-colors cursor-pointer"
             >
               <span>{displayOrderId}</span>
               <FaCopy className={`h-3 w-3 ${copied ? 'text-emerald-600' : 'text-slate-400'}`} />
-              {copied && <span className="text-[10px] text-emerald-600 font-sans font-semibold">Copied!</span>}
+              {copied && <span className="text-[10px] text-emerald-600 font-sans font-medium">Copied!</span>}
             </button>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span className="flex items-center gap-1">
               <FaClock className="h-3 w-3 text-[#FF6500]" />
-              Est. Site Arrival: <strong className="text-slate-900 font-semibold">~45 Mins</strong>
+              Est. Site Arrival: <strong className="text-slate-900 font-medium">~45 Mins</strong>
             </span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>GST Tax Invoice Ready</span>
@@ -97,7 +97,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
             {onTrackOrderLive && (
               <button
                 onClick={onTrackOrderLive}
-                className="px-4 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-xs font-semibold text-white flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[#FF6500] hover:bg-[#e05900] text-xs font-medium text-white flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
               >
                 <FaTruckFast className="h-3.5 w-3.5" />
                 <span>Live GPS Tracking</span>
@@ -106,7 +106,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
             {onReturnHome && (
               <button
                 onClick={onReturnHome}
-                className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <span>Continue Shopping</span>
               </button>
@@ -123,18 +123,18 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-sm sm:text-base font-semibold text-slate-900 tracking-tight">
+                    <h2 className="text-sm sm:text-base font-medium text-slate-900 tracking-tight">
                       Order Fulfillment Status
                     </h2>
                     <span className="h-2 w-2 rounded-xs bg-[#FF6500] inline-block" />
-                    <span className="text-[11px] font-semibold text-[#FF6500] uppercase tracking-wider">Live Transit</span>
+                    <span className="text-[11px] font-medium text-[#FF6500] uppercase tracking-wider">Live Transit</span>
                   </div>
                   <p className="text-xs text-slate-500 font-normal mt-0.5">
                     Direct merchant depot dispatch en-route to site with verified vehicle allocation
                   </p>
                 </div>
 
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-50 text-[#FF6500] text-xs font-semibold self-start sm:self-center shrink-0">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-50 text-[#FF6500] text-xs font-medium self-start sm:self-center shrink-0">
                   <FaClock className="h-3.5 w-3.5 text-[#FF6500]" />
                   <span>Est. Site Arrival: ~45 Mins</span>
                 </div>
@@ -143,13 +143,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
                 <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 flex flex-col justify-between space-y-3 transition-all shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="h-9 w-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
+                    <div className="h-9 w-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-medium shadow-xs">
                       <FaCheck className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Step 1</span>
+                    <span className="text-[10px] font-medium text-emerald-600 uppercase tracking-wider">Step 1</span>
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">Order Placed</h3>
+                    <h3 className="text-xs sm:text-sm font-medium text-slate-900 leading-tight">Order Placed</h3>
                     <p className="text-[11px] text-slate-500 font-normal mt-1 flex items-center gap-1.5">
                       <span>11:52 AM</span>
                       <span className="h-2 w-px bg-slate-300 inline-block" />
@@ -160,13 +160,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
 
                 <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 flex flex-col justify-between space-y-3 transition-all shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="h-9 w-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-semibold shadow-xs">
+                    <div className="h-9 w-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-medium shadow-xs">
                       <FaCheck className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Step 2</span>
+                    <span className="text-[10px] font-medium text-emerald-600 uppercase tracking-wider">Step 2</span>
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">Vendor Accepted</h3>
+                    <h3 className="text-xs sm:text-sm font-medium text-slate-900 leading-tight">Vendor Accepted</h3>
                     <p className="text-[11px] text-slate-500 font-normal mt-1 flex items-center gap-1.5">
                       <span>11:53 AM</span>
                       <span className="h-2 w-px bg-slate-300 inline-block" />
@@ -177,13 +177,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
 
                 <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-[#FF6500] to-[#E55A00] text-white flex flex-col justify-between space-y-3 shadow-md shadow-orange-500/20 transition-all">
                   <div className="flex items-center justify-between">
-                    <div className="h-9 w-9 rounded-xl bg-white text-[#FF6500] flex items-center justify-center text-xs font-semibold shadow-xs">
+                    <div className="h-9 w-9 rounded-xl bg-white text-[#FF6500] flex items-center justify-center text-xs font-medium shadow-xs">
                       <FaTruckFast className="h-4 w-4" />
                     </div>
-                    <span className="text-[10px] font-semibold text-orange-100 uppercase tracking-wider">Active</span>
+                    <span className="text-[10px] font-medium text-orange-100 uppercase tracking-wider">Active</span>
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-semibold text-white leading-tight">Vehicle Dispatched</h3>
+                    <h3 className="text-xs sm:text-sm font-medium text-white leading-tight">Vehicle Dispatched</h3>
                     <p className="text-[11px] text-orange-100 font-normal mt-1 flex items-center gap-1.5">
                       <span>En-Route</span>
                       <span className="h-2 w-px bg-orange-300/60 inline-block" />
@@ -194,13 +194,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
 
                 <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/50 flex flex-col justify-between space-y-3 opacity-60 transition-all shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="h-9 w-9 rounded-xl bg-slate-200 text-slate-400 flex items-center justify-center text-xs font-semibold">
+                    <div className="h-9 w-9 rounded-xl bg-slate-200 text-slate-400 flex items-center justify-center text-xs font-medium">
                       <FaLocationDot className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Step 4</span>
+                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Step 4</span>
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-600 leading-tight">Site Delivery</h3>
+                    <h3 className="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Site Delivery</h3>
                     <p className="text-[11px] text-slate-400 font-normal mt-1">Unloading Pending</p>
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-semibold text-slate-900 truncate">Manoj K (KL-07-CD-8921)</span>
+                      <span className="text-xs font-medium text-slate-900 truncate">Manoj K (KL-07-CD-8921)</span>
                       <span className="h-2.5 w-px bg-slate-300 inline-block" />
                       <span className="text-xs text-slate-600 font-medium">Standard 6-Wheeler</span>
                     </div>
@@ -226,7 +226,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                 {onTrackOrderLive && (
                   <button
                     onClick={onTrackOrderLive}
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors shrink-0 cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-medium shadow-xs transition-colors shrink-0 cursor-pointer"
                   >
                     <span>Track Live GPS</span>
                     <FaChevronRight className="h-2.5 w-2.5 text-orange-400" />
@@ -238,16 +238,16 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
             <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-2xs border border-slate-100/80 space-y-4 sm:space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-100 gap-3">
                 <div className="flex items-center gap-3.5">
-                  <div className="h-11 w-11 rounded-xl bg-[#0F172A] text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="h-11 w-11 rounded-xl bg-[#0F172A] text-white font-medium text-lg flex items-center justify-center shrink-0 shadow-xs">
                     K
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-sm sm:text-base text-slate-900 whitespace-nowrap">
+                      <h3 className="font-medium text-sm sm:text-base text-slate-900 whitespace-nowrap">
                         Kakkanad Building Supplies Co.
                       </h3>
                       <span className="h-3 w-px bg-slate-300 inline-block" />
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 whitespace-nowrap">
                         <FaCircleCheck className="h-3 w-3 text-emerald-600" />
                         <span>Verified Merchant</span>
                       </span>
@@ -261,7 +261,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
 
                 <Link
                   href="/catalog"
-                  className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0 whitespace-nowrap self-start sm:self-auto"
+                  className="text-xs sm:text-sm font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0 whitespace-nowrap self-start sm:self-auto"
                 >
                   <span>View More</span>
                   <FaChevronRight className="h-3 w-3" />
@@ -274,8 +274,8 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     <FaTruckFast className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider whitespace-nowrap block">ALLOCATED VEHICLE</span>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900 mt-0.5 whitespace-nowrap">Bolero Pickup</p>
+                    <span className="text-[10px] uppercase font-medium text-slate-400 tracking-wider whitespace-nowrap block">ALLOCATED VEHICLE</span>
+                    <p className="text-xs sm:text-sm font-medium text-slate-900 mt-0.5 whitespace-nowrap">Bolero Pickup</p>
                   </div>
                 </div>
 
@@ -284,8 +284,8 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     <FaWeightHanging className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider whitespace-nowrap block">PAYLOAD WEIGHT</span>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900 mt-0.5 whitespace-nowrap">2.50 Tons</p>
+                    <span className="text-[10px] uppercase font-medium text-slate-400 tracking-wider whitespace-nowrap block">PAYLOAD WEIGHT</span>
+                    <p className="text-xs sm:text-sm font-medium text-slate-900 mt-0.5 whitespace-nowrap">2.50 Tons</p>
                   </div>
                 </div>
 
@@ -294,8 +294,8 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     <FaClock className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider whitespace-nowrap block">EST. SITE UNLOADING</span>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900 mt-0.5 whitespace-nowrap">Today in 45 Mins</p>
+                    <span className="text-[10px] uppercase font-medium text-slate-400 tracking-wider whitespace-nowrap block">EST. SITE UNLOADING</span>
+                    <p className="text-xs sm:text-sm font-medium text-slate-900 mt-0.5 whitespace-nowrap">Today in 45 Mins</p>
                   </div>
                 </div>
               </div>
@@ -304,7 +304,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                 <Link href="/tracking" className="w-full">
                   <button
                     onClick={onTrackOrderLive}
-                    className="w-full px-4 py-3 rounded-2xl bg-[#FF6500] hover:bg-[#e55b00] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                    className="w-full px-4 py-3 rounded-2xl bg-[#FF6500] hover:bg-[#e55b00] text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                   >
                     <FaTruckFast className="h-3.5 w-3.5" />
                     <span>Track Order (Live Page)</span>
@@ -315,7 +315,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                 <Link href="/" className="w-full">
                   <button
                     onClick={onReturnHome}
-                    className="w-full px-4 py-3 rounded-2xl bg-[#F1F5F9] hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap"
+                    className="w-full px-4 py-3 rounded-2xl bg-[#F1F5F9] hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap"
                   >
                     <FaHouse className="h-3.5 w-3.5 text-slate-600" />
                     <span>Continue Shopping</span>
@@ -324,7 +324,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
 
                 <button
                   onClick={handleDownloadInvoice}
-                  className="w-full px-4 py-3 rounded-2xl bg-[#F1F5F9] hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap"
+                  className="w-full px-4 py-3 rounded-2xl bg-[#F1F5F9] hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap"
                 >
                   <FaFileInvoiceDollar className="h-3.5 w-3.5 text-[#FF6500]" />
                   <span>{invoiceDownloaded ? 'Invoice Saved' : 'GST Tax Invoice'}</span>
@@ -335,7 +335,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
 
           <div className="lg:col-span-4 lg:sticky lg:top-24 self-start">
             <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-2xs border border-slate-100/80 space-y-4">
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 whitespace-nowrap">
+              <h2 className="text-base sm:text-lg font-medium text-slate-900 whitespace-nowrap">
                 Order Summary
               </h2>
 
@@ -347,7 +347,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     </div>
                     <span className="font-normal text-slate-600 whitespace-nowrap">Total Material Value</span>
                   </span>
-                  <span className="font-bold text-slate-900 whitespace-nowrap">₹ 12,480.00</span>
+                  <span className="font-medium text-slate-900 whitespace-nowrap">₹ 12,480.00</span>
                 </div>
 
                 <div className="flex items-center justify-between text-slate-600">
@@ -357,7 +357,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     </div>
                     <span className="font-normal text-slate-600 whitespace-nowrap">Delivery Charges</span>
                   </span>
-                  <span className="font-bold text-slate-900 whitespace-nowrap">₹ 350.00</span>
+                  <span className="font-medium text-slate-900 whitespace-nowrap">₹ 350.00</span>
                 </div>
 
                 <div className="flex items-center justify-between text-slate-600">
@@ -367,13 +367,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     </div>
                     <span className="font-normal text-slate-600 whitespace-nowrap">GST (18%)</span>
                   </span>
-                  <span className="font-bold text-slate-900 whitespace-nowrap">₹ 2,217.00</span>
+                  <span className="font-medium text-slate-900 whitespace-nowrap">₹ 2,217.00</span>
                 </div>
               </div>
 
               <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between">
-                <span className="text-sm font-bold text-slate-800 whitespace-nowrap">Total Amount</span>
-                <span className="text-xl sm:text-2xl font-bold text-slate-900 whitespace-nowrap">₹ 15,047.00</span>
+                <span className="text-sm font-medium text-slate-800 whitespace-nowrap">Total Amount</span>
+                <span className="text-xl sm:text-2xl font-medium text-slate-900 whitespace-nowrap">₹ 15,047.00</span>
               </div>
 
               <div className="p-3.5 rounded-2xl bg-[#EDF9F3] flex items-center gap-3">
@@ -381,8 +381,8 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                   <FaCheck className="h-4 w-4 stroke-[2]" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider whitespace-nowrap block">Payment Status</span>
-                  <p className="font-bold text-emerald-800 text-sm leading-tight whitespace-nowrap">Paid</p>
+                  <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider whitespace-nowrap block">Payment Status</span>
+                  <p className="font-medium text-emerald-800 text-sm leading-tight whitespace-nowrap">Paid</p>
                 </div>
               </div>
 
@@ -390,7 +390,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                 href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`MaterialHub Site Delivery Update: Order #${displayOrderId} is confirmed for site unloading today. Track live: http://localhost:3000/tracking`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full px-4 py-3 rounded-2xl bg-[#00895A] hover:bg-[#007A50] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                className="w-full px-4 py-3 rounded-2xl bg-[#00895A] hover:bg-[#007A50] text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
               >
                 <FaWhatsapp className="h-4 w-4" />
                 <span>Share with Site Supervisor</span>

@@ -60,10 +60,10 @@ export const QuickSiteDispatchCard: React.FC = () => {
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 pb-5 sm:pb-6 border-b border-slate-100">
             <div>
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5">
+              <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5">
                 60-Minute Site Emergency Dispatch
               </p>
-              <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug mt-1 sm:mt-1.5">
+              <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug mt-1 sm:mt-1.5">
                 Running Low on Site? Quick Reorder &amp; Emergency Top-Up
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed max-w-2xl">
@@ -74,7 +74,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
             <div className="flex items-center gap-1.5 text-xs text-slate-500 shrink-0 self-start md:self-center">
               <FaLocationDot className="h-3.5 w-3.5 text-[#FF6500]" />
               <span>
-                Active Site: <strong className="font-semibold text-slate-900">{location.address.split(',')[0] || 'Site #14, Kakkanad'}</strong>
+                Active Site: <strong className="font-medium text-slate-900">{location.address.split(',')[0] || 'Site #14, Kakkanad'}</strong>
               </span>
             </div>
           </div>
@@ -84,7 +84,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
             <div className="lg:col-span-7 bg-slate-50/70 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <h3 className="text-xs sm:text-sm font-semibold text-slate-700">
+                  <h3 className="text-xs sm:text-sm font-medium text-slate-700">
                     Previous Site Delivery Batch
                   </h3>
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
@@ -112,7 +112,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
                   </div>
 
                   <div className="space-y-1 min-w-0 flex-1">
-                    <h4 className="font-semibold text-xs sm:text-sm text-slate-900 leading-snug">
+                    <h4 className="font-medium text-xs sm:text-sm text-slate-900 leading-snug">
                       50 Bags UltraTech 53G + 20 Bundles Fe550D TMT Steel
                     </h4>
                     <p className="text-xs text-slate-500 font-normal flex items-center gap-2 truncate">
@@ -127,10 +127,10 @@ export const QuickSiteDispatchCard: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-200/60">
                 <div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
                     Full Batch Total (GST Included)
                   </div>
-                  <div className="text-lg sm:text-xl font-semibold text-slate-900 leading-tight">
+                  <div className="text-lg sm:text-xl font-medium text-slate-900 leading-tight">
                     ₹48,250
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
                   size="md"
                   onClick={handleReorderBatch}
                   icon={<FaRotateRight className="h-3.5 w-3.5" />}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-medium cursor-pointer"
                 >
                   Reorder Entire Batch
                 </Button>
@@ -151,7 +151,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div>
-                    <h3 className="font-semibold text-xs sm:text-sm text-slate-900">
+                    <h3 className="font-medium text-xs sm:text-sm text-slate-900">
                       Instant Site Shortage Top-Ups
                     </h3>
                     <p className="text-[11px] text-slate-500 font-normal">
@@ -176,20 +176,20 @@ export const QuickSiteDispatchCard: React.FC = () => {
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h4 className="font-semibold text-xs text-slate-900 truncate">
+                          <h4 className="font-medium text-xs text-slate-900 truncate">
                             {pack.title}
                           </h4>
                           <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
                             <span className="truncate">{pack.spec}</span>
                             <span className="h-2 w-px bg-slate-300 inline-block" />
-                            <span className="text-emerald-700 font-semibold shrink-0">ETA {pack.eta}</span>
+                            <span className="text-emerald-700 font-medium shrink-0">ETA {pack.eta}</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <div className="text-right">
-                          <div className="text-xs font-semibold text-slate-900">
+                          <div className="text-xs font-medium text-slate-900">
                             ₹{pack.price.toLocaleString()}
                           </div>
                         </div>

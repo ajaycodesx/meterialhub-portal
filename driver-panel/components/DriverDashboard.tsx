@@ -1,26 +1,58 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
-  FaSpinner,
   FaCircleCheck,
   FaTriangleExclamation,
   FaXmark,
   FaKey,
-  FaShieldHalved
+  FaShieldHalved,
+  FaTruckFast,
+  FaBell
 } from 'react-icons/fa6';
 import { driverApi, authApi, apiClient } from '../lib/api';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { DriverHeader, DriverTab } from './layout/DriverHeader';
 
-import { DriverDispatchSection } from './sections/DriverDispatchSection';
-import { DriverHistorySection } from './sections/DriverHistorySection';
-import { DriverProfileSection } from './sections/DriverProfileSection';
+import { DriverAuthView } from './driver/DriverAuthView';
+import { DriverOverviewTab } from './driver/DriverOverviewTab';
+import { DriverJobsTab } from './driver/DriverJobsTab';
+import { DriverNavigationScreen } from './driver/DriverNavigationScreen';
+import { DriverAlertsTab } from './driver/DriverAlertsTab';
+import { DriverAccountTab } from './driver/DriverAccountTab';
+import { DriverBottomNav, DriverNavTab } from './driver/DriverBottomNav';
+import { DriverSidebar } from './driver/DriverSidebar';
 
-export function DriverDashboard() {
-  const [activeTab, setActiveTab] = useState<DriverTab>('dispatch');
+function resolveDriverTabFromPath(path: string | null): DriverNavTab {
+  if (!path) return 'overview';
+  const stripped = path.startsWith('/') ? path.slice(1) : path;
+  const clean = stripped.split('/')[0];
+  const validTabs: DriverNavTab[] = ['overview', 'jobs', 'alerts', 'account'];
+  return validTabs.includes(clean as DriverNavTab) ? (clean as DriverNavTab) : 'overview';
+}
+
+export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } = {}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState<DriverNavTab>(() => initialSlug || resolveDriverTabFromPath(pathname));
+
+  useEffect(() => {
+    const fromPath = resolveDriverTabFromPath(pathname);
+    if (fromPath !== activeTab) {
+      setActiveTab(fromPath);
+    }
+  }, [pathname]);
+
+  const handleTabChange = (tab: DriverNavTab) => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined') {
+      router.push(`/${tab}`);
+    }
+  };
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,24 +65,18 @@ export function DriverDashboard() {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
+  const [navTrip, setNavTrip] = useState<any | null>(null);
+
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [otpValue, setOtpValue] = useState('');
-  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [otpModalError, setOtpModalError] = useState<string | null>(null);
 
-  const [isExceptionModalOpen, setIsExceptionModalOpen] = useState(false);
-  const [exceptionType, setExceptionType] = useState('Site Gate Locked / Narrow Road');
-  const [exceptionDescription, setExceptionDescription] = useState('');
-  const [submittingException, setSubmittingException] = useState(false);
-
-  const [isWsConnected, setIsWsConnected] = useState(false);
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [gpsActive, setGpsActive] = useState(false);
 
   function requestBrowserGps() {
     if (typeof window === 'undefined' || !navigator.geolocation) {
-      setActionError('Browser Geolocation is not supported on this device.');
       return;
     }
 
@@ -68,11 +94,9 @@ export function DriverDashboard() {
           speedKmh: position.coords.speed ? position.coords.speed * 3.6 : 30.0,
           heading: position.coords.heading || 0
         }).catch(() => {});
-        setActionSuccess('GPS fixed. Live carrier telemetry active.');
       },
-      (err) => {
+      () => {
         setGpsActive(false);
-        setActionError('Location permission denied or unavailable. Using simulated depot route coordinates.');
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -81,9 +105,21 @@ export function DriverDashboard() {
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsRefreshing(true);
     try {
-      if (typeof window !== 'undefined' && !localStorage.getItem('access_token')) {
-        const auth: any = await authApi.login('driver@materialhub.in', 'driver123');
-        apiClient.setToken(auth.access_token);
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          const auth: any = await authApi.login('driver@materialhub.in', 'driver123');
+          if (auth?.access_token) {
+            apiClient.setToken(auth.access_token);
+            setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
+            setLoading(false);
+            return;
+          }
+        } else {
+          setIsAuthenticated(true);
+        }
       }
 
       const [feedRes, historyRes, profileRes] = await Promise.allSettled([
@@ -118,7 +154,6 @@ export function DriverDashboard() {
 
       try {
         socket = new WebSocket(wsUrl);
-        socket.onopen = () => setIsWsConnected(true);
         socket.onmessage = (event) => {
           try {
             const msg = JSON.parse(event.data);
@@ -137,12 +172,9 @@ export function DriverDashboard() {
           }
         };
         socket.onclose = () => {
-          setIsWsConnected(false);
-          reconnectTimer = setTimeout(setupWs, 3000);
+          reconnectTimer = setTimeout(setupWs, 4000);
         };
-        socket.onerror = () => setIsWsConnected(false);
       } catch (e) {
-        setIsWsConnected(false);
       }
     }
 
@@ -150,7 +182,7 @@ export function DriverDashboard() {
     setupWs();
     requestBrowserGps();
 
-    const pollTimer = setInterval(() => loadData(true), 6000);
+    const pollTimer = setInterval(() => loadData(true), 7000);
 
     return () => {
       if (socket) socket.close();
@@ -180,8 +212,9 @@ export function DriverDashboard() {
     setActionSuccess(null);
     try {
       await driverApi.updateTripStatus({ tripId, status: 'accepted' });
-      setActionSuccess('Trip accepted! Proceed to merchant depot for material loading.');
+      setActionSuccess('Delivery accepted. Proceed to vendor depot for material pickup.');
       await loadData(true);
+      setActiveTab('overview');
     } catch (err: any) {
       setActionError(err.message || 'Failed to accept trip.');
     } finally {
@@ -213,13 +246,10 @@ export function DriverDashboard() {
     setActionLoading('request_otp');
     setOtpModalError(null);
     try {
-      const res: any = await driverApi.requestDeliveryOtp(tripId);
-      if (res?.devOtp) {
-        setDevOtpHint(res.devOtp);
-        setOtpValue(res.devOtp);
-      }
+      await driverApi.requestDeliveryOtp(tripId);
+      setOtpValue('');
       setIsOtpModalOpen(true);
-      setActionSuccess('Delivery verification OTP dispatched to customer mobile.');
+      setActionSuccess('Verification OTP sent to contractor mobile number.');
     } catch (err: any) {
       setActionError(err.message || 'Failed to generate delivery OTP.');
     } finally {
@@ -227,287 +257,328 @@ export function DriverDashboard() {
     }
   }
 
-  async function handleVerifyOtp() {
-    if (!feedData?.activeTrip?.tripId || !otpValue.trim()) {
-      setOtpModalError('Please enter the 6-digit OTP provided by customer.');
+  async function handleVerifyOtpDirect(tripId: string, otp: string) {
+    if (!otp.trim()) {
+      setActionError('Please enter the verification OTP.');
+      return;
+    }
+    try {
+      setActionLoading('verify_otp');
+      await driverApi.verifyDeliveryOtp(tripId, otp.trim());
+      setActionSuccess('Delivery verified and offloading completed successfully. Payout credited.');
+      await loadData(true);
+    } catch (err: any) {
+      setActionError(err.message || 'Invalid or expired OTP. Please verify with site supervisor.');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleVerifyOtpModal() {
+    const targetTripId = feedData?.activeTrip?.tripId || 'trip_5501';
+    if (!otpValue.trim()) {
+      setOtpModalError('Please enter the OTP.');
       return;
     }
     setVerifyingOtp(true);
     setOtpModalError(null);
     try {
-      await driverApi.verifyDeliveryOtp(feedData.activeTrip.tripId, otpValue.trim());
+      await driverApi.verifyDeliveryOtp(targetTripId, otpValue.trim());
       setIsOtpModalOpen(false);
       setOtpValue('');
-      setDevOtpHint(null);
-      setActionSuccess('Delivery verified and offloading completed successfully! Payout credited.');
+      setActionSuccess('Delivery verified and offloading completed successfully.');
       await loadData(true);
     } catch (err: any) {
-      setOtpModalError(err.message || 'Invalid or expired OTP. Please re-check with site supervisor.');
+      setOtpModalError(err.message || 'Invalid OTP. Please check with customer.');
     } finally {
       setVerifyingOtp(false);
     }
   }
 
-  async function handleReportException() {
-    if (!feedData?.activeTrip?.tripId || !exceptionDescription.trim()) return;
-    try {
-      setSubmittingException(true);
-      await driverApi.reportException({
-        tripId: feedData.activeTrip.tripId,
-        exceptionType,
-        description: exceptionDescription.trim()
-      });
-      setIsExceptionModalOpen(false);
-      setExceptionDescription('');
-      setActionSuccess('Incident recorded and escalated to MaterialHub field dispatch operations.');
-    } catch (err: any) {
-      setActionError(err.message || 'Failed to report exception.');
-    } finally {
-      setSubmittingException(false);
+  function handleLogout() {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+      apiClient.setToken(null);
+      setIsAuthenticated(false);
+      setProfile(null);
+      setFeedData(null);
     }
   }
 
-  async function handleUpdateProfile(data: any) {
-    try {
-      const res = await driverApi.updateProfile(data);
-      setProfile(res);
-      setActionSuccess('Driver profile and commercial vehicle details updated successfully.');
-      await loadData(true);
-    } catch (err: any) {
-      setActionError(err.message || 'Failed to update profile.');
-      throw err;
-    }
-  }
-
-  if (loading && !feedData) {
+  if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
-        <FaSpinner className="h-10 w-10 animate-spin text-[#FF6500]" />
-        <p className="text-sm font-medium tracking-wide">
-          Connecting to MaterialHub Commercial Dispatch Network...
-        </p>
-      </div>
+      <DriverAuthView
+        onAuthenticated={(token) => {
+          apiClient.setToken(token);
+          setIsAuthenticated(true);
+          loadData();
+        }}
+      />
     );
   }
 
+
+  const driverName = profile?.name || feedData?.driverName || 'Ajay';
+  const isOnline = profile?.isOnline ?? feedData?.isOnline ?? true;
+  const activeTrip = feedData?.activeTrip;
+  const availableTrips = feedData?.availableTrips || [];
+  const completedCount = feedData?.todayTripsCount ?? profile?.completedTripsLifetime ?? 12;
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <DriverHeader
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row w-full">
+      <DriverSidebar
         activeTab={activeTab}
-        onTabChange={(tab) => setActiveTab(tab)}
-        driverName={profile?.name || feedData?.driverName || 'Manoj K'}
-        vehicleType={profile?.vehicleType || feedData?.vehicleType || 'Mini Commercial Truck (3 Ton)'}
-        isOnline={profile?.isOnline ?? feedData?.isOnline ?? true}
+        onTabChange={(tab) => handleTabChange(tab)}
+        driverName={driverName}
+        vehicleType={profile?.vehicleType || feedData?.vehicleType || 'Commercial Carrier'}
+        isOnline={isOnline}
         onToggleOnline={handleToggleOnline}
-        isWsConnected={isWsConnected}
-        onRefresh={() => loadData(false)}
-        isRefreshing={isRefreshing}
-        gpsActive={gpsActive}
-        onRequestGps={requestBrowserGps}
-        onLogout={() => {
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('access_token');
-            window.location.reload();
-          }
-        }}
+        onLogout={handleLogout}
+        unreadAlertsCount={4}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
-        {actionSuccess && (
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center justify-between shadow-xs">
-            <div className="flex items-center gap-2">
-              <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>{actionSuccess}</span>
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+        <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/70 shadow-xs">
+          <div className="w-full max-w-md md:max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-[#F5A623] text-slate-900 rounded-xl flex items-center justify-center shadow-xs">
+                <FaTruckFast className="h-4 w-4" />
+              </div>
+              <div>
+                <span className="text-xs font-medium text-slate-900 tracking-wider block leading-tight">
+                  MATERIALHUB
+                </span>
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest block">
+                  DRIVER LOGISTICS
+                </span>
+              </div>
             </div>
-            <button onClick={() => setActionSuccess(null)} className="p-1 hover:bg-black/5 rounded-lg cursor-pointer">
-              <FaXmark className="h-3.5 w-3.5 text-emerald-800" />
-            </button>
-          </div>
-        )}
 
-        {actionError && (
-          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-semibold flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2">
-              <FaTriangleExclamation className="h-4 w-4 text-rose-600 shrink-0" />
-              <span>{actionError}</span>
+              <button
+                type="button"
+                onClick={handleToggleOnline}
+                aria-label={isOnline ? 'Switch to Inactive' : 'Switch to Active'}
+                className="flex items-center gap-2 py-1 px-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
+              >
+                <span
+                  className={`w-2 h-2 rounded-xs inline-block ${
+                    isOnline ? 'bg-emerald-500' : 'bg-slate-400'
+                  }`}
+                />
+                <span
+                  className={`text-xs font-medium ${
+                    isOnline ? 'text-emerald-700' : 'text-slate-500'
+                  }`}
+                >
+                  {isOnline ? 'Active' : 'Inactive'}
+                </span>
+                <span
+                  className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-lg p-0.5 transition-colors duration-200 ${
+                    isOnline ? 'bg-emerald-600' : 'bg-slate-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-md bg-white shadow-xs transition duration-200 ${
+                      isOnline ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </span>
+              </button>
+
+              <button
+                onClick={() => handleTabChange('alerts')}
+                aria-label="View alerts"
+                className="relative w-8 h-8 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-colors cursor-pointer"
+              >
+                <FaBell className="h-3.5 w-3.5" />
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#F5A623] text-slate-950 font-medium text-[8px] rounded-xs flex items-center justify-center shadow-xs">
+                  4
+                </span>
+              </button>
             </div>
-            <button onClick={() => setActionError(null)} className="p-1 hover:bg-black/5 rounded-lg cursor-pointer">
-              <FaXmark className="h-3.5 w-3.5 text-rose-800" />
+          </div>
+        </header>
+
+        <header className="hidden lg:flex bg-white px-8 py-4 border-b border-slate-200/80 items-center justify-between sticky top-0 z-30 shadow-xs">
+          <div>
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-widest block">
+              DISPATCH CONSOLE
+            </span>
+            <h1 className="text-xl font-medium text-slate-900 tracking-tight">
+              {activeTab === 'overview' && 'Operations Overview'}
+              {activeTab === 'jobs' && 'Dispatch Board & Deliveries'}
+              {activeTab === 'alerts' && 'System Notifications & Bulletins'}
+              {activeTab === 'account' && 'Carrier Profile & Compliance'}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl">
+              <span className={`w-2.5 h-2.5 rounded-xs ${gpsActive ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              <span className="text-xs font-medium text-slate-700">
+                {gpsActive ? 'Live Telemetry Active' : 'Depot Routing Mode'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleToggleOnline}
+              className="flex items-center gap-2.5 py-1.5 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors shadow-xs cursor-pointer"
+            >
+              <span className={`w-2 h-2 rounded-xs ${isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+              <span className={`text-xs font-medium ${isOnline ? 'text-emerald-700' : 'text-slate-500'}`}>
+                {isOnline ? 'Active (Accepting)' : 'Inactive (Off Duty)'}
+              </span>
+              <span className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-lg p-0.5 transition-colors duration-200 ${isOnline ? 'bg-emerald-600' : 'bg-slate-300'}`}>
+                <span className={`inline-block h-4 w-4 transform rounded-md bg-white shadow-xs transition duration-200 ${isOnline ? 'translate-x-4' : 'translate-x-0'}`} />
+              </span>
             </button>
           </div>
-        )}
+        </header>
 
-        {error && (
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between">
-            <span>{error}</span>
-            <button onClick={() => loadData(false)} className="underline font-bold">
-              Retry
-            </button>
-          </div>
-        )}
+        <main className="flex-1 w-full max-w-md md:max-w-3xl lg:max-w-none mx-auto lg:mx-0 pt-20 sm:pt-22 lg:pt-8 px-4 sm:px-6 lg:px-8 space-y-6 overflow-y-auto">
+          {actionSuccess && (
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-medium flex items-center justify-between shadow-xs">
+              <div className="flex items-center gap-2">
+                <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span>{actionSuccess}</span>
+              </div>
+              <button
+                onClick={() => setActionSuccess(null)}
+                className="p-1 hover:bg-black/5 rounded-lg cursor-pointer"
+              >
+                <FaXmark className="h-3.5 w-3.5 text-emerald-800" />
+              </button>
+            </div>
+          )}
 
-        {activeTab === 'dispatch' && (
-          <DriverDispatchSection
-            activeTrip={feedData?.activeTrip}
-            availableTrips={feedData?.availableTrips || []}
-            todayEarnings={feedData?.todayEarnings || 0}
-            todayTripsCount={feedData?.todayTripsCount || 0}
-            vehicleType={profile?.vehicleType || feedData?.vehicleType || 'Mini Commercial Truck (3 Ton)'}
-            actionLoading={actionLoading}
-            onAcceptTrip={handleAcceptTrip}
-            onUpdateStatus={handleUpdateStatus}
-            onRequestOtp={handleRequestOtp}
-            onOpenOtpModal={() => {
-              setOtpModalError(null);
-              setIsOtpModalOpen(true);
-            }}
-            onOpenExceptionModal={() => setIsExceptionModalOpen(true)}
+          {actionError && (
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-medium flex items-center justify-between shadow-xs">
+              <div className="flex items-center gap-2">
+                <FaTriangleExclamation className="h-4 w-4 text-rose-600 shrink-0" />
+                <span>{actionError}</span>
+              </div>
+              <button
+                onClick={() => setActionError(null)}
+                className="p-1 hover:bg-black/5 rounded-lg cursor-pointer"
+              >
+                <FaXmark className="h-3.5 w-3.5 text-rose-800" />
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'overview' && (
+            <DriverOverviewTab
+              driverName={driverName}
+              isOnline={isOnline}
+              onToggleOnline={handleToggleOnline}
+              activeTrip={activeTrip}
+              completedCount={completedCount}
+              loading={loading}
+              onNavigateTab={(tab) => handleTabChange(tab)}
+              onOpenMap={(trip) => setNavTrip(trip)}
+              onRequestOtp={handleRequestOtp}
+              onVerifyOtp={handleVerifyOtpDirect}
+              onUpdateStatus={handleUpdateStatus}
+            />
+          )}
+
+          {activeTab === 'jobs' && (
+            <DriverJobsTab
+              availableTrips={availableTrips}
+              activeTrip={activeTrip}
+              tripHistory={tripHistory}
+              onAcceptTrip={handleAcceptTrip}
+              onOpenMap={(trip) => setNavTrip(trip)}
+              actionLoading={actionLoading}
+            />
+          )}
+
+          {activeTab === 'alerts' && <DriverAlertsTab />}
+
+          {activeTab === 'account' && (
+            <DriverAccountTab
+              profile={profile}
+              isOnline={isOnline}
+              onToggleOnline={handleToggleOnline}
+              onLogout={handleLogout}
+            />
+          )}
+        </main>
+
+        <div className="lg:hidden">
+          <DriverBottomNav
+            activeTab={activeTab}
+            onTabChange={(tab) => handleTabChange(tab)}
+            unreadAlertsCount={4}
+          />
+        </div>
+      </div>
+
+        {navTrip && (
+          <DriverNavigationScreen
+            trip={navTrip}
+            onClose={() => setNavTrip(null)}
             gpsCoords={gpsCoords}
+            gpsActive={gpsActive}
+            onRequestGps={requestBrowserGps}
           />
         )}
 
-        {activeTab === 'history' && (
-          <DriverHistorySection
-            history={tripHistory}
-            weeklyPayout={
-              feedData?.weeklyPayoutSummary || {
-                weekTotal: feedData?.todayEarnings || 0,
-                completedTrips: feedData?.todayTripsCount || 0,
-                payoutDay: 'Every Tuesday Direct Bank Deposit'
-              }
-            }
-            onRefresh={() => loadData(false)}
-          />
-        )}
-
-        {activeTab === 'profile' && (
-          <DriverProfileSection
-            profile={profile || feedData}
-            onUpdateProfile={handleUpdateProfile}
-            onRefresh={() => loadData(false)}
-          />
-        )}
-      </main>
-
-      {isOtpModalOpen && (
         <Modal
           isOpen={isOtpModalOpen}
-          onClose={() => {
-            setIsOtpModalOpen(false);
-            setOtpModalError(null);
-          }}
-          title="Delivery OTP Verification"
-          subtitle={`Order #${feedData?.activeTrip?.orderId || ''} · Site Offloading Confirmation`}
-          maxWidth="md"
-          footer={
-            <div className="flex items-center justify-end gap-2 w-full">
+          onClose={() => setIsOtpModalOpen(false)}
+          title="Verify Delivery Handover"
+          maxWidth="sm"
+        >
+          <div className="space-y-4">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3">
+              <FaShieldHalved className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="text-xs space-y-0.5">
+                <p className="font-medium text-slate-900">Enter Delivery Handover OTP</p>
+                <p className="text-slate-500 font-medium">
+                  Request the 4 or 6-digit OTP from the site supervisor upon material offload.
+                </p>
+              </div>
+            </div>
+
+            {otpModalError && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+                {otpModalError}
+              </div>
+            )}
+
+            <Input
+              label="CUSTOMER OTP"
+              type="text"
+              value={otpValue}
+              onChange={(e) => setOtpValue(e.target.value)}
+              placeholder="e.g. 5821"
+              maxLength={6}
+              leftIcon={<FaKey className="h-3.5 w-3.5" />}
+              autoFocus
+            />
+
+            <div className="flex items-center gap-2 pt-2">
               <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  setIsOtpModalOpen(false);
-                  setOtpModalError(null);
-                }}
+                variant="outline"
+                className="flex-1"
+                onClick={() => setIsOtpModalOpen(false)}
               >
                 Cancel
               </Button>
               <Button
                 variant="primary"
-                size="sm"
+                className="flex-1 bg-[#059669] hover:bg-[#047857]"
                 loading={verifyingOtp}
-                disabled={otpValue.length < 4}
-                onClick={handleVerifyOtp}
+                onClick={handleVerifyOtpModal}
               >
-                <FaShieldHalved className="mr-1.5 h-3.5 w-3.5" />
-                Confirm Offloading
+                Verify Handover
               </Button>
-            </div>
-          }
-        >
-          <div className="space-y-4 text-xs">
-            <p className="text-slate-600 leading-relaxed font-medium">
-              Obtain the 6-digit verification code sent to the site supervisor or buyer to confirm cargo offloading.
-            </p>
-
-            {devOtpHint && (
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-between font-medium">
-                <span>Dev Simulation Code:</span>
-                <span className="font-mono text-sm font-bold tracking-widest">{devOtpHint}</span>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
-                Enter 6-Digit Verification Code
-              </label>
-              <input
-                type="text"
-                maxLength={6}
-                value={otpValue}
-                onChange={(e) => setOtpValue(e.target.value)}
-                placeholder="------"
-                className="w-full text-center tracking-[0.5em] font-mono text-2xl font-bold py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#FF6500] text-slate-900 bg-white"
-              />
-              {otpModalError && (
-                <p className="text-xs text-rose-600 mt-1 font-semibold">{otpModalError}</p>
-              )}
             </div>
           </div>
         </Modal>
-      )}
-
-      {isExceptionModalOpen && (
-        <Modal
-          isOpen={isExceptionModalOpen}
-          onClose={() => setIsExceptionModalOpen(false)}
-          title="Report Site or Transport Exception"
-          subtitle={`Trip #${feedData?.activeTrip?.tripId?.slice(0, 8).toUpperCase() || ''} Escalation`}
-          maxWidth="md"
-          footer={
-            <div className="flex items-center justify-end gap-2 w-full">
-              <Button variant="secondary" size="sm" onClick={() => setIsExceptionModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                loading={submittingException}
-                disabled={!exceptionDescription.trim()}
-                onClick={handleReportException}
-              >
-                Escalate Incident
-              </Button>
-            </div>
-          }
-        >
-          <div className="space-y-4 text-xs">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Exception Classification
-              </label>
-              <select
-                value={exceptionType}
-                onChange={(e) => setExceptionType(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-800 font-medium focus:outline-none focus:border-[#FF6500]"
-              >
-                <option value="Site Gate Locked / Narrow Road">Site Gate Locked / Narrow Road Access</option>
-                <option value="Customer / Site Supervisor Unreachable">Customer / Site Supervisor Unreachable</option>
-                <option value="Damaged Material at Depot Loading">Damaged Material at Depot Loading</option>
-                <option value="Carrier Vehicle Breakdown / Flat Tyre">Carrier Vehicle Breakdown / Flat Tyre</option>
-                <option value="Site Offloading Refusal / Dispute">Site Offloading Refusal / Dispute</option>
-              </select>
-            </div>
-
-            <Input
-              label="Detailed Incident Description"
-              placeholder="Explain physical roadblock, waiting duration, or reason..."
-              value={exceptionDescription}
-              onChange={(e) => setExceptionDescription(e.target.value)}
-              required
-            />
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }

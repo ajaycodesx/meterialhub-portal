@@ -6,11 +6,7 @@ import {
   FaPlus,
   FaMagnifyingGlass,
   FaPen,
-  FaTrashCan,
-  FaIndianRupeeSign,
-  FaBoxesStacked,
-  FaTriangleExclamation,
-  FaCheck
+  FaTrashCan
 } from 'react-icons/fa6';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
@@ -21,15 +17,14 @@ interface VendorProductsSectionProps {
   onCreateProduct: (data: any) => Promise<void>;
   onUpdateProduct: (productId: string, data: any) => Promise<void>;
   onDeleteProduct: (productId: string) => Promise<void>;
-  onRefresh: () => void;
+  onRefresh?: () => void;
 }
 
 export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
   products,
   onCreateProduct,
   onUpdateProduct,
-  onDeleteProduct,
-  onRefresh
+  onDeleteProduct
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -59,11 +54,15 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
     { label: 'Plumbing & Pipes', value: 'plumbing' }
   ];
 
-  const filteredProducts = products.filter((p) => {
+  const safeProducts = Array.isArray(products) ? products : [];
+  const filteredProducts = safeProducts.filter((p) => {
+    const title = p.title || '';
+    const brand = p.brand || '';
+    const sku = p.sku || '';
     const matchesSearch =
-      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (p.brand && p.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (p.sku && p.sku.toLowerCase().includes(searchTerm.toLowerCase()));
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sku.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
       selectedCategory === 'all' ||
@@ -164,7 +163,7 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
             <button
               key={c.value}
               onClick={() => setSelectedCategory(c.value)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
                 selectedCategory === c.value
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
@@ -188,12 +187,14 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
           <Button
             variant="primary"
             size="md"
+            icon={<FaPlus className="h-3.5 w-3.5" />}
+            iconPosition="left"
             onClick={() => {
               resetForm();
               setShowAddModal(true);
             }}
+            className="shrink-0"
           >
-            <FaPlus className="mr-1.5 h-3.5 w-3.5" />
             Add SKU
           </Button>
         </div>
@@ -202,7 +203,7 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider">
+            <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-medium uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">Material SKU & Name</th>
                 <th className="py-3 px-4">Category</th>
@@ -227,22 +228,24 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
                   const isLowStock = stock <= (product.reorderThreshold ?? 10);
 
                   return (
-                    <tr key={product.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={product.id || product.productId} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 px-4 max-w-xs">
-                        <div className="font-bold text-slate-900 truncate">{product.title}</div>
-                        <div className="text-[11px] text-slate-400">
-                          {product.brand || 'Depot'} • SKU: {product.sku || product.id.slice(0, 8)}
+                        <div className="font-medium text-slate-900 truncate">{product.title}</div>
+                        <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
+                          <span>{product.brand || 'Depot'}</span>
+                          <span className="h-2 w-px bg-slate-300 inline-block" />
+                          <span>SKU: {product.sku || (product.id || product.productId || '').slice(0, 8)}</span>
                         </div>
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="capitalize text-slate-700 font-semibold">
+                        <span className="capitalize text-slate-700 font-medium">
                           {product.category || 'General'}
                         </span>
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="font-bold text-slate-900">
+                        <span className="font-medium text-slate-900">
                           ₹{(product.price || 0).toLocaleString('en-IN')}
                         </span>
                         <span className="text-[11px] text-slate-400"> / {product.unit || 'unit'}</span>
@@ -251,14 +254,14 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-1.5">
                           <span
-                            className={`font-bold ${
+                            className={`font-medium ${
                               isLowStock ? 'text-rose-600' : 'text-slate-900'
                             }`}
                           >
                             {stock} {product.unit || 'units'}
                           </span>
                           {isLowStock && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-bold bg-rose-100 text-rose-700 rounded-md">
+                            <span className="text-[10px] font-medium text-rose-600">
                               Low
                             </span>
                           )}
@@ -266,7 +269,7 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <div className="text-slate-800 font-semibold">{product.unit || 'Bag'}</div>
+                        <div className="text-slate-800 font-medium">{product.unit || 'Bag'}</div>
                         <div className="text-[11px] text-slate-400">MOQ: {product.minOrderQty || 1}</div>
                       </td>
 
@@ -346,7 +349,7 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
               />
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Category</label>
                 <select
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value)}

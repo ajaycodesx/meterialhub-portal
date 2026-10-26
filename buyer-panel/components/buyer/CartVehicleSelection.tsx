@@ -137,8 +137,8 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
               <FaWeightHanging className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Total Cart Weight</div>
-              <div className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">
+              <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider leading-none mb-0.5">Total Cart Weight</div>
+              <div className="text-xs sm:text-sm font-medium text-slate-900 leading-tight">
                 {totalWeightTons.toFixed(2)} Tons <span className="text-[10px] text-slate-400 font-normal">({totalWeightKg.toLocaleString()} kg)</span>
               </div>
             </div>
@@ -154,12 +154,12 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-4 relative overflow-hidden">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-semibold flex items-center justify-center text-xl shrink-0 shadow-xs">
+                    <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white font-medium flex items-center justify-center text-xl shrink-0 shadow-xs">
                       {merchant.name.charAt(0)}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-sm sm:text-base text-slate-900">{merchant.name}</h3>
+                        <h3 className="font-medium text-sm sm:text-base text-slate-900">{merchant.name}</h3>
                         {merchant.verified && (
                           <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
                             <FaShieldHalved className="h-3 w-3 text-emerald-600" />
@@ -186,7 +186,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                       <FaCartShopping className="h-7 w-7" />
                     </div>
                     <div>
-                      <h3 className="text-base font-semibold text-slate-900">Your wholesale cart is empty</h3>
+                      <h3 className="text-base font-medium text-slate-900">Your wholesale cart is empty</h3>
                       <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 font-normal leading-relaxed">
                         You haven&apos;t added any construction supplies yet. Browse Cement, TMT Steel Rods, PVC Pipes, and Hardware with direct factory pricing and same-day site delivery.
                       </p>
@@ -203,7 +203,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                   </div>
                 ) : (
                   <div className="space-y-3.5 pt-1">
-                    <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1">
+                    <div className="flex items-center justify-between text-[10px] font-medium text-slate-400 uppercase tracking-wider px-1">
                       <span>Order Items ({cartItems.length})</span>
                       <span>Subtotal Price</span>
                     </div>
@@ -227,7 +227,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                               />
                             </div>
                             <div className="min-w-0">
-                              <h4 className="font-semibold text-xs sm:text-sm text-slate-900 truncate">{product.title}</h4>
+                              <h4 className="font-medium text-xs sm:text-sm text-slate-900 truncate">{product.title}</h4>
                               <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 mt-0.5">
                                 <span className="text-[#FF6500] font-medium">{product.brand}</span>
                                 {product.grade && (
@@ -239,7 +239,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                                 <span className="h-2.5 w-px bg-slate-300 inline-block" />
                                 <span>{product.unit} ({itemWeightTons.toFixed(2)} Tons)</span>
                               </div>
-                              <div className="text-xs font-semibold text-slate-900 mt-1">
+                              <div className="text-xs font-medium text-slate-900 mt-1">
                                 ₹{product.price} <span className="text-[10px] font-normal text-slate-400">/ {product.unit}</span>
                               </div>
                             </div>
@@ -260,7 +260,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                               >
                                 <FaMinus className="h-2.5 w-2.5" />
                               </button>
-                              <span className="w-9 text-center text-xs font-semibold text-slate-900">{item.quantity}</span>
+                              <span className="w-9 text-center text-xs font-medium text-slate-900">{item.quantity}</span>
                               <button
                                 onClick={() => onUpdateQuantity(product.id, item.quantity + 1)}
                                 className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-600 hover:text-[#FF6500] hover:bg-slate-50 transition-colors cursor-pointer"
@@ -271,7 +271,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                             </div>
 
                             <div className="text-right min-w-[75px]">
-                              <div className="text-sm font-semibold text-slate-900">₹{itemTotal.toLocaleString()}</div>
+                              <div className="text-sm font-medium text-slate-900">₹{itemTotal.toLocaleString()}</div>
                             </div>
 
                             <button
@@ -292,7 +292,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="min-w-0 flex-1 pr-2">
-                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Dynamic Vehicle Allocation</h2>
+                    <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">Dynamic Vehicle Allocation</h2>
                     <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">Select logistics vehicle based on payload weight</p>
                   </div>
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
@@ -304,7 +304,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                   <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium flex items-start gap-3">
                     <FaTriangleExclamation className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-semibold">Payload Exceeds Vehicle Capacity!</span>
+                      <span className="font-medium">Payload Exceeds Vehicle Capacity!</span>
                       <p className="text-[11px] font-normal text-amber-700 mt-0.5">
                         Your total cart weight ({totalWeightTons.toFixed(2)} Tons) exceeds {activeVehicle.name}&apos;s limit of {activeVehicle.capacityTons} Tons. Switch to a higher capacity vehicle.
                       </p>
@@ -334,7 +334,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                         }`}
                       >
                         {isRecommended && (
-                          <span className="absolute -top-2.5 right-4 px-3 py-0.5 rounded-lg bg-[#FF6500] text-white text-[10px] font-semibold shadow-xs flex items-center gap-1">
+                          <span className="absolute -top-2.5 right-4 px-3 py-0.5 rounded-lg bg-[#FF6500] text-white text-[10px] font-medium shadow-xs flex items-center gap-1">
                             <FaCircleCheck className="h-2.5 w-2.5" />
                             Recommended Match
                           </span>
@@ -351,15 +351,15 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
 
                           <div className="flex-1 space-y-1.5">
                             <div className="flex items-center justify-between">
-                              <h4 className="font-semibold text-xs text-slate-900">{vehicle.name}</h4>
-                              <span className="text-xs font-semibold text-slate-900">₹{vehicle.freightFee}</span>
+                              <h4 className="font-medium text-xs text-slate-900">{vehicle.name}</h4>
+                              <span className="text-xs font-medium text-slate-900">₹{vehicle.freightFee}</span>
                             </div>
                             
                             <p className="text-[10px] text-slate-500 font-normal line-clamp-1">{vehicle.description}</p>
 
                             <div className="space-y-1 pt-0.5">
                               <div className="flex items-center justify-between text-[10px]">
-                                <span className={`font-semibold ${fitsLoad ? 'text-emerald-700' : 'text-red-600'}`}>
+                                <span className={`font-medium ${fitsLoad ? 'text-emerald-700' : 'text-red-600'}`}>
                                   {totalWeightTons.toFixed(2)} / {vehicle.capacityTons} Tons ({fillPct}%)
                                 </span>
                                 <span className="text-slate-500 font-medium">ETA: ~{vehicle.etaMinutes} Mins</span>
@@ -386,7 +386,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="min-w-0 flex-1 pr-2">
-                    <h3 className="font-semibold text-base sm:text-lg text-slate-900 tracking-tight">Order Cost Summary</h3>
+                    <h3 className="font-medium text-base sm:text-lg text-slate-900 tracking-tight">Order Cost Summary</h3>
                     <p className="text-xs text-slate-500 font-normal mt-0.5">Direct merchant rates + logistics</p>
                   </div>
                   <div className="h-10 w-10 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center shrink-0">
@@ -397,15 +397,15 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                 <div className="space-y-3.5">
                   <div className="flex justify-between text-xs text-slate-600">
                     <span>Materials Subtotal ({cartItems.length} items)</span>
-                    <span className="font-semibold text-slate-900">₹{subtotalPrice.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{subtotalPrice.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-xs text-slate-600">
                     <span>Allocated Freight Charge ({activeVehicle.name})</span>
-                    <span className="font-semibold text-slate-900">₹{activeVehicle.freightFee.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{activeVehicle.freightFee.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-semibold text-slate-900 pt-3 border-t border-slate-100">
+                  <div className="flex justify-between text-sm font-medium text-slate-900 pt-3 border-t border-slate-100">
                     <span>Total Estimated Cost</span>
-                    <span className="text-[#FF6500] text-base sm:text-lg font-semibold">₹{(subtotalPrice + activeVehicle.freightFee).toLocaleString()}</span>
+                    <span className="text-[#FF6500] text-base sm:text-lg font-medium">₹{(subtotalPrice + activeVehicle.freightFee).toLocaleString()}</span>
                   </div>
                 </div>
 

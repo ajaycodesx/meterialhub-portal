@@ -244,7 +244,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
         title="Checkout & Site Delivery Confirmation"
         subtitle="Verify unloading site address, payment method, and GST tax invoice details"
         rightContent={(
-          <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-semibold text-emerald-600">
+          <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-emerald-600">
             <FaLock className="h-3.5 w-3.5 text-emerald-600" />
             <span className="text-slate-800">256-Bit SSL Encrypted Checkout</span>
           </div>
@@ -263,7 +263,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       <FaLocationDot className="h-4.5 w-4.5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-lg sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Delivery Address &amp; Site Details</h2>
+                      <h2 className="text-lg sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">Delivery Address &amp; Site Details</h2>
                       <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5 leading-relaxed">Verified unloading site for heavy logistics</p>
                     </div>
                   </div>
@@ -276,16 +276,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
                 <div className="p-4 rounded-2xl bg-slate-50/80 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-medium text-slate-900 flex items-center gap-2">
                       <FaBuilding className="h-3.5 w-3.5 text-orange-500 shrink-0" />
                       {location.address || 'Kakkanad Construction Site Zone'}
                     </span>
                   </div>
 
                   <div className="text-xs text-slate-600 font-normal space-y-1 pt-1.5 border-t border-slate-200/50">
-                    <p>Pincode: <strong className="font-semibold text-slate-800">{location.pinCode || '682030'}</strong></p>
-                    <p>Site Access Width: <strong className="font-semibold text-slate-800">{location.siteConstraints?.roadWidth || '12ft+ (Standard Truck Access)'}</strong></p>
-                    <p>Site Supervisor Contact: <strong className="font-semibold text-slate-800">+91 98765 43210 (Suresh Nair)</strong></p>
+                    <p>Pincode: <strong className="font-medium text-slate-800">{location.pinCode || '682030'}</strong></p>
+                    <p>Site Access Width: <strong className="font-medium text-slate-800">{location.siteConstraints?.roadWidth || '12ft+ (Standard Truck Access)'}</strong></p>
+                    <p>Site Supervisor Contact: <strong className="font-medium text-slate-800">+91 98765 43210 (Suresh Nair)</strong></p>
                   </div>
                 </div>
               </div>
@@ -297,7 +297,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       <FaTruckFast className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm sm:text-base text-slate-900">Allocated Vehicle &amp; Payload</h3>
+                      <h3 className="font-medium text-sm sm:text-base text-slate-900">Allocated Vehicle &amp; Payload</h3>
                       <p className="text-xs text-slate-500 font-normal">Delivery vehicle and timeframe for unloading</p>
                     </div>
                   </div>
@@ -313,12 +313,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-xs sm:text-sm text-slate-900">{vehicle.name}</h4>
+                      <h4 className="font-medium text-xs sm:text-sm text-slate-900">{vehicle.name}</h4>
                       <p className="text-xs text-slate-500 font-normal mt-0.5">{vehicle.subtitle}</p>
                       <div className="flex items-center gap-2 text-[11px] text-slate-600 font-medium mt-1">
                         <span>Payload: <strong className="text-slate-900">{totalWeightTons.toFixed(2)} Tons</strong></span>
                         <span className="h-2.5 w-px bg-slate-300 inline-block" />
-                        <span className="flex items-center gap-1 text-slate-700 font-semibold">
+                        <span className="flex items-center gap-1 text-slate-700 font-medium">
                           <FaClock className="h-3 w-3 text-orange-500" />
                           ETA ~{vehicle.etaMinutes} Mins
                         </span>
@@ -326,7 +326,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </div>
                   </div>
 
-                  <span className="px-3 py-1.5 rounded-xl bg-white shadow-2xs text-slate-900 text-xs font-semibold text-center shrink-0">
+                  <span className="px-3 py-1.5 rounded-xl bg-white shadow-2xs text-slate-900 text-xs font-medium text-center shrink-0">
                     Freight: ₹{freightFee.toLocaleString()}
                   </span>
                 </div>
@@ -339,7 +339,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       <FaCreditCard className="h-4.5 w-4.5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-lg sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">Select Payment Method</h2>
+                      <h2 className="text-lg sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">Select Payment Method</h2>
                       <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5 leading-relaxed">Instant digital payment or B2B credit terms</p>
                     </div>
                   </div>
@@ -357,7 +357,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaMoneyBillWave className="h-4 w-4 text-emerald-600" />
                         UPI / GPay / BHIM
                       </span>
@@ -378,7 +378,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaLandmark className="h-4 w-4 text-blue-600" />
                         NetBanking / NEFT
                       </span>
@@ -399,7 +399,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaCreditCard className="h-4 w-4 text-purple-600" />
                         Debit / Credit Card
                       </span>
@@ -420,7 +420,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaTruckFast className="h-4 w-4 text-amber-600" />
                         Cash on Unloading
                       </span>
@@ -441,7 +441,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-900 flex items-center gap-2">
                         <FaFileInvoiceDollar className="h-4 w-4 text-[#FF6500]" />
                         Wholesale B2B Credit (15 Days)
                       </span>
@@ -462,38 +462,38 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               <div className="bg-white p-5 sm:p-7 rounded-3xl shadow-sm space-y-5">
                 
                 <div className="border-b border-slate-100 pb-3.5 space-y-1">
-                  <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                  <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
                     Fulfill Merchant &amp; Tax Invoice
                   </div>
-                  <h3 className="font-semibold text-base text-slate-900">{merchant.name}</h3>
+                  <h3 className="font-medium text-base text-slate-900">{merchant.name}</h3>
                   <p className="text-xs text-slate-500 font-normal">{merchant.address}</p>
                 </div>
 
                 <div className="space-y-3 text-xs">
                   <div className="flex justify-between text-slate-600">
                     <span>Materials Subtotal ({cartItems.length} items)</span>
-                    <span className="font-semibold text-slate-900">₹{subtotal.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{subtotal.toLocaleString()}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-600">
                     <span>Allocated Freight Charge ({vehicle.name})</span>
-                    <span className="font-semibold text-slate-900">₹{freightFee.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{freightFee.toLocaleString()}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-600">
                     <span>Site Unloading Support</span>
-                    <span className="font-semibold text-slate-900">₹{handlingFee.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{handlingFee.toLocaleString()}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-600">
                     <span>Estimated GST (18% Tax Invoice)</span>
-                    <span className="font-semibold text-slate-900">₹{gstAmount.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{gstAmount.toLocaleString()}</span>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-sm">
-                    <span className="font-semibold text-slate-900">Grand Total</span>
+                    <span className="font-medium text-slate-900">Grand Total</span>
                     <div className="text-right">
-                      <div className="text-lg sm:text-xl font-semibold text-[#FF6500]">
+                      <div className="text-lg sm:text-xl font-medium text-[#FF6500]">
                         ₹{grandTotal.toLocaleString()}
                       </div>
                       <div className="text-[10px] text-emerald-600 font-medium">Incl. GST Invoice &amp; Unloading</div>
@@ -552,22 +552,22 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <div className="p-4 rounded-2xl bg-[#141d33] border border-slate-700/60 space-y-2">
               <div className="flex justify-between items-center text-xs text-slate-400">
                 <span>Order Reference</span>
-                <span className="font-semibold text-slate-200">{razorpayOrderData.orderId}</span>
+                <span className="font-medium text-slate-200">{razorpayOrderData.orderId}</span>
               </div>
               <div className="flex justify-between items-center text-xs text-slate-400">
                 <span>Gateway Transaction Ref</span>
                 <span className="font-mono text-[11px] text-slate-300">{razorpayOrderData.razorpayOrderId}</span>
               </div>
               <div className="pt-2 border-t border-slate-700/60 flex justify-between items-center">
-                <span className="text-sm font-semibold text-slate-200">Total Payable</span>
-                <span className="text-xl font-semibold text-[#FF6500]">
+                <span className="text-sm font-medium text-slate-200">Total Payable</span>
+                <span className="text-xl font-medium text-[#FF6500]">
                   ₹{razorpayOrderData.amount.toLocaleString()}
                 </span>
               </div>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-blue-950/40 border border-blue-800/60 text-xs text-blue-200 space-y-1">
-              <div className="flex items-center gap-2 font-semibold">
+              <div className="flex items-center gap-2 font-medium">
                 <FaBolt className="h-3.5 w-3.5 text-blue-400" />
                 <span>Payment Channel: {razorpayOrderData.method.toUpperCase()}</span>
               </div>
@@ -577,7 +577,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </div>
 
             {paymentVerifiedSuccess ? (
-              <div className="p-4 rounded-2xl bg-emerald-950/40 text-emerald-300 flex items-center justify-center gap-2 text-sm font-semibold border border-emerald-800/60">
+              <div className="p-4 rounded-2xl bg-emerald-950/40 text-emerald-300 flex items-center justify-center gap-2 text-sm font-medium border border-emerald-800/60">
                 <FaCircleCheck className="h-5 w-5 text-emerald-400" />
                 <span>Payment Verified Successfully! Redirecting...</span>
               </div>
@@ -587,7 +587,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   type="button"
                   disabled={isVerifyingPayment}
                   onClick={() => setShowRazorpayModal(false)}
-                  className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-medium transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -598,7 +598,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   disabled={isVerifyingPayment}
                   onClick={handleVerifySimulatedPayment}
                   icon={isVerifyingPayment ? <FaSpinner className="h-3.5 w-3.5 animate-spin" /> : <FaCheck className="h-3.5 w-3.5" />}
-                  className="px-6 rounded-xl text-xs font-semibold"
+                  className="px-6 rounded-xl text-xs font-medium"
                 >
                   {isVerifyingPayment ? 'Verifying...' : `Authorize ₹${razorpayOrderData.amount.toLocaleString()}`}
                 </Button>

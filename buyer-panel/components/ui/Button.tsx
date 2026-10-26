@@ -60,7 +60,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       disabled={disabled || isLoading}
-      className={`inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 disabled:opacity-50 disabled:cursor-not-allowed ${getVariantClasses(
+      className={`inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 disabled:opacity-50 disabled:cursor-not-allowed ${getVariantClasses(
         variant
       )} ${getSizeClasses(size)} ${className}`}
       {...props}

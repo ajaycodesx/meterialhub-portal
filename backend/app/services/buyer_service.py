@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 from typing import Optional
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from app.models.category import MaterialCategory
@@ -277,6 +278,21 @@ class BuyerService:
         """
         Creates order, items, GST invoice, and automatically dispatches delivery trip in one transaction.
         """
+        validated_products = []
+        for item in req.items:
+            res = await db.execute(select(Product).where(Product.id == item.productId))
+            prod = res.scalars().first()
+            if not prod:
+                raise HTTPException(status_code=404, detail=f"Product {item.productId} not found")
+            if prod.merchant_id != req.merchantId:
+                raise HTTPException(status_code=400, detail=f"Product {prod.id} does not belong to merchant {req.merchantId}")
+            if prod.stock_qty is not None and prod.stock_qty < item.quantity:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Insufficient stock for {prod.title}. Available: {prod.stock_qty}, requested: {item.quantity}"
+                )
+            validated_products.append((item, prod))
+
         calc = await BuyerService.calculate_order_payload(
             db,
             OrderCalculationRequest(
@@ -310,33 +326,30 @@ class BuyerService:
         db.add(new_order)
         
         order_items_list = []
-        for item in req.items:
-            res = await db.execute(select(Product).where(Product.id == item.productId))
-            prod = res.scalars().first()
-            if prod:
-                item_id = f"item_{uuid.uuid4().hex[:6]}"
-                subtotal = prod.price * item.quantity
-                prod.stock_qty = max(0, (prod.stock_qty or 100) - item.quantity)
-                db_item = OrderItem(
-                    id=item_id,
-                    order_id=order_id,
-                    product_id=prod.id,
-                    product_title=prod.title,
-                    unit_price=prod.price,
-                    quantity=item.quantity,
-                    unit=prod.unit,
-                    weight_kg=prod.weight_kg,
-                    subtotal=subtotal
-                )
-                db.add(db_item)
-                order_items_list.append({
-                    "id": item_id,
-                    "title": prod.title,
-                    "quantity": item.quantity,
-                    "unit": prod.unit,
-                    "price": prod.price,
-                    "subtotal": subtotal
-                })
+        for item, prod in validated_products:
+            item_id = f"item_{uuid.uuid4().hex[:6]}"
+            subtotal = prod.price * item.quantity
+            prod.stock_qty = max(0, (prod.stock_qty or 100) - item.quantity)
+            db_item = OrderItem(
+                id=item_id,
+                order_id=order_id,
+                product_id=prod.id,
+                product_title=prod.title,
+                unit_price=prod.price,
+                quantity=item.quantity,
+                unit=prod.unit,
+                weight_kg=prod.weight_kg,
+                subtotal=subtotal
+            )
+            db.add(db_item)
+            order_items_list.append({
+                "id": item_id,
+                "title": prod.title,
+                "quantity": item.quantity,
+                "unit": prod.unit,
+                "price": prod.price,
+                "subtotal": subtotal
+            })
                 
         merch_res = await db.execute(select(HardwareMerchant).where(HardwareMerchant.id == req.merchantId))
         merchant = merch_res.scalars().first()

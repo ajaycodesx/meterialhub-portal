@@ -63,15 +63,7 @@ export const Select: React.FC<SelectProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isOpen || !containerRef.current) return;
-    if (direction === 'up') {
-      setDropdownPosition('up');
-      return;
-    }
-    if (direction === 'down') {
-      setDropdownPosition('down');
-      return;
-    }
+    if (!isOpen || !containerRef.current || direction !== 'auto') return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const dialog = containerRef.current.closest('[role="dialog"]');
@@ -95,17 +87,19 @@ export const Select: React.FC<SelectProps> = ({
     }
   }, [isOpen, direction]);
 
+  const activePosition = direction !== 'auto' ? direction : dropdownPosition;
+
   const selectedOption = options.find((opt) => opt.value === value);
 
   const getSizeClasses = (s: 'sm' | 'md' | 'lg') => {
     switch (s) {
       case 'sm':
-        return 'h-9 px-3 text-xs font-semibold rounded-xl';
+        return 'h-9 px-3 text-xs font-medium rounded-xl';
       case 'lg':
-        return 'h-12 px-4 text-sm font-semibold rounded-xl';
+        return 'h-12 px-4 text-sm font-medium rounded-xl';
       case 'md':
       default:
-        return 'h-10 sm:h-11 px-3.5 text-xs font-semibold rounded-xl';
+        return 'h-10 sm:h-11 px-3.5 text-xs font-medium rounded-xl';
     }
   };
 
@@ -113,11 +107,11 @@ export const Select: React.FC<SelectProps> = ({
     const textColor = v === 'dark' ? 'text-slate-300' : 'text-slate-700';
     switch (s) {
       case 'sm':
-        return `text-[10px] font-semibold uppercase tracking-wider ${textColor}`;
+        return `text-[10px] font-medium uppercase tracking-wider ${textColor}`;
       case 'lg':
       case 'md':
       default:
-        return `text-xs font-semibold ${textColor}`;
+        return `text-xs font-medium ${textColor}`;
     }
   };
 
@@ -144,12 +138,12 @@ export const Select: React.FC<SelectProps> = ({
   const getOptionClasses = (v: 'light' | 'dark', isSelected: boolean) => {
     if (v === 'dark') {
       if (isSelected) {
-        return 'bg-[#FF6500]/15 text-[#FF6500] font-semibold border-l-2 border-[#FF6500]';
+        return 'bg-[#FF6500]/15 text-[#FF6500] font-medium border-l-2 border-[#FF6500]';
       }
       return 'text-slate-300 hover:text-white hover:bg-[#162137] font-medium';
     } else {
       if (isSelected) {
-        return 'bg-orange-50 text-[#FF6500] font-semibold border-l-2 border-[#FF6500]';
+        return 'bg-orange-50 text-[#FF6500] font-medium border-l-2 border-[#FF6500]';
       }
       return 'text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-medium';
     }
@@ -197,7 +191,7 @@ export const Select: React.FC<SelectProps> = ({
             className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} ${
               popoverWidth === 'w-full' && !trigger ? 'left-0 right-0' : popoverWidth
             } ${
-              dropdownPosition === 'up' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+              activePosition === 'up' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
             } rounded-2xl z-50 animate-in fade-in duration-150 overflow-hidden ${getPopoverVariantClasses(variant)}`}
           >
             <div className="max-h-60 overflow-y-auto py-1.5 p-1 space-y-0.5 scrollbar-none">

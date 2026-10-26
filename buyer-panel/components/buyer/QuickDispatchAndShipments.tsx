@@ -25,10 +25,10 @@ export const QuickDispatchAndShipments: React.FC = () => {
           <div className="bg-[#1E293B] text-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between gsap-card">
             <div className="space-y-4">
               <div className="text-center sm:text-left">
-                <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
+                <p className="text-xs font-medium uppercase tracking-wider text-orange-400">
                   Site Shortage Dispatch
                 </p>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-tight leading-snug mt-1">
+                <h3 className="text-xl sm:text-2xl font-medium text-white tracking-tight leading-snug mt-1">
                   Running low on Steel? Quick Reorder &amp; Transit
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-300 font-normal mt-1.5 leading-relaxed">
@@ -45,7 +45,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
                   />
                 </div>
                 <div className="min-w-0 flex-1 leading-snug">
-                  <h4 className="text-sm font-semibold text-white truncate">
+                  <h4 className="text-sm font-medium text-white truncate">
                     TMT Steel Rods Fe550D
                   </h4>
                   <p className="text-xs text-slate-300 font-normal truncate mt-0.5 flex items-center gap-2">
@@ -64,7 +64,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
 
             <button
               onClick={() => handleQuickReorder('TMT Steel Rods Fe550D', 10)}
-              className="w-full mt-5 py-3 px-4 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs sm:text-sm font-semibold text-center shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full mt-5 py-3 px-4 rounded-xl bg-[#FF6500] hover:bg-[#E05800] text-white text-xs sm:text-sm font-medium text-center shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <FaRotateRight className="h-3.5 w-3.5" />
               <span>Quick Reorder (10 Tons)</span>
@@ -74,7 +74,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
           <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-4 gsap-card">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-center sm:text-left">
               <div>
-                <h3 className="text-xl font-semibold text-slate-900 leading-tight">
+                <h3 className="text-xl font-medium text-slate-900 leading-tight">
                   Recent Shipments Arrival
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
@@ -83,7 +83,7 @@ export const QuickDispatchAndShipments: React.FC = () => {
               </div>
               <button
                 onClick={() => router.push('/tracking')}
-                className="self-center sm:self-auto text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                className="self-center sm:self-auto text-xs sm:text-sm font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer flex items-center gap-1 shrink-0"
               >
                 <span>View More</span>
                 <FaChevronRight className="h-3 w-3" />
@@ -100,20 +100,20 @@ export const QuickDispatchAndShipments: React.FC = () => {
                     <img src="/images/tmt_steel_rods.png" alt="TMT Steel" className="w-full h-full object-cover" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
+                    <h4 className="text-sm font-medium text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
                       Torrent Fe550D TMT Steel
                     </h4>
                     <p className="text-xs text-slate-500 font-normal truncate flex items-center gap-2 mt-0.5">
                       <span>12mm Fastrods</span>
                       <span className="h-2.5 w-px bg-slate-200 inline-block" />
-                      <span className="text-emerald-600 font-semibold">
+                      <span className="text-emerald-600 font-medium">
                         In-Transit
                       </span>
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0 text-right">
-                  <span className="text-sm font-semibold text-slate-900">₹12,880</span>
+                  <span className="text-sm font-medium text-slate-900">₹12,880</span>
                   <FaChevronRight className="h-3 w-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
@@ -127,20 +127,20 @@ export const QuickDispatchAndShipments: React.FC = () => {
                     <img src="/images/cement_aggregates.png" alt="Bricks" className="w-full h-full object-cover" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
+                    <h4 className="text-sm font-medium text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
                       Bricks &amp; Aggregate 7 Bags
                     </h4>
                     <p className="text-xs text-slate-500 font-normal truncate flex items-center gap-2 mt-0.5">
                       <span>Direct Yard Delivery</span>
                       <span className="h-2.5 w-px bg-slate-200 inline-block" />
-                      <span className="text-emerald-600 font-semibold">
+                      <span className="text-emerald-600 font-medium">
                         In-Transit
                       </span>
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0 text-right">
-                  <span className="text-sm font-semibold text-slate-900">₹6,480</span>
+                  <span className="text-sm font-medium text-slate-900">₹6,480</span>
                   <FaChevronRight className="h-3 w-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
@@ -154,20 +154,20 @@ export const QuickDispatchAndShipments: React.FC = () => {
                     <img src="/images/cement_aggregates.png" alt="Cement" className="w-full h-full object-cover" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
+                    <h4 className="text-sm font-medium text-slate-900 truncate group-hover:text-[#FF6500] transition-colors">
                       Cement Bags Fast Transit
                     </h4>
                     <p className="text-xs text-slate-500 font-normal truncate flex items-center gap-2 mt-0.5">
                       <span>UltraTech 53G Bags</span>
                       <span className="h-2.5 w-px bg-slate-200 inline-block" />
-                      <span className="text-emerald-600 font-semibold">
+                      <span className="text-emerald-600 font-medium">
                         In-Transit
                       </span>
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0 text-right">
-                  <span className="text-sm font-semibold text-slate-900">₹1,288</span>
+                  <span className="text-sm font-medium text-slate-900">₹1,288</span>
                   <FaChevronRight className="h-3 w-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>

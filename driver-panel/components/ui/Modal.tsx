@@ -93,7 +93,7 @@ export const Modal: React.FC<ModalProps> = ({
               )}
               <div className="min-w-0 flex-1">
                 {title && (
-                  <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight leading-snug truncate">
+                  <h3 className="text-base sm:text-lg font-medium text-white tracking-tight leading-snug truncate">
                     {title}
                   </h3>
                 )}

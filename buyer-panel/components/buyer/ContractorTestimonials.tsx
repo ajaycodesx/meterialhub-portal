@@ -50,10 +50,10 @@ export function ContractorTestimonials() {
     <section className="w-full bg-transparent">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-4 sm:mb-5">
-          <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5">
+          <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5">
             Contractor Reviews
           </p>
-          <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">
+          <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">
             Trusted by Site Managers Across Kerala
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed max-w-xl mx-auto">
@@ -77,11 +77,11 @@ export function ContractorTestimonials() {
               </div>
 
               <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
-                <div className={`h-9 w-9 rounded-xl ${t.color} flex items-center justify-center text-xs font-semibold shrink-0`}>
+                <div className={`h-9 w-9 rounded-xl ${t.color} flex items-center justify-center text-xs font-medium shrink-0`}>
                   {t.initials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-slate-900 truncate">{t.name}</p>
+                  <p className="text-xs font-medium text-slate-900 truncate">{t.name}</p>
                   <p className="text-xs text-slate-500 font-normal truncate flex items-center gap-2">
                     <span>{t.role}</span>
                     <span className="h-2.5 w-px bg-slate-200 inline-block" />

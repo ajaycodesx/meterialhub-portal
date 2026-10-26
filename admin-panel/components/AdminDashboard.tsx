@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { adminApi, authApi, apiClient } from '../lib/api';
 import { AdminSidebar, AdminTab } from './layout/AdminSidebar';
 import { AdminHeader } from './layout/AdminHeader';
@@ -22,8 +23,81 @@ import { NotificationsSection } from './sections/NotificationsSection';
 import { AuditLogsSection } from './sections/AuditLogsSection';
 import { SettingsSection } from './sections/SettingsSection';
 
-export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+interface AdminDashboardProps {
+  initialSlug?: string;
+}
+
+function getTabFromSlug(slugOrPath?: string): AdminTab {
+  if (!slugOrPath) return 'overview';
+  const stripped = slugOrPath.startsWith('/') ? slugOrPath.slice(1) : slugOrPath;
+  const clean = stripped.replace(/-/g, '_').toLowerCase();
+  switch (clean) {
+    case '':
+    case 'overview':
+      return 'overview';
+    case 'reports':
+      return 'reports';
+    case 'orders':
+      return 'orders';
+    case 'merchants':
+      return 'merchants';
+    case 'boq':
+      return 'boq';
+    case 'finance':
+      return 'finance';
+    case 'disputes':
+      return 'disputes';
+    case 'categories':
+      return 'categories';
+    case 'products':
+      return 'products';
+    case 'commodity_rates':
+      return 'commodity_rates';
+    case 'deals':
+      return 'deals';
+    case 'drivers':
+      return 'drivers';
+    case 'dispatch':
+      return 'dispatch';
+    case 'buyers':
+      return 'buyers';
+    case 'audit_logs':
+      return 'audit_logs';
+    case 'notifications':
+      return 'notifications';
+    case 'settings':
+      return 'settings';
+    default:
+      return 'overview';
+  }
+}
+
+const TAB_TO_SLUG: Record<AdminTab, string> = {
+  overview: 'overview',
+  reports: 'reports',
+  orders: 'orders',
+  merchants: 'merchants',
+  boq: 'boq',
+  finance: 'finance',
+  disputes: 'disputes',
+  categories: 'categories',
+  products: 'products',
+  commodity_rates: 'commodity-rates',
+  deals: 'deals',
+  drivers: 'drivers',
+  dispatch: 'dispatch',
+  buyers: 'buyers',
+  audit_logs: 'audit-logs',
+  notifications: 'notifications',
+  settings: 'settings'
+};
+
+export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const activeTab: AdminTab = getTabFromSlug(pathname) || getTabFromSlug(initialSlug) || 'overview';
+
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -32,12 +106,29 @@ export function AdminDashboard() {
 
   async function fetchOverview() {
     try {
-      if (typeof window !== 'undefined' && !localStorage.getItem('access_token')) {
+      let token = apiClient.getToken();
+      if (!token) {
         const auth: any = await authApi.login('admin@materialhub.in', 'admin123');
-        apiClient.setToken(auth.access_token);
+        if (auth?.access_token) {
+          apiClient.setToken(auth.access_token);
+        }
       }
-      const dashboardData = await adminApi.getOverview();
-      setData(dashboardData);
+
+      try {
+        const dashboardData = await adminApi.getOverview();
+        setData(dashboardData);
+      } catch (innerErr: any) {
+        if (innerErr?.status === 401 || innerErr?.status === 403) {
+          const auth: any = await authApi.login('admin@materialhub.in', 'admin123');
+          if (auth?.access_token) {
+            apiClient.setToken(auth.access_token);
+            const dashboardData = await adminApi.getOverview();
+            setData(dashboardData);
+            return;
+          }
+        }
+        throw innerErr;
+      }
     } catch (err: any) {
       console.error('Failed to load admin overview:', err);
     } finally {
@@ -110,18 +201,23 @@ export function AdminDashboard() {
     }
   }
 
+  function handleNavigateTab(tab: AdminTab) {
+    const slug = TAB_TO_SLUG[tab] || tab;
+    router.push(`/${slug}`);
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 flex">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col lg:flex-row w-full">
       <AdminSidebar
         activeTab={activeTab}
-        onTabChange={(tab) => setActiveTab(tab)}
+        onTabChange={handleNavigateTab}
         isOpenMobile={mobileSidebarOpen}
         onCloseMobile={() => setMobileSidebarOpen(false)}
         isWsConnected={isWsConnected}
         onLogout={handleLogout}
       />
 
-      <div className="flex-1 lg:pl-72 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader
           activeTab={activeTab}
           onOpenMobile={() => setMobileSidebarOpen(true)}
@@ -130,12 +226,12 @@ export function AdminDashboard() {
           systemHealth={data?.systemHealth}
         />
 
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 w-full">
           {activeTab === 'overview' && (
             <OverviewSection
               data={data}
               loading={loading}
-              onNavigateTab={(tab) => setActiveTab(tab)}
+              onNavigateTab={handleNavigateTab}
             />
           )}
 

@@ -51,11 +51,15 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
     { label: 'Cancelled', value: 'cancelled' }
   ];
 
-  const filteredOrders = orders.filter((o) => {
+  const safeOrders = Array.isArray(orders) ? orders : [];
+  const filteredOrders = safeOrders.filter((o) => {
+    const orderId = o.id || o.orderId || '';
+    const buyerName = o.buyerName || o.buyer?.name || '';
+    const deliveryAddress = o.deliveryAddress || '';
     const matchesSearch =
-      o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (o.buyerName && o.buyerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (o.deliveryAddress && o.deliveryAddress.toLowerCase().includes(searchTerm.toLowerCase()));
+      orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      deliveryAddress.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || o.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -92,48 +96,48 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
     const s = status?.toLowerCase();
     if (s === 'confirmed') {
       return (
-        <span className="px-2.5 py-1 text-xs font-semibold bg-amber-100 text-amber-800 rounded-lg">
+        <span className="text-xs font-medium text-amber-600">
           Awaiting Action
         </span>
       );
     }
     if (s === 'packing') {
       return (
-        <span className="px-2.5 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-lg">
+        <span className="text-xs font-medium text-[#FF6500]">
           Depot Packing
         </span>
       );
     }
     if (s === 'ready_for_pickup') {
       return (
-        <span className="px-2.5 py-1 text-xs font-semibold bg-purple-100 text-purple-800 rounded-lg">
+        <span className="text-xs font-medium text-[#FF6500]">
           Ready for Pickup
         </span>
       );
     }
     if (s === 'out_for_delivery') {
       return (
-        <span className="px-2.5 py-1 text-xs font-semibold bg-indigo-100 text-indigo-800 rounded-lg">
+        <span className="text-xs font-medium text-[#F5A623]">
           Out for Delivery
         </span>
       );
     }
     if (s === 'delivered') {
       return (
-        <span className="px-2.5 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-lg">
+        <span className="text-xs font-medium text-emerald-600">
           Fulfilled
         </span>
       );
     }
     if (s === 'cancelled') {
       return (
-        <span className="px-2.5 py-1 text-xs font-semibold bg-rose-100 text-rose-800 rounded-lg">
+        <span className="text-xs font-medium text-rose-600">
           Cancelled
         </span>
       );
     }
     return (
-      <span className="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg">
+      <span className="text-xs font-medium text-slate-600">
         {status}
       </span>
     );
@@ -147,7 +151,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
             <button
               key={opt.value}
               onClick={() => setStatusFilter(opt.value)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
                 statusFilter === opt.value
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
@@ -171,7 +175,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider">
+            <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-medium uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">Order ID & Date</th>
                 <th className="py-3 px-4">Buyer & Site Destination</th>
@@ -199,10 +203,10 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                   );
 
                   return (
-                    <tr key={order.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={order.id || order.orderId} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-900">
-                          #{order.id.slice(0, 8).toUpperCase()}
+                        <div className="font-medium text-slate-900">
+                          #{(order.id || order.orderId || '').slice(0, 8).toUpperCase()}
                         </div>
                         <div className="text-[11px] text-slate-400">
                           {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN') : 'Recent'}
@@ -210,7 +214,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                       </td>
 
                       <td className="py-3.5 px-4 max-w-xs">
-                        <div className="font-semibold text-slate-900 truncate">
+                        <div className="font-medium text-slate-900 truncate">
                           {order.buyerName || 'Contractor Project Site'}
                         </div>
                         <div className="text-[11px] text-slate-500 truncate flex items-center gap-1">
@@ -220,13 +224,13 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="font-semibold text-slate-900">
+                        <span className="font-medium text-slate-900">
                           {itemsCount} {itemsCount === 1 ? 'material' : 'materials'}
                         </span>
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="font-semibold text-slate-700">
+                        <span className="font-medium text-slate-700">
                           {totalWeightKg >= 1000
                             ? `${(totalWeightKg / 1000).toFixed(2)} Tons`
                             : `${totalWeightKg} kg`}
@@ -234,7 +238,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="font-bold text-slate-900">
+                        <span className="font-medium text-slate-900">
                           ₹{(order.totalAmount || 0).toLocaleString('en-IN')}
                         </span>
                       </td>
@@ -258,7 +262,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                               <button
                                 onClick={() => handlePackConfirm(order.id)}
                                 disabled={isActionLoading}
-                                className="px-3 py-1.5 rounded-xl bg-[#FF6500] hover:bg-orange-600 text-white font-semibold transition-colors cursor-pointer"
+                                className="px-3 py-1.5 rounded-xl bg-[#FF6500] hover:bg-orange-600 text-white font-medium transition-colors cursor-pointer"
                               >
                                 Pack & Ready
                               </button>
@@ -282,7 +286,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                             order.status === 'delivered') && (
                             <button
                               onClick={() => setShowChallanModal(order)}
-                              className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                              className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition-colors flex items-center gap-1 cursor-pointer"
                             >
                               <FaFileInvoice className="h-3 w-3" />
                               <span>Challan</span>
@@ -303,7 +307,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
         <Modal
           isOpen={!!selectedOrder}
           onClose={() => setSelectedOrder(null)}
-          title={`Order #${selectedOrder.id.slice(0, 8).toUpperCase()}`}
+          title={`Order #${(selectedOrder.id || selectedOrder.orderId || '').slice(0, 8).toUpperCase()}`}
           subtitle="Contractor pick list, site specifications, and dispatch authorization"
           maxWidth="2xl"
           footer={
@@ -345,7 +349,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-700">Delivery Destination</span>
+                <span className="text-xs font-medium text-slate-700">Delivery Destination</span>
                 {getStatusBadge(selectedOrder.status)}
               </div>
               <p className="text-xs text-slate-600 font-medium leading-relaxed">
@@ -359,12 +363,12 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
             </div>
 
             <div>
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">
+              <h3 className="text-xs font-medium text-slate-900 uppercase tracking-wider mb-2">
                 Pick List Items ({selectedOrder.items?.length || 0})
               </h3>
               <div className="border border-slate-200/80 rounded-xl overflow-hidden">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+                  <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-200/80">
                     <tr>
                       <th className="py-2.5 px-3">Material SKU / Description</th>
                       <th className="py-2.5 px-3 text-right">Quantity</th>
@@ -376,7 +380,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                     {selectedOrder.items?.map((item: any, idx: number) => (
                       <tr key={idx} className="hover:bg-slate-50/50">
                         <td className="py-2.5 px-3">
-                          <div className="font-semibold text-slate-900">{item.title}</div>
+                          <div className="font-medium text-slate-900">{item.title}</div>
                           <div className="text-[11px] text-slate-400">SKU: {item.sku || `MAT-${idx + 1}`}</div>
                         </td>
                         <td className="py-2.5 px-3 text-right font-medium">
@@ -385,7 +389,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                         <td className="py-2.5 px-3 text-right font-medium">
                           ₹{(item.unitPrice || 0).toLocaleString('en-IN')}
                         </td>
-                        <td className="py-2.5 px-3 text-right font-bold text-slate-900">
+                        <td className="py-2.5 px-3 text-right font-medium text-slate-900">
                           ₹{((item.quantity || 1) * (item.unitPrice || 0)).toLocaleString('en-IN')}
                         </td>
                       </tr>
@@ -398,13 +402,13 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex justify-between items-center text-xs">
               <div>
                 <span className="text-slate-500 font-medium">Payment Mode: </span>
-                <span className="font-bold text-slate-900">
+                <span className="font-medium text-slate-900">
                   {selectedOrder.paymentMethod || 'Razorpay Escrow (Paid)'}
                 </span>
               </div>
               <div className="text-right">
                 <span className="text-slate-500 font-medium">Order Total: </span>
-                <span className="text-sm font-bold text-emerald-600">
+                <span className="text-sm font-medium text-emerald-600">
                   ₹{(selectedOrder.totalAmount || 0).toLocaleString('en-IN')}
                 </span>
               </div>
@@ -440,7 +444,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
           <div className="space-y-4 text-xs">
             <p className="text-slate-600 font-medium">
               Specify the commercial or stock reason for rejecting Order #
-              {rejectModalOrder.id.slice(0, 8).toUpperCase()}:
+              {(rejectModalOrder.id || rejectModalOrder.orderId || '').slice(0, 8).toUpperCase()}:
             </p>
             <Input
               label="Rejection Reason"
@@ -475,34 +479,34 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
           <div className="space-y-4 p-4 border border-slate-200 rounded-xl bg-white text-xs text-slate-800">
             <div className="flex justify-between items-start border-b border-slate-200 pb-3">
               <div>
-                <h2 className="text-sm font-bold text-slate-900 uppercase">MaterialHub Delivery Challan</h2>
+                <h2 className="text-sm font-medium text-slate-900 uppercase">MaterialHub Delivery Challan</h2>
                 <p className="text-slate-500 font-medium">Rule 55, CGST Rules 2017 Transit Document</p>
-                <p className="text-slate-500">Challan Ref: MH-DC-{showChallanModal.id.slice(0, 8).toUpperCase()}</p>
+                <p className="text-slate-500">Challan Ref: MH-DC-{(showChallanModal.id || showChallanModal.orderId || '').slice(0, 8).toUpperCase()}</p>
               </div>
               <div className="text-right">
-                <span className="font-bold text-slate-900">Date: </span>
+                <span className="font-medium text-slate-900">Date: </span>
                 <span>{new Date().toLocaleDateString('en-IN')}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 py-2 border-b border-slate-200">
               <div>
-                <span className="font-bold text-slate-900 block mb-1">Consignor (Merchant Depot):</span>
+                <span className="font-medium text-slate-900 block mb-1">Consignor (Merchant Depot):</span>
                 <p className="font-medium">Kakkanad Building Supplies</p>
                 <p className="text-slate-500">GSTIN: 32AABCU9603R1ZX</p>
                 <p className="text-slate-500">Seaport-Airport Road, Kakkanad, Kochi</p>
               </div>
               <div>
-                <span className="font-bold text-slate-900 block mb-1">Consignee (Project Site):</span>
+                <span className="font-medium text-slate-900 block mb-1">Consignee (Project Site):</span>
                 <p className="font-medium">{showChallanModal.buyerName || 'Contractor Delivery Site'}</p>
                 <p className="text-slate-500">{showChallanModal.deliveryAddress || 'Site Delivery'}</p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <span className="font-bold text-slate-900 block">Consignment Material Manifest:</span>
+              <span className="font-medium text-slate-900 block">Consignment Material Manifest:</span>
               <table className="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden">
-                <thead className="bg-slate-50 font-semibold border-b border-slate-200">
+                <thead className="bg-slate-50 font-medium border-b border-slate-200">
                   <tr>
                     <th className="py-2 px-3">Description</th>
                     <th className="py-2 px-3 text-right">Quantity</th>
@@ -516,7 +520,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                       <td className="py-2 px-3 font-medium">{item.title}</td>
                       <td className="py-2 px-3 text-right">{item.quantity} {item.unit}</td>
                       <td className="py-2 px-3 text-right">₹{(item.unitPrice || 0).toLocaleString('en-IN')}</td>
-                      <td className="py-2 px-3 text-right font-bold">
+                      <td className="py-2 px-3 text-right font-medium">
                         ₹{((item.quantity || 1) * (item.unitPrice || 0)).toLocaleString('en-IN')}
                       </td>
                     </tr>
@@ -531,7 +535,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                 <p className="pt-1">Yard Security Gate Stamp</p>
               </div>
               <div className="text-right">
-                <p>Receiver's Signature: ___________________</p>
+                <p>Receiver&apos;s Signature: ___________________</p>
                 <p className="pt-1">Site Unloading Supervisor</p>
               </div>
             </div>

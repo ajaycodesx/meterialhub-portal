@@ -140,14 +140,14 @@ export const DealsSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -157,7 +157,7 @@ export const DealsSection: React.FC = () => {
 
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Promotions & Flash Deals</h2>
+          <h2 className="text-sm font-medium text-slate-900">Promotions & Flash Deals</h2>
           <p className="text-xs text-slate-500">Live builder discounts displayed on buyer homepage countdown ticker</p>
         </div>
         <Button size="sm" variant="primary" onClick={openCreateModal} icon={<FaPlus />}>
@@ -191,14 +191,14 @@ export const DealsSection: React.FC = () => {
                 </div>
                 <div className="space-y-0.5 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-[#FF6500] uppercase tracking-wider bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200/60">
+                    <span className="text-[10px] font-medium text-[#FF6500] uppercase tracking-wider">
                       {d.badge || 'Flash Deal'}
                     </span>
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-medium text-emerald-600">
                       {d.discountPct}% OFF
                     </span>
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900 leading-tight">{d.material}</h3>
+                  <h3 className="text-sm font-medium text-slate-900 leading-tight">{d.material}</h3>
                   <p className="text-xs font-medium text-slate-500">{d.brand}</p>
                 </div>
               </div>
@@ -207,14 +207,14 @@ export const DealsSection: React.FC = () => {
                 <div className="flex items-baseline justify-between">
                   <span className="text-slate-500">Contractor Rate</span>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-sm font-bold text-slate-900">INR {d.dealRate}</span>
+                    <span className="text-sm font-medium text-slate-900">INR {d.dealRate}</span>
                     <span className="line-through text-slate-400 text-[11px]">INR {d.originalRate}</span>
                     <span className="text-slate-500 text-[11px]">/ {d.unit}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-500">
                   <span>Minimum Volume:</span>
-                  <span className="font-semibold text-slate-700">{d.minOrder}</span>
+                  <span className="font-medium text-slate-700">{d.minOrder}</span>
                 </div>
               </div>
 

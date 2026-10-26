@@ -135,14 +135,14 @@ export const MerchantsSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -180,7 +180,7 @@ export const MerchantsSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Store & Owner</th>
                 <th className="py-3.5">Contact & Location</th>
                 <th className="py-3.5">GSTIN</th>
@@ -209,29 +209,29 @@ export const MerchantsSection: React.FC = () => {
                 merchants.map((m) => (
                   <tr key={m.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 pl-4">
-                      <p className="font-bold text-slate-900">{m.name}</p>
+                      <p className="font-medium text-slate-900">{m.name}</p>
                       <p className="text-[11px] text-slate-500">Proprietor: {m.ownerName}</p>
                     </td>
                     <td className="py-3.5">
                       <p className="font-medium text-slate-800">{m.phone}</p>
                       <p className="text-[11px] text-slate-500 truncate max-w-[160px]">{m.address}</p>
                     </td>
-                    <td className="py-3.5 font-semibold text-slate-700">
+                    <td className="py-3.5 font-medium text-slate-700">
                       {m.gstin || 'Pending Verification'}
                     </td>
-                    <td className="py-3.5 text-right font-bold text-slate-900">
+                    <td className="py-3.5 text-right font-medium text-slate-900">
                       INR {(m.walletBalance || 0).toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3.5 text-center font-semibold text-slate-700">
+                    <td className="py-3.5 text-center font-medium text-slate-700">
                       {m.productsCount || 0}
                     </td>
                     <td className="py-3.5 text-center">
                       {m.verified ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
                           <FaCircleCheck className="h-3 w-3 text-emerald-600" /> Verified
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600">
                           Pending Review
                         </span>
                       )}
@@ -239,10 +239,10 @@ export const MerchantsSection: React.FC = () => {
                     <td className="py-3.5 text-center">
                       <button
                         onClick={() => toggleOnline(m.id)}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
                           m.isOnline
-                            ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            ? 'text-emerald-700 bg-white border-slate-200 hover:bg-slate-50'
+                            : 'text-slate-600 bg-white border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         {m.isOnline ? 'Online' : 'Offline'}
@@ -298,7 +298,7 @@ export const MerchantsSection: React.FC = () => {
             >
               Previous
             </Button>
-            <span className="font-semibold text-slate-700">
+            <span className="font-medium text-slate-700">
               Page {page} of {totalPages}
             </span>
             <Button
@@ -330,24 +330,24 @@ export const MerchantsSection: React.FC = () => {
             <div className="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200">
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Owner</p>
-                <p className="font-bold text-slate-900">{selectedMerchant.ownerName}</p>
+                <p className="font-medium text-slate-900">{selectedMerchant.ownerName}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">GSTIN Record</p>
-                <p className="font-bold text-slate-900">{selectedMerchant.gstin || '32AAACH7409R1ZZ'}</p>
+                <p className="font-medium text-slate-900">{selectedMerchant.gstin || '32AAACH7409R1ZZ'}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Bank Account</p>
-                <p className="font-bold text-slate-900">{selectedMerchant.bankAccount || '9876543210123'}</p>
+                <p className="font-medium text-slate-900">{selectedMerchant.bankAccount || '9876543210123'}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Escrow Wallet Balance</p>
-                <p className="font-bold text-emerald-600">INR {(selectedMerchant.walletBalance || 0).toLocaleString('en-IN')}</p>
+                <p className="font-medium text-emerald-600">INR {(selectedMerchant.walletBalance || 0).toLocaleString('en-IN')}</p>
               </div>
             </div>
 
             <div>
-              <p className="font-bold text-slate-900 mb-2">Merchant Store Catalog ({selectedMerchant.products?.length || 0} SKUs)</p>
+              <p className="font-medium text-slate-900 mb-2">Merchant Store Catalog ({selectedMerchant.products?.length || 0} SKUs)</p>
               <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px]">
@@ -363,8 +363,8 @@ export const MerchantsSection: React.FC = () => {
                       <tr key={p.id}>
                         <td className="py-2 pl-3 font-medium text-slate-900">{p.title}</td>
                         <td className="py-2 text-slate-600">{p.brand}</td>
-                        <td className="py-2 text-right font-semibold text-slate-800">INR {p.price} / {p.unit}</td>
-                        <td className="py-2 pr-3 text-right font-bold text-slate-900">{p.stockQty}</td>
+                        <td className="py-2 text-right font-medium text-slate-800">INR {p.price} / {p.unit}</td>
+                        <td className="py-2 pr-3 text-right font-medium text-slate-900">{p.stockQty}</td>
                       </tr>
                     ))}
                   </tbody>

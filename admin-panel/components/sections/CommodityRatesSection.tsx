@@ -85,14 +85,14 @@ export const CommodityRatesSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -102,7 +102,7 @@ export const CommodityRatesSection: React.FC = () => {
 
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Wholesale Spot Commodity Rate Governance</h2>
+          <h2 className="text-sm font-medium text-slate-900">Wholesale Spot Commodity Rate Governance</h2>
           <p className="text-xs text-slate-500">Benchmark daily pricing index broadcast to buyers and yard merchants</p>
         </div>
       </div>
@@ -111,7 +111,7 @@ export const CommodityRatesSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 pl-4">Commodity Material</th>
                 <th className="py-3.5">Unit of Trade</th>
                 <th className="py-3.5 text-right">Current Wholesale Spot</th>
@@ -142,13 +142,13 @@ export const CommodityRatesSection: React.FC = () => {
                   return (
                     <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="py-3.5 pl-4">
-                        <p className="font-bold text-slate-900">{r.material}</p>
+                        <p className="font-medium text-slate-900">{r.material}</p>
                         <p className="text-[11px] text-slate-400">Commodity ID: {r.id}</p>
                       </td>
                       <td className="py-3.5 font-medium text-slate-700">
                         {r.unit}
                       </td>
-                      <td className="py-3.5 text-right font-bold text-slate-900 text-sm">
+                      <td className="py-3.5 text-right font-medium text-slate-900 text-sm">
                         INR {rateVal.toLocaleString('en-IN')}
                       </td>
                       <td className="py-3.5 text-right font-medium text-slate-500">
@@ -156,15 +156,15 @@ export const CommodityRatesSection: React.FC = () => {
                       </td>
                       <td className="py-3.5 text-center">
                         {r.trend === 'up' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
                             <FaArrowTrendUp className="h-2.5 w-2.5 text-emerald-600" /> +{r.changePercent || 0}%
                           </span>
                         ) : r.trend === 'down' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600">
                             <FaArrowTrendDown className="h-2.5 w-2.5 text-rose-600" /> -{r.changePercent || 0}%
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-slate-100 text-slate-600">
+                          <span className="inline-flex items-center text-xs font-medium text-slate-500">
                             Stable Index
                           </span>
                         )}

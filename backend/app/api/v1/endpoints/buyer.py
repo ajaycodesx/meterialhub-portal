@@ -87,7 +87,7 @@ async def place_order(
     logger.info("Order created successfully: order_id=%s, grand_total=%s", data.orderId, data.grandTotal)
 
     await audit_service.log_order_created(
-        db, current_user, data.orderId, req.dict(), request
+        db, current_user, data.orderId, req.model_dump(), request
     )
 
     return ApiResponse(data=data, message="Order placed successfully with instant dispatch allocation")

@@ -2,12 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  FaChartLine,
   FaDownload,
-  FaIndianRupeeSign,
-  FaBoxesStacked,
-  FaStore,
-  FaWeightHanging,
   FaCircleCheck,
   FaSpinner
 } from 'react-icons/fa6';
@@ -27,20 +22,25 @@ export const ReportsSection: React.FC = () => {
   const [dateRange, setDateRange] = useState<string>('q3_2026');
   const [exportSuccess, setExportSuccess] = useState<string | null>(null);
 
-  async function fetchReportData() {
-    setLoading(true);
-    try {
-      const res = await adminApi.getOverview();
-      setData(res);
-    } catch (err: any) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchReportData();
+    let isMounted = true;
+    (async () => {
+      try {
+        const res = await adminApi.getOverview();
+        if (isMounted) {
+          setData(res);
+          setLoading(false);
+        }
+      } catch (err: any) {
+        console.error(err);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
   }, [dateRange]);
 
   function handleExportCsv() {
@@ -74,7 +74,7 @@ export const ReportsSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {exportSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{exportSuccess}</span>
         </div>
@@ -82,7 +82,7 @@ export const ReportsSection: React.FC = () => {
 
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Executive Financial & Tonnage Audit</h2>
+          <h2 className="text-sm font-medium text-slate-900">Executive Financial & Tonnage Audit</h2>
           <p className="text-xs text-slate-500">Authoritative platform ledgers, commission margins, and freight tonnage</p>
         </div>
 
@@ -108,33 +108,33 @@ export const ReportsSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Gross Merchandise Value</p>
-          <p className="text-xl font-bold text-slate-900">INR {totalGmv.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Gross Merchandise Value</p>
+          <p className="text-xl font-medium text-slate-900">INR {totalGmv.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Total contractor order billing</p>
         </div>
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Platform Marketplace Margin (5%)</p>
-          <p className="text-xl font-bold text-emerald-600">INR {platformRevenue.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Platform Marketplace Margin (5%)</p>
+          <p className="text-xl font-medium text-emerald-600">INR {platformRevenue.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Net platform commissions</p>
         </div>
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Payable Merchant Settlements</p>
-          <p className="text-xl font-bold text-blue-600">INR {netSettlements.toLocaleString('en-IN')}</p>
+          <p className="text-xs font-medium text-slate-500">Payable Merchant Settlements</p>
+          <p className="text-xl font-medium text-slate-900">INR {netSettlements.toLocaleString('en-IN')}</p>
           <p className="text-[11px] text-slate-400">Direct store disbursement ledger</p>
         </div>
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <p className="text-xs font-semibold text-slate-500">Cumulative Freight Tonnage</p>
-          <p className="text-xl font-bold text-indigo-600">{totalTonnage.toFixed(1)} MT</p>
+          <p className="text-xs font-medium text-slate-500">Cumulative Freight Tonnage</p>
+          <p className="text-xl font-medium text-[#FF6500]">{totalTonnage.toFixed(1)} MT</p>
           <p className="text-[11px] text-slate-400">Dispatched via commercial fleet</p>
         </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 space-y-4">
-        <h3 className="text-sm font-bold text-slate-900">Category Volume & Tonnage Share</h3>
+        <h3 className="text-sm font-medium text-slate-900">Category Volume & Tonnage Share</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50 text-slate-500 font-semibold uppercase text-[11px]">
+              <tr className="border-b border-slate-200/80 bg-slate-50 text-slate-500 font-medium uppercase text-[11px]">
                 <th className="py-3 pl-3">Material Category</th>
                 <th className="py-3 text-center">Volume Share</th>
                 <th className="py-3 text-right">Calculated GMV</th>
@@ -145,15 +145,15 @@ export const ReportsSection: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {categoryBreakdown.map((cat) => (
                 <tr key={cat.name} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-3 pl-3 font-semibold text-slate-900">{cat.name}</td>
-                  <td className="py-3 text-center font-bold text-slate-700">{cat.share}</td>
-                  <td className="py-3 text-right font-bold text-slate-900">
+                  <td className="py-3 pl-3 font-medium text-slate-900">{cat.name}</td>
+                  <td className="py-3 text-center font-medium text-slate-700">{cat.share}</td>
+                  <td className="py-3 text-right font-medium text-slate-900">
                     INR {cat.gmv.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </td>
-                  <td className="py-3 text-right font-semibold text-emerald-600">
+                  <td className="py-3 text-right font-medium text-emerald-600">
                     INR {(cat.gmv * 0.05).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </td>
-                  <td className="py-3 pr-3 text-right font-semibold text-slate-800">
+                  <td className="py-3 pr-3 text-right font-medium text-slate-800">
                     {cat.tonnage.toFixed(1)} MT
                   </td>
                 </tr>

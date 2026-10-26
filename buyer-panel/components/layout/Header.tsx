@@ -81,7 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             <div className="leading-tight">
-              <div className="text-base sm:text-xl font-semibold tracking-tight text-white leading-none">
+              <div className="text-base sm:text-xl font-medium tracking-tight text-white leading-none">
                 Material<span className="text-[#FF6500]">Hub</span>
               </div>
               <p className="text-xs text-slate-400 font-normal leading-tight mt-1 hidden sm:block">
@@ -101,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="text-xs font-medium text-slate-400 tracking-wider uppercase">
                 Inline Delivery Site
               </div>
-              <div className="text-xs font-semibold text-white truncate max-w-[150px]">
+              <div className="text-xs font-medium text-white truncate max-w-[150px]">
                 {location.address ? `${location.address.split(',')[0]}, 20km` : 'Site #14, Kakkanad, 20km'}
               </div>
             </div>
@@ -124,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={handleVoiceSearch}
-              className={`h-8 px-3.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+              className={`h-8 px-3.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
                 isListeningVoice 
                   ? 'bg-red-500 text-white shadow-xs animate-pulse' 
                   : 'bg-[#0d1527] text-white hover:bg-[#1a253d] shadow-2xs'
@@ -139,7 +139,7 @@ export const Header: React.FC<HeaderProps> = ({
             
             <button
               onClick={onOpenLocationModal}
-              className="sm:hidden flex items-center gap-1 px-2 py-1 rounded-xl bg-[#1c2638] border border-slate-700/60 text-white text-[11px] font-semibold max-w-[90px] shrink-0 cursor-pointer"
+              className="sm:hidden flex items-center gap-1 px-2 py-1 rounded-xl bg-[#1c2638] border border-slate-700/60 text-white text-[11px] font-medium max-w-[90px] shrink-0 cursor-pointer"
             >
               <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500] shrink-0" />
               <span className="truncate">{location.address.split(',')[0]}</span>
@@ -163,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="hidden md:flex items-center gap-2">
                     <div className="text-left leading-tight">
-                      <div className="text-sm font-semibold text-white tracking-tight">
+                      <div className="text-sm font-medium text-white tracking-tight">
                         {user.isLoggedIn ? user.name : 'Ajay Kumar'}
                       </div>
                       <div className="text-xs text-slate-400 font-normal mt-0.5">
@@ -176,14 +176,14 @@ export const Header: React.FC<HeaderProps> = ({
               }
             >
               <div className="px-4 py-2.5 border-b border-slate-100">
-                <p className="text-xs font-semibold text-slate-900">{user.isLoggedIn ? user.name : 'Ajay Kumar'}</p>
+                <p className="text-xs font-medium text-slate-900">{user.isLoggedIn ? user.name : 'Ajay Kumar'}</p>
                 <p className="text-xs text-slate-500 font-normal">{user.phone || '+91 98470 12345'}</p>
               </div>
               <div className="py-1">
                 <Link 
                   href="/profile"
                   onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
-                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
                 >
                   <FaUser className="h-3.5 w-3.5" /> Profile Settings
                 </Link>
@@ -191,7 +191,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Link 
                   href="/tracking"
                   onClick={() => { onNavigate?.('tracking'); }} 
-                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
                 >
                   <FaBagShopping className="h-3.5 w-3.5" /> My Orders &amp; Tracking
                 </Link>
@@ -199,7 +199,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Link 
                   href="/profile"
                   onClick={() => { onNavigate?.('profile_sites'); onOpenProfileSites?.(); }} 
-                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
                 >
                   <FaCreditCard className="h-3.5 w-3.5" /> Connected Bank / Credit
                 </Link>
@@ -207,7 +207,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Link 
                   href="/site-delivery"
                   onClick={() => { onNavigate?.('site_delivery_page'); }} 
-                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-[#FF6500] cursor-pointer"
                 >
                   <FaMapLocationDot className="h-3.5 w-3.5" /> Saved Site Addresses
                 </Link>
@@ -216,14 +216,14 @@ export const Header: React.FC<HeaderProps> = ({
                 {user.isLoggedIn ? (
                   <button
                     onClick={onLogout}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 cursor-pointer"
+                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 cursor-pointer"
                   >
                     <FaRightFromBracket className="h-3.5 w-3.5" /> Logout Session
                   </button>
                 ) : (
                   <button
                     onClick={onOpenAuthModal}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-semibold text-[#FF6500] hover:bg-orange-50 cursor-pointer"
+                    className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-[#FF6500] hover:bg-orange-50 cursor-pointer"
                   >
                     <FaUser className="h-3.5 w-3.5" /> Sign In / Register
                   </button>
@@ -249,8 +249,8 @@ export const Header: React.FC<HeaderProps> = ({
               title="View Cart & Truck Allocation"
             >
               <FiShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-white shrink-0" />
-              <span className="text-base font-semibold text-white hidden sm:inline tracking-tight">Cart</span>
-              <span className="h-5 w-5 sm:h-6 sm:w-6 rounded-lg sm:rounded-xl bg-[#FF6500] text-white text-[10px] sm:text-xs font-bold flex items-center justify-center shadow-xs shrink-0">
+              <span className="text-base font-medium text-white hidden sm:inline tracking-tight">Cart</span>
+              <span className="h-5 w-5 sm:h-6 sm:w-6 rounded-lg sm:rounded-xl bg-[#FF6500] text-white text-[10px] sm:text-xs font-medium flex items-center justify-center shadow-xs shrink-0">
                 {cartCount > 0 ? cartCount : 1}
               </span>
             </Link>
@@ -271,7 +271,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={handleVoiceSearch}
-              className={`h-7 px-2.5 rounded-lg text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all shrink-0 ${
+              className={`h-7 px-2.5 rounded-lg text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-all shrink-0 ${
                 isListeningVoice ? 'bg-red-500 text-white animate-pulse' : 'bg-[#0d1527] text-white'
               }`}
             >

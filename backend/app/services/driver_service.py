@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
+from sqlalchemy import select, update, desc, or_
 from app.models.delivery import DeliveryTrip, TripStatus
 from app.models.order import Order, OrderStatus
 from app.models.user import User
@@ -306,7 +306,18 @@ class DriverService:
             return False
 
         if trip.status == TripStatus.UNASSIGNED or trip.driver_id is None:
-            trip.driver_id = driver_id
+            claim_stmt = (
+                update(DeliveryTrip)
+                .where(
+                    DeliveryTrip.id == req.tripId,
+                    or_(DeliveryTrip.status == TripStatus.UNASSIGNED, DeliveryTrip.driver_id.is_(None))
+                )
+                .values(driver_id=driver_id)
+            )
+            claim_res = await db.execute(claim_stmt)
+            if claim_res.rowcount == 0:
+                return False
+            await db.refresh(trip)
         elif trip.driver_id != driver_id:
             return False
 

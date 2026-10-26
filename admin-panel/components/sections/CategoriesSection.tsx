@@ -124,14 +124,14 @@ export const CategoriesSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-800">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-semibold text-rose-800">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
             <FaXmark className="h-4 w-4" />
@@ -141,7 +141,7 @@ export const CategoriesSection: React.FC = () => {
 
       <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Material Categories Taxonomy</h2>
+          <h2 className="text-sm font-medium text-slate-900">Material Categories Taxonomy</h2>
           <p className="text-xs text-slate-500">Configure marketplace taxonomy, subcategory chips, and brand linkages</p>
         </div>
         <Button size="sm" variant="primary" onClick={openCreateModal} icon={<FaPlus />}>
@@ -174,10 +174,10 @@ export const CategoriesSection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400 bg-orange-500/20 px-2 py-0.5 rounded-md border border-orange-500/30">
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-orange-400">
                       ID: {c.id}
                     </span>
-                    <h3 className="text-base font-bold text-white mt-1 leading-tight">{c.title}</h3>
+                    <h3 className="text-base font-medium text-white mt-1 leading-tight">{c.title}</h3>
                   </div>
                   <Button
                     size="sm"
@@ -199,14 +199,14 @@ export const CategoriesSection: React.FC = () => {
 
                 <div className="space-y-2 pt-2 border-t border-slate-100">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                    <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400 mb-1">
                       Subcategories
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {(c.subcategories || []).map((sub: string) => (
                         <span
                           key={sub}
-                          className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-700"
+                          className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-700"
                         >
                           {sub}
                         </span>
@@ -215,14 +215,14 @@ export const CategoriesSection: React.FC = () => {
                   </div>
 
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                    <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400 mb-1">
                       Associated Brands
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {(c.featuredBrands || []).map((b: string) => (
                         <span
                           key={b}
-                          className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-orange-50 text-orange-700 border border-orange-200/60"
+                          className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-white text-slate-700 border border-slate-200"
                         >
                           {b}
                         </span>

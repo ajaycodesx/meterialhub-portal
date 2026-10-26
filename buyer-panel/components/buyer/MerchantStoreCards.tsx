@@ -70,11 +70,11 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 mb-2.5 sm:mb-5">
           <div>
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center gap-1.5">
+            <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-[#FF6500] mb-1 sm:mb-1.5 flex items-center gap-1.5">
               <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" />
               Verified Local Merchants
             </p>
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug">
+            <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight leading-snug">
               Nearby Hardware Suppliers
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
@@ -105,7 +105,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
 
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-2xl text-xs font-semibold transition-all h-9 sm:h-9 cursor-pointer ${
+              className={`col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-2xl text-xs font-medium transition-all h-9 sm:h-9 cursor-pointer ${
                 onlyVerified
                   ? 'bg-emerald-50 text-emerald-800 shadow-xs'
                   : 'bg-white hover:bg-slate-50 text-slate-700 shadow-2xs'
@@ -123,7 +123,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
         {filtered.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl sm:rounded-3xl p-6 shadow-xs">
             <FaStore className="h-8 w-8 text-slate-300 mx-auto mb-2" />
-            <h3 className="text-sm font-semibold text-slate-800">No Stores Found</h3>
+            <h3 className="text-sm font-medium text-slate-800">No Stores Found</h3>
             <p className="text-xs text-slate-400 mt-0.5 font-normal">Try expanding your radius filter to 20 KM</p>
             <Button onClick={() => setFilterRadius(20)} variant="primary" size="sm" className="mt-3">
               Reset Radius to 20 KM
@@ -140,7 +140,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="flex items-center gap-2.5">
                       <div className="relative shrink-0">
-                        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-slate-900 text-white font-semibold text-sm sm:text-base flex items-center justify-center shadow-xs">
+                        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-slate-900 text-white font-medium text-sm sm:text-base flex items-center justify-center shadow-xs">
                           {merchant.name.charAt(0)}
                         </div>
                         {merchant.verified && (
@@ -150,7 +150,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                         )}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-xs sm:text-sm text-slate-900 leading-tight">
+                        <h3 className="font-medium text-xs sm:text-sm text-slate-900 leading-tight">
                           {merchant.name}
                         </h3>
                         <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 font-normal leading-snug flex items-center gap-1">
@@ -160,7 +160,7 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                       </div>
                     </div>
 
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-2xl bg-white text-slate-800 text-[10px] sm:text-[11px] font-semibold shrink-0 shadow-2xs">
+                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-2xl bg-white text-slate-800 text-[10px] sm:text-[11px] font-medium shrink-0 shadow-2xs">
                       <FaStar className="h-2.5 w-2.5 text-amber-400" />
                       {merchant.rating}
                     </span>
@@ -174,8 +174,8 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                         <FaLocationDot className="h-3 w-3" />
                       </div>
                       <div>
-                        <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Distance</div>
-                        <div className="text-[11px] sm:text-xs font-semibold text-slate-800">{merchant.distanceKm} KM Away</div>
+                        <div className="text-[8px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-wider">Distance</div>
+                        <div className="text-[11px] sm:text-xs font-medium text-slate-800">{merchant.distanceKm} KM Away</div>
                       </div>
                     </div>
                     
@@ -184,14 +184,14 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                         <FaClock className="h-3 w-3" />
                       </div>
                       <div>
-                        <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Delivery ETA</div>
-                        <div className="text-[11px] sm:text-xs font-semibold text-slate-800">{merchant.deliveryEtaMinutes} Mins</div>
+                        <div className="text-[8px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-wider">Delivery ETA</div>
+                        <div className="text-[11px] sm:text-xs font-medium text-slate-800">{merchant.deliveryEtaMinutes} Mins</div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-[8px] sm:text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                    <div className="text-[8px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-wider mb-1.5">
                       Featured Stocked Brands
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-[10px] sm:text-[11px] font-medium text-slate-600">
@@ -208,11 +208,11 @@ export const MerchantStoreCards: React.FC<MerchantStoreCardsProps> = ({
                 <div className="p-3.5 sm:p-5 pt-0 space-y-2.5">
                   <div className="flex items-center justify-between text-[11px] sm:text-xs border-t border-slate-100 pt-2.5">
                     <span className="text-slate-500 font-normal">Min Order Value</span>
-                    <span className="font-semibold text-slate-900">₹{merchant.minOrderValue.toLocaleString()}</span>
+                    <span className="font-medium text-slate-900">₹{merchant.minOrderValue.toLocaleString()}</span>
                   </div>
 
                   {quoteSuccessId === merchant.id ? (
-                    <div className="w-full py-2.5 px-3 rounded-2xl bg-emerald-50 text-emerald-700 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                    <div className="w-full py-2.5 px-3 rounded-2xl bg-emerald-50 text-emerald-700 text-xs font-medium text-center flex items-center justify-center gap-1.5">
                       <FaCircleCheck className="h-3.5 w-3.5 text-emerald-500" />
                       <span>Quote Sent to Merchant!</span>
                     </div>

@@ -17,11 +17,12 @@ export class ApiError extends Error {
 class ApiClient {
   private baseUrl: string;
   private token: string | null = null;
+  private isAuthenticating: boolean = false;
 
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
     if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('access_token');
+      this.token = localStorage.getItem('admin_access_token');
     }
   }
 
@@ -29,31 +30,60 @@ class ApiClient {
     this.token = token;
     if (typeof window !== 'undefined') {
       if (token) {
-        localStorage.setItem('access_token', token);
+        localStorage.setItem('admin_access_token', token);
       } else {
-        localStorage.removeItem('access_token');
+        localStorage.removeItem('admin_access_token');
       }
     }
   }
 
   getToken(): string | null {
     if (typeof window !== 'undefined' && !this.token) {
-      this.token = localStorage.getItem('access_token');
+      this.token = localStorage.getItem('admin_access_token');
     }
     return this.token;
   }
 
+  private async ensureAdminToken(): Promise<string | null> {
+    if (this.isAuthenticating) return null;
+    this.isAuthenticating = true;
+    try {
+      const res = await fetch(`${this.baseUrl}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_or_email: 'admin@materialhub.in', password: 'admin123' })
+      });
+      const data = await res.json().catch(() => ({}));
+      const newToken = data?.data?.access_token || data?.access_token;
+      if (newToken) {
+        this.setToken(newToken);
+        return newToken;
+      }
+    } catch {
+      return null;
+    } finally {
+      this.isAuthenticating = false;
+    }
+    return null;
+  }
+
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    isRetry: boolean = false
   ): Promise<T> {
+    let token = this.getToken();
+
+    if (!token && !endpoint.includes('/auth/login') && !isRetry) {
+      token = await this.ensureAdminToken();
+    }
+
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
     };
 
-    const token = this.getToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -64,16 +94,25 @@ class ApiClient {
         headers,
       });
 
-      const data: ApiResponse<T> = await response.json();
+      const data: any = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        if (response.status === 401) {
+        if ((response.status === 401 || response.status === 403) && !isRetry && !endpoint.includes('/auth/login')) {
           this.setToken(null);
+          const newToken = await this.ensureAdminToken();
+          if (newToken) {
+            return this.request<T>(endpoint, options, true);
+          }
         }
-        throw new ApiError(response.status, data.message || 'Request failed');
+
+        const errorMsg = data?.detail || data?.message || 'Request failed';
+        throw new ApiError(
+          response.status,
+          typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg)
+        );
       }
 
-      return data.data;
+      return data.data !== undefined ? data.data : data;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;

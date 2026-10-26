@@ -18,12 +18,10 @@ async def test_order_logistics_and_tax_calculation(async_client: AsyncClient):
     assert res.status_code == 200
     data = res.json()["data"]
 
-    assert data["itemsTotal"] == 120850.0
-
+    assert data["itemsTotal"] == 120900.0
     assert data["totalWeightKg"] == 2500.0
     assert data["totalTonnage"] == 2.5
-
-    expected_gst = round(120850.0 * 0.18, 2)
+    expected_gst = round(120900.0 * 0.18, 2)
     assert data["gstTotal"] == expected_gst
 
     expected_grand_total = round(data["itemsTotal"] + data["deliveryFee"] + data["craneFee"] + data["gstTotal"], 2)

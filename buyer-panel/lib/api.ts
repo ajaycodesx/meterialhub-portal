@@ -22,7 +22,7 @@ class ApiClient {
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
     if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('access_token');
+      this.token = localStorage.getItem('buyer_access_token') || localStorage.getItem('access_token');
     }
   }
 
@@ -30,8 +30,10 @@ class ApiClient {
     this.token = token;
     if (typeof window !== 'undefined') {
       if (token) {
+        localStorage.setItem('buyer_access_token', token);
         localStorage.setItem('access_token', token);
       } else {
+        localStorage.removeItem('buyer_access_token');
         localStorage.removeItem('access_token');
       }
     }
@@ -44,7 +46,7 @@ class ApiClient {
     const url = `${this.baseUrl}${endpoint}`;
 
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('access_token');
+      const stored = localStorage.getItem('buyer_access_token') || localStorage.getItem('access_token');
       if (stored) {
         this.token = stored;
       }

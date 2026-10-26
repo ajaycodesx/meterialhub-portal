@@ -192,7 +192,7 @@ async def request_delivery_otp(
         pass
 
     return ApiResponse(
-        data={"otpSent": True, "tripId": target_trip_id, "orderId": order.id, "devOtp": otp},
+        data={"otpSent": True, "tripId": target_trip_id, "orderId": order.id},
         message="OTP sent to customer's phone for delivery verification"
     )
 

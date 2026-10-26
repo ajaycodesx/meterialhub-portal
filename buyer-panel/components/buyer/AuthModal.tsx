@@ -89,7 +89,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">
                 10-Digit Mobile Number or Email
               </label>
               <div className="relative flex items-center">
@@ -114,7 +114,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className="h-4 w-4 rounded-md accent-[#FF6500] mt-0.5 shrink-0"
               />
               <span className="text-xs text-slate-400 font-normal leading-relaxed">
-                I agree to MaterialHub&apos;s <strong className="font-semibold text-slate-200">Terms of Service</strong>, <strong className="font-semibold text-slate-200">Return Policy</strong>, and <strong className="font-semibold text-slate-200">GST Wholesale Agreement</strong>.
+                I agree to MaterialHub&apos;s <strong className="font-medium text-slate-200">Terms of Service</strong>, <strong className="font-medium text-slate-200">Return Policy</strong>, and <strong className="font-medium text-slate-200">GST Wholesale Agreement</strong>.
               </span>
             </label>
 
@@ -146,7 +146,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     newArr[idx] = e.target.value;
                     setOtpValues(newArr);
                   }}
-                  className="w-10 sm:w-11 h-12 text-center text-lg font-semibold rounded-2xl bg-[#162137] border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] text-white shadow-2xs"
+                  className="w-10 sm:w-11 h-12 text-center text-lg font-medium rounded-2xl bg-[#162137] border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-[#FF6500]/25 focus:border-[#FF6500] text-white shadow-2xs"
                 />
               ))}
             </div>
@@ -161,7 +161,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 type="button"
                 onClick={() => setStep('input')}
-                className="px-4 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[#1c2638] hover:bg-[#253248] border border-slate-700/70 text-slate-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <FaArrowLeft className="h-3 w-3" />
                 <span>Back</span>
