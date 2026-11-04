@@ -27,11 +27,11 @@ export const VendorFinanceSection: React.FC<VendorFinanceSectionProps> = ({
   const netEarnings = settlementData?.netEarnings || grossSales * 0.95;
   const walletBalance = settlementData?.walletBalance || netEarnings;
   const bankDetails = settlementData?.bankDetails || {
-    bankName: 'HDFC Bank',
-    accountNumberMasked: '•••• •••• •••• 4892',
-    ifsc: 'HDFC0001244',
-    holderName: 'Kakkanad Building Supplies',
-    payoutCycle: 'T+1 Automatic Escrow Clearance'
+    bankName: 'No data',
+    accountNumberMasked: 'No data',
+    ifsc: 'No data',
+    holderName: 'No data',
+    payoutCycle: 'No data'
   };
   const orders = Array.isArray(settlementData?.recentSettlements) ? settlementData.recentSettlements : [];
 

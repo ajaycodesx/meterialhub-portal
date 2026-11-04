@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
 import uuid
 from typing import Optional, List, Dict, Any
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 from app.models.merchant import HardwareMerchant
 from app.models.product import Product
+from app.models.category import MaterialCategory
 from app.models.order import Order, OrderItem, OrderStatus
 from app.models.delivery import DeliveryTrip, TripStatus
 from app.models.user import User
@@ -14,6 +16,13 @@ from app.models.deal import Deal
 from app.models.audit_log import AuditLog
 from app.schemas.vendor import VendorDashboardCompositeResponse, StockUpdateRequest
 from app.core.websocket import manager, EventType
+
+# Orders a merchant may still reject. Unpaid (PENDING) orders can be declined;
+# once out for delivery or delivered they can no longer be cancelled by the vendor.
+VENDOR_REJECTABLE_STATUSES = [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.PACKING]
+
+# The only status name a vendor may set through update-order-status.
+VENDOR_PACK_STATUS_NAMES = ["packing", "ready_for_pickup"]
 
 
 class VendorService:
@@ -367,6 +376,12 @@ class VendorService:
         if not order:
             return False
 
+        if order.status != OrderStatus.CONFIRMED:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Only confirmed orders can be packed. Current status: {order.status.value}"
+            )
+
         order.status = OrderStatus.PACKING
 
         trip_res = await db.execute(select(DeliveryTrip).where(DeliveryTrip.order_id == order.id))
@@ -416,6 +431,22 @@ class VendorService:
         if not order:
             return False
 
+        # Once the truck has left the store, cancelling would restock goods that
+        # were delivered or are in transit, so only pre-dispatch orders are rejectable.
+        if order.status not in VENDOR_REJECTABLE_STATUSES:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Order cannot be rejected in status: {order.status.value}"
+            )
+
+        # A paid order cannot be cancelled by the vendor: the money would stay with
+        # the store. Admin cancels and refunds through the finance flow instead.
+        if order.payment_id:
+            raise HTTPException(
+                status_code=409,
+                detail="Paid orders must be cancelled and refunded by an admin"
+            )
+
         order.status = OrderStatus.CANCELLED
 
         items_res = await db.execute(select(OrderItem).where(OrderItem.order_id == order.id))
@@ -449,13 +480,11 @@ class VendorService:
         page: int = 1,
         limit: int = 50
     ) -> Dict[str, Any]:
+        # Only this merchant's own catalogue. Never fall back to other merchants' products.
         res = await db.execute(
             select(Product).where(Product.merchant_id == merchant_id).order_by(Product.title)
         )
         merchant_prods = res.scalars().all()
-        if len(merchant_prods) == 0:
-            all_res = await db.execute(select(Product).order_by(Product.title))
-            merchant_prods = all_res.scalars().all()
 
         filtered = []
         for p in merchant_prods:
@@ -489,7 +518,9 @@ class VendorService:
                 "gauge": p.gauge,
                 "weightKg": p.weight_kg,
                 "stockQty": p.stock_qty,
-                "isLowStock": p.stock_qty < 50
+                "isLowStock": p.stock_qty < 50,
+                "status": p.status or "approved",
+                "rejectionReason": p.rejection_reason
             } for p in paged
         ]
 
@@ -499,6 +530,25 @@ class VendorService:
             "page": page,
             "limit": limit
         }
+
+    @staticmethod
+    async def get_categories(db: AsyncSession) -> List[Dict[str, Any]]:
+        res = await db.execute(select(MaterialCategory))
+        categories = res.scalars().all()
+        return [
+            {
+                "id": c.id,
+                "title": c.title,
+                "subtitle": c.subtitle,
+                "iconName": c.icon_name,
+                "colorBg": c.color_bg,
+                "itemCount": c.item_count,
+                "trendingBadge": c.trending_badge,
+                "image": c.image,
+                "subcategories": c.subcategories or [],
+                "featuredBrands": c.featured_brands or []
+            } for c in categories
+        ]
 
     @staticmethod
     async def create_product(
@@ -522,7 +572,9 @@ class VendorService:
             gauge=data.get("gauge"),
             weight_kg=float(data.get("weight_kg", 50.0)),
             stock_qty=int(data.get("stock_qty", 500)),
-            merchant_id=merchant_id
+            merchant_id=merchant_id,
+            status="pending",
+            rejection_reason=None
         )
         db.add(prod)
 
@@ -548,14 +600,17 @@ class VendorService:
         data: Dict[str, Any],
         actor_id: str
     ) -> bool:
-        res = await db.execute(select(Product).where(Product.id == product_id))
-        prod = res.scalars().first()
+        prod = await VendorService._get_merchant_product(db, merchant_id, product_id)
         if not prod:
             return False
 
         for k, v in data.items():
             if v is not None and hasattr(prod, k):
                 setattr(prod, k, v)
+
+        if prod.status == "rejected":
+            prod.status = "pending"
+            prod.rejection_reason = None
 
         audit_entry = AuditLog(
             id=str(uuid.uuid4()),
@@ -578,8 +633,7 @@ class VendorService:
         product_id: str,
         actor_id: str
     ) -> bool:
-        res = await db.execute(select(Product).where(Product.id == product_id))
-        prod = res.scalars().first()
+        prod = await VendorService._get_merchant_product(db, merchant_id, product_id)
         if not prod:
             return False
 
@@ -607,8 +661,7 @@ class VendorService:
         reason: str,
         actor_id: str
     ) -> Dict[str, Any]:
-        res = await db.execute(select(Product).where(Product.id == product_id))
-        prod = res.scalars().first()
+        prod = await VendorService._get_merchant_product(db, merchant_id, product_id)
         if not prod:
             raise ValueError("Product not found")
 
@@ -633,17 +686,51 @@ class VendorService:
     @staticmethod
     async def update_stock(
         db: AsyncSession,
-        req: StockUpdateRequest
+        merchant_id: str,
+        req: StockUpdateRequest,
+        actor_id: str
     ) -> bool:
-        res = await db.execute(select(Product).where(Product.id == req.productId))
-        prod = res.scalars().first()
+        prod = await VendorService._get_merchant_product(db, merchant_id, req.productId)
         if not prod:
             return False
+
+        old_qty = prod.stock_qty
+        old_price = prod.price
         prod.stock_qty = req.newStockQty
-        if req.newPrice:
+        if req.newPrice is not None:
             prod.price = req.newPrice
+
+        audit_entry = AuditLog(
+            id=str(uuid.uuid4()),
+            action="inventory.vendor_stock_reconciliation",
+            actor_id=actor_id,
+            actor_role="vendor",
+            target_type="product",
+            target_id=prod.id,
+            changes={
+                "oldQty": old_qty,
+                "newQty": req.newStockQty,
+                "oldPrice": old_price,
+                "newPrice": prod.price,
+                "reason": req.reason
+            },
+            status="success"
+        )
+        db.add(audit_entry)
         await db.commit()
         return True
+
+    @staticmethod
+    async def _get_merchant_product(
+        db: AsyncSession,
+        merchant_id: str,
+        product_id: str
+    ) -> Optional[Product]:
+        """Load a product only if it belongs to the given merchant."""
+        res = await db.execute(
+            select(Product).where(Product.id == product_id, Product.merchant_id == merchant_id)
+        )
+        return res.scalars().first()
 
     @staticmethod
     async def update_order_status(
@@ -657,13 +744,18 @@ class VendorService:
         if not order:
             return False
 
-        status_lookup = {
-            "packing": OrderStatus.PACKING,
-            "confirmed": OrderStatus.CONFIRMED,
-            "ready_for_pickup": OrderStatus.PACKING,
-            "cancelled": OrderStatus.CANCELLED
-        }
-        target_status = status_lookup.get(status_name.lower(), order.status)
+        # Vendors may only mark an order as packed. Cancellation goes through
+        # reject_order so stock is restored exactly once, and delivery status
+        # is controlled by the driver/OTP flow.
+        target_name = status_name.lower()
+        if target_name not in VENDOR_PACK_STATUS_NAMES:
+            raise HTTPException(status_code=400, detail=f"Unsupported vendor status: {status_name}")
+        if order.status != OrderStatus.CONFIRMED:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Only confirmed orders can be packed. Current status: {order.status.value}"
+            )
+        target_status = OrderStatus.PACKING
         order.status = target_status
 
         try:
@@ -689,8 +781,8 @@ class VendorService:
             {
                 "id": q.id,
                 "projectName": q.project_name,
+                # Vendors need the delivery pincode to quote, not the buyer's exact site address.
                 "deliveryPincode": q.delivery_pincode,
-                "siteAddress": q.site_address,
                 "rawMaterialsText": q.raw_materials_text,
                 "estimatedTotal": q.estimated_total,
                 "status": q.status,
@@ -772,6 +864,7 @@ class VendorService:
         data: Dict[str, Any],
         actor_id: str
     ) -> bool:
+        # Vendor deals stay pending until an admin approves them; buyers never see them before that.
         new_deal = Deal(
             id=f"deal_{uuid.uuid4().hex[:8]}",
             material=data["material"],
@@ -782,7 +875,8 @@ class VendorService:
             unit=data["unit"],
             discount_pct=int(data.get("discountPct", 10)),
             min_order=data.get("minOrder", "100 Bags Min."),
-            badge=data.get("badge", "Merchant Special")
+            badge=data.get("badge", "Merchant Special"),
+            status="pending"
         )
         db.add(new_deal)
 

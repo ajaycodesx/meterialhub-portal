@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  FaTruckFast,
   FaArrowRight,
   FaShieldHalved,
   FaSpinner
@@ -19,12 +18,12 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  const [fullName, setFullName] = useState('Arun Raj');
-  const [phone, setPhone] = useState('+91 98765 43210');
-  const [license, setLicense] = useState('KL-07-2024-0012345');
-  const [vehicleName, setVehicleName] = useState('Ashok Leyland 1618');
-  const [regNumber, setRegNumber] = useState('KL 07 AB 1234');
-  const [loadCapacity, setLoadCapacity] = useState('16');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [license, setLicense] = useState('');
+  const [vehicleName, setVehicleName] = useState('');
+  const [regNumber, setRegNumber] = useState('');
+  const [loadCapacity, setLoadCapacity] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +40,9 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
       setLoading(true);
       const res: any = await authApi.login(email.trim(), password);
       if (res?.access_token) {
+        if (res.role && res.role.toLowerCase() !== 'driver') {
+          throw new Error('Access denied. This account does not have a Driver role.');
+        }
         apiClient.setToken(res.access_token);
         onAuthenticated(res.access_token, res);
       } else {
@@ -89,6 +91,9 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
       });
 
       if (res?.access_token) {
+        if (res.role && res.role.toLowerCase() !== 'driver') {
+          throw new Error('Access denied. This account does not have a Driver role.');
+        }
         apiClient.setToken(res.access_token);
         onAuthenticated(res.access_token, res);
       } else {
@@ -113,8 +118,12 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
       <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center px-4 py-8 sm:py-12">
         <div className="max-w-md w-full mx-auto space-y-6">
           <div className="space-y-3">
-            <div className="w-12 h-12 bg-[#F5A623] text-slate-900 rounded-2xl flex items-center justify-center shadow-sm">
-              <FaTruckFast className="h-6 w-6" />
+            <div className="relative h-11 w-11 flex items-center justify-center shrink-0">
+              <img
+                src="/images/logo_dark.png"
+                alt="MaterialHub Logo"
+                className="h-full w-full object-contain"
+              />
             </div>
             <div className="space-y-1">
               <span className="text-[11px] font-medium text-slate-400 uppercase tracking-widest block">
@@ -160,7 +169,7 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
                   PHONE NUMBER
                 </label>
                 <input
-                  type="text"
+                  type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+91 98765 43210"
@@ -171,7 +180,7 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
 
               <div className="space-y-1">
                 <label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
-                  DRIVING LICENSE
+                  COMMERCIAL DRIVER LICENSE NUMBER
                 </label>
                 <input
                   type="text"
@@ -191,7 +200,7 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
 
               <div className="space-y-1">
                 <label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
-                  VEHICLE NAME / MODEL
+                  VEHICLE MAKE AND MODEL
                 </label>
                 <input
                   type="text"
@@ -203,32 +212,33 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
-                  REGISTRATION NUMBER
-                </label>
-                <input
-                  type="text"
-                  value={regNumber}
-                  onChange={(e) => setRegNumber(e.target.value)}
-                  placeholder="KL 07 AB 1234"
-                  className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#FF6500] focus:ring-1 focus:ring-[#FF6500]"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
-                  LOAD CAPACITY (TONS)
-                </label>
-                <input
-                  type="text"
-                  value={loadCapacity}
-                  onChange={(e) => setLoadCapacity(e.target.value)}
-                  placeholder="16"
-                  className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#FF6500] focus:ring-1 focus:ring-[#FF6500]"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+                    REGISTRATION NUMBER
+                  </label>
+                  <input
+                    type="text"
+                    value={regNumber}
+                    onChange={(e) => setRegNumber(e.target.value)}
+                    placeholder="KL 07 AB 1234"
+                    className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#FF6500] focus:ring-1 focus:ring-[#FF6500]"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+                    PAYLOAD CAPACITY (TONS)
+                  </label>
+                  <input
+                    type="text"
+                    value={loadCapacity}
+                    onChange={(e) => setLoadCapacity(e.target.value)}
+                    placeholder="16"
+                    className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#FF6500] focus:ring-1 focus:ring-[#FF6500]"
+                    required
+                  />
+                </div>
               </div>
             </div>
 
@@ -266,12 +276,21 @@ export function DriverAuthView({ onAuthenticated }: DriverAuthViewProps) {
     <div className="min-h-screen bg-[#0F172A] flex flex-col justify-center px-4 py-8 sm:py-12">
       <div className="max-w-md w-full mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-[#F5A623] text-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
-            <FaTruckFast className="h-6 w-6" />
+          <div className="relative h-11 w-11 flex items-center justify-center shrink-0">
+            <img
+              src="/images/logo.png"
+              alt="MaterialHub Logo"
+              className="h-full w-full object-contain"
+            />
           </div>
-          <span className="text-white font-medium tracking-widest text-base">
-            MATERIALHUB
-          </span>
+          <div className="leading-tight">
+            <span className="text-white font-medium tracking-wider text-lg block leading-none">
+              Material<span className="text-[#FF6500]">Hub</span>
+            </span>
+            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest block mt-1">
+              Carrier Dispatch
+            </span>
+          </div>
         </div>
 
         <div className="space-y-1.5">

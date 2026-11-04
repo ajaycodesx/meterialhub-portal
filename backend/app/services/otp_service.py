@@ -5,7 +5,6 @@ and other authentication purposes.
 """
 
 import logging
-import pyotp
 import secrets
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone, timedelta

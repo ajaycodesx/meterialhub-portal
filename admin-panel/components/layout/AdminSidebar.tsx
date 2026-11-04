@@ -31,6 +31,7 @@ export type AdminTab =
   | 'reports'
   | 'orders'
   | 'merchants'
+  | 'verifications'
   | 'boq'
   | 'finance'
   | 'disputes'
@@ -81,6 +82,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'orders', slug: 'orders', href: '/orders', label: 'Orders & Fulfillment', icon: FaBoxesStacked },
       { id: 'merchants', slug: 'merchants', href: '/merchants', label: 'Merchants & KYC', icon: FaStore },
+      { id: 'verifications', slug: 'verifications', href: '/verifications', label: 'Vendor & Driver Approvals', icon: FaStore },
       { id: 'boq', slug: 'boq', href: '/boq', label: 'BOQ Bulk Quotes', icon: FaFileContract },
       { id: 'finance', slug: 'finance', href: '/finance', label: 'Payments & Refunds', icon: FaIndianRupeeSign },
       { id: 'disputes', slug: 'disputes', href: '/disputes', label: 'Disputes & Support', icon: FaTriangleExclamation }

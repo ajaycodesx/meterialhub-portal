@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, desc, or_
+from sqlalchemy import select, desc
 from app.models.delivery import DeliveryTrip, TripStatus
 from app.models.order import Order, OrderStatus
 from app.models.user import User
+from app.services import dispatch_service
 from app.schemas.driver import (
     DriverFeedCompositeResponse,
     DriverProfileResponse,
@@ -16,91 +18,87 @@ from app.schemas.driver import (
 )
 
 
+# Order in which a trip moves from dispatch to delivery.
+TRIP_PROGRESSION = [
+    TripStatus.UNASSIGNED,
+    TripStatus.ASSIGNED,
+    TripStatus.ACCEPTED,
+    TripStatus.ARRIVED_AT_STORE,
+    TripStatus.LOADED,
+    TripStatus.IN_TRANSIT,
+    TripStatus.ARRIVED_AT_SITE,
+    TripStatus.UNLOADED_COMPLETED,
+]
+
+# Statuses a driver may set directly. UNLOADED_COMPLETED is intentionally absent:
+# it is only reachable through customer OTP verification.
+DRIVER_SETTABLE_STATUSES = [
+    TripStatus.ACCEPTED,
+    TripStatus.ARRIVED_AT_STORE,
+    TripStatus.LOADED,
+    TripStatus.IN_TRANSIT,
+    TripStatus.ARRIVED_AT_SITE,
+]
+
+# Orders a driver may pick up. Online-payment orders stay PENDING until paid.
+DISPATCHABLE_ORDER_STATUSES = [
+    OrderStatus.CONFIRMED,
+    OrderStatus.PACKING,
+    OrderStatus.OUT_FOR_DELIVERY,
+]
+
+
 class DriverService:
-    _online_drivers: Dict[str, bool] = {}
 
     @staticmethod
     async def get_driver_feed_composite(
         db: AsyncSession,
         driver_id: str
     ) -> DriverFeedCompositeResponse:
-        user_res = await db.execute(select(User).where(User.id == driver_id))
-        driver = user_res.scalars().first()
+        driver = (await db.execute(select(User).where(User.id == driver_id))).scalars().first()
+        if driver is None:
+            raise HTTPException(status_code=404, detail="Driver not found")
 
-        trip_res = await db.execute(
+        active_trip_obj = (await db.execute(
             select(DeliveryTrip).where(
                 DeliveryTrip.driver_id == driver_id,
-                DeliveryTrip.status.in_([
-                    TripStatus.ASSIGNED,
-                    TripStatus.ACCEPTED,
-                    TripStatus.ARRIVED_AT_STORE,
-                    TripStatus.LOADED,
-                    TripStatus.IN_TRANSIT,
-                    TripStatus.ARRIVED_AT_SITE
-                ])
+                DeliveryTrip.status.in_(dispatch_service.ACTIVE_TRIP_STATUSES),
             )
-        )
-        active_trip_obj = trip_res.scalars().first()
+        )).scalars().first()
 
-        all_trips_res = await db.execute(
+        all_trips = (await db.execute(
             select(DeliveryTrip).where(DeliveryTrip.driver_id == driver_id)
-        )
-        all_trips = all_trips_res.scalars().all()
-
-        today_earnings = sum(
-            t.trip_fare + t.tip_amount for t in all_trips if t.status == TripStatus.UNLOADED_COMPLETED
-        )
-        today_trips_count = sum(1 for t in all_trips if t.status == TripStatus.UNLOADED_COMPLETED)
-
-        avail_res = await db.execute(
-            select(DeliveryTrip).where(DeliveryTrip.status == TripStatus.UNASSIGNED).limit(10)
-        )
-        avail_trips = avail_res.scalars().all()
+        )).scalars().all()
+        completed = [t for t in all_trips if t.status == TripStatus.UNLOADED_COMPLETED]
+        today_earnings = sum(t.trip_fare + t.tip_amount for t in completed)
 
         active_trip_dict = None
         if active_trip_obj:
             active_trip_dict = {
                 "tripId": active_trip_obj.id,
                 "orderId": active_trip_obj.order_id,
-                "status": active_trip_obj.status.value if hasattr(active_trip_obj.status, "value") else str(active_trip_obj.status),
+                "status": active_trip_obj.status.value,
                 "pickupAddress": active_trip_obj.pickup_address,
                 "dropAddress": active_trip_obj.drop_address,
-                "distanceKm": active_trip_obj.distance_km,
-                "tripFare": active_trip_obj.trip_fare,
-                "tipAmount": active_trip_obj.tip_amount,
                 "vehicleType": active_trip_obj.vehicle_type,
-                "vehicleRegNumber": active_trip_obj.vehicle_reg_number,
-                "currentGps": active_trip_obj.current_gps
+                "tripFare": active_trip_obj.trip_fare,
             }
 
-        avail_list = [
-            {
-                "tripId": t.id,
-                "orderId": t.order_id,
-                "pickupAddress": t.pickup_address,
-                "dropAddress": t.drop_address,
-                "distanceKm": t.distance_km,
-                "tripFare": t.trip_fare,
-                "vehicleType": t.vehicle_type
-            } for t in avail_trips
-        ]
-
-        driver_online = DriverService._online_drivers.get(driver_id, True)
+        offers = await dispatch_service.get_driver_offers(db, driver_id)
 
         return DriverFeedCompositeResponse(
             driverId=driver_id,
-            driverName=driver.name if (driver and driver.name) else "Manoj K",
-            vehicleType=driver.vehicle_type if (driver and driver.vehicle_type) else "Mini Commercial Truck (3 Ton)",
-            vehicleRegNumber="KL-07-CD-8921",
-            isOnline=driver_online,
+            driverName=driver.name,
+            vehicleType=driver.vehicle_type,
+            vehicleRegNumber=driver.vehicle_reg_number,
+            isOnline=bool(driver.is_online),
             todayEarnings=round(today_earnings, 2),
-            todayTripsCount=today_trips_count,
+            todayTripsCount=len(completed),
             activeTrip=active_trip_dict,
-            availableTrips=avail_list,
+            availableTrips=offers,
             weeklyPayoutSummary={
                 "weekTotal": round(today_earnings, 2),
-                "completedTrips": today_trips_count,
-                "payoutDay": "Every Tuesday Direct Bank Deposit"
+                "completedTrips": len(completed),
             }
         )
 
@@ -109,37 +107,35 @@ class DriverService:
         db: AsyncSession,
         driver_id: str
     ) -> DriverProfileResponse:
-        res = await db.execute(select(User).where(User.id == driver_id))
-        driver = res.scalars().first()
+        driver = (await db.execute(select(User).where(User.id == driver_id))).scalars().first()
+        if driver is None:
+            raise HTTPException(status_code=404, detail="Driver not found")
 
-        completed_trips_res = await db.execute(
-            select(DeliveryTrip).where(
+        completed_count = len((await db.execute(
+            select(DeliveryTrip.id).where(
                 DeliveryTrip.driver_id == driver_id,
-                DeliveryTrip.status == TripStatus.UNLOADED_COMPLETED
+                DeliveryTrip.status == TripStatus.UNLOADED_COMPLETED,
             )
-        )
-        completed_count = len(completed_trips_res.scalars().all())
+        )).all())
 
+        license_masked = None
+        if driver.driver_license:
+            license_masked = "•" * max(0, len(driver.driver_license) - 4) + driver.driver_license[-4:]
+
+        # Only values stored for this driver are returned. Anything not recorded is null.
         return DriverProfileResponse(
-            driverId=driver_id,
-            name=driver.name if driver else "Manoj K",
-            phone=driver.phone if driver else "+91 98470 54321",
-            email=driver.email if driver else "driver@materialhub.in",
-            isOnline=DriverService._online_drivers.get(driver_id, True),
-            isVerified=getattr(driver, "is_verified", True) if driver else True,
-            licenseNumberMasked="KL-07-••••••••492",
-            licenseExpiry="2029-08-15",
-            vehicleType=getattr(driver, "vehicle_type", "Mini Commercial Truck (3 Ton)") or "Mini Commercial Truck (3 Ton)",
-            vehicleRegNumber="KL-07-CD-8921",
-            payloadCapacityTons=3.5,
-            permitStatus="State Goods Carrier Valid",
-            insuranceExpiry="2027-03-31",
-            fitnessExpiry="2028-11-20",
-            bankName="State Bank of India",
-            bankAccountMasked="•••• •••• •••• 9214",
-            ifsc="SBIN0007821",
-            rating=4.95,
-            completedTripsLifetime=max(completed_count, 128)
+            driverId=driver.id,
+            name=driver.name,
+            phone=driver.phone,
+            email=driver.email,
+            isOnline=bool(driver.is_online),
+            isVerified=bool(driver.is_verified),
+            verificationReason=driver.verification_reason,
+            licenseNumberMasked=license_masked,
+            vehicleType=driver.vehicle_type,
+            vehicleRegNumber=driver.vehicle_reg_number,
+            payloadCapacityTons=driver.payload_capacity_tons,
+            completedTripsLifetime=completed_count,
         )
 
     @staticmethod
@@ -148,18 +144,21 @@ class DriverService:
         driver_id: str,
         req: DriverProfileUpdateRequest
     ) -> DriverProfileResponse:
-        res = await db.execute(select(User).where(User.id == driver_id))
-        driver = res.scalars().first()
-        if driver:
-            if req.name:
-                driver.name = req.name
-            if req.phone:
-                driver.phone = req.phone
-            if req.vehicleType:
-                driver.vehicle_type = req.vehicleType
-            await db.commit()
-            await db.refresh(driver)
+        driver = (await db.execute(select(User).where(User.id == driver_id))).scalars().first()
+        if driver is None:
+            raise HTTPException(status_code=404, detail="Driver not found")
 
+        if req.name:
+            driver.name = req.name
+        if req.phone:
+            driver.phone = req.phone
+        if req.vehicleType:
+            driver.vehicle_type = req.vehicleType
+        if req.vehicleRegNumber:
+            driver.vehicle_reg_number = req.vehicleRegNumber.upper()
+        if req.payloadCapacityTons is not None:
+            driver.payload_capacity_tons = req.payloadCapacityTons
+        await db.commit()
         return await DriverService.get_driver_profile(db, driver_id)
 
     @staticmethod
@@ -167,10 +166,14 @@ class DriverService:
         db: AsyncSession,
         driver_id: str
     ) -> Dict[str, Any]:
-        current_status = DriverService._online_drivers.get(driver_id, True)
-        new_status = not current_status
-        DriverService._online_drivers[driver_id] = new_status
-        return {"driverId": driver_id, "isOnline": new_status}
+        driver = (await db.execute(select(User).where(User.id == driver_id))).scalars().first()
+        if driver is None:
+            raise HTTPException(status_code=404, detail="Driver not found")
+        if not driver.is_verified:
+            raise HTTPException(status_code=403, detail="Driver account is pending admin verification")
+        driver.is_online = not bool(driver.is_online)
+        await db.commit()
+        return {"driverId": driver_id, "isOnline": bool(driver.is_online)}
 
     @staticmethod
     async def get_trip_history(
@@ -221,14 +224,15 @@ class DriverService:
             return {"success": False, "message": "Access denied to trip"}
 
         from app.services.audit_service import audit_service
+        from app.models.audit_log import AuditAction
         await audit_service.log_action(
             db=db,
             actor_id=driver_id,
             actor_role="driver",
-            action="TRIP_EXCEPTION_REPORTED",
+            action=AuditAction.TRIP_EXCEPTION_REPORTED,
             target_id=req.tripId,
             target_type="delivery_trip",
-            metadata={
+            context={
                 "exceptionType": req.exceptionType,
                 "description": req.description,
                 "orderId": trip.order_id
@@ -264,35 +268,50 @@ class DriverService:
         driver_id: str,
         req: DriverLocationUpdateRequest
     ) -> Dict[str, Any]:
+        now = datetime.now(timezone.utc)
         gps_data = {
             "lat": req.latitude,
             "lng": req.longitude,
             "speed": req.speedKmh,
             "heading": req.heading,
-            "timestamp": datetime.now(timezone.utc).isoformat()
+            "timestamp": now.isoformat()
         }
 
-        if req.tripId:
-            res = await db.execute(select(DeliveryTrip).where(DeliveryTrip.id == req.tripId))
-            trip = res.scalars().first()
-            if trip and trip.driver_id == driver_id:
-                trip.current_gps = gps_data
-                await db.commit()
+        driver = (await db.execute(select(User).where(User.id == driver_id))).scalars().first()
+        if driver is None:
+            raise HTTPException(status_code=404, detail="Driver not found")
+        driver.latitude = req.latitude
+        driver.longitude = req.longitude
+        driver.location_updated_at = now
 
-        from app.core.websocket import manager, EventType
-        try:
-            await manager.broadcast({
-                "event": EventType.DRIVER_LOCATION_UPDATE,
-                "data": {
-                    "driverId": driver_id,
-                    "tripId": req.tripId,
-                    "gps": gps_data
-                }
-            })
-        except Exception:
-            pass
+        active_trip = (await db.execute(
+            select(DeliveryTrip).where(
+                DeliveryTrip.driver_id == driver_id,
+                DeliveryTrip.status.in_(dispatch_service.ACTIVE_TRIP_STATUSES),
+            )
+        )).scalars().first()
+        if active_trip:
+            active_trip.current_gps = gps_data
+        await db.commit()
 
-        return {"updated": True, "gps": gps_data}
+        if active_trip:
+            # Live position goes only to the buyer whose order this trip serves.
+            from app.core.websocket import manager, EventType
+            order = (await db.execute(select(Order).where(Order.id == active_trip.order_id))).scalars().first()
+            if order:
+                try:
+                    await manager.send_personal_message({
+                        "event": EventType.DRIVER_LOCATION_UPDATE,
+                        "data": {
+                            "orderId": order.id,
+                            "tripId": active_trip.id,
+                            "gps": gps_data
+                        }
+                    }, order.user_id)
+                except Exception:
+                    pass
+
+        return {"updated": True, "gps": gps_data, "tripId": active_trip.id if active_trip else None}
 
     @staticmethod
     async def update_trip_status(
@@ -300,26 +319,31 @@ class DriverService:
         req: UpdateTripStatusRequest,
         driver_id: str
     ) -> bool:
+        if req.status not in DRIVER_SETTABLE_STATUSES:
+            raise HTTPException(
+                status_code=400,
+                detail="Delivery completion requires customer OTP verification"
+            )
+
         res = await db.execute(select(DeliveryTrip).where(DeliveryTrip.id == req.tripId))
         trip = res.scalars().first()
         if not trip:
             return False
 
-        if trip.status == TripStatus.UNASSIGNED or trip.driver_id is None:
-            claim_stmt = (
-                update(DeliveryTrip)
-                .where(
-                    DeliveryTrip.id == req.tripId,
-                    or_(DeliveryTrip.status == TripStatus.UNASSIGNED, DeliveryTrip.driver_id.is_(None))
-                )
-                .values(driver_id=driver_id)
-            )
-            claim_res = await db.execute(claim_stmt)
-            if claim_res.rowcount == 0:
-                return False
-            await db.refresh(trip)
-        elif trip.driver_id != driver_id:
+        order_res = await db.execute(select(Order).where(Order.id == trip.order_id))
+        order = order_res.scalars().first()
+
+        # Trips are only given to a driver through an accepted dispatch offer.
+        if trip.driver_id != driver_id:
             return False
+
+        current_index = TRIP_PROGRESSION.index(trip.status)
+        requested_index = TRIP_PROGRESSION.index(req.status)
+        if requested_index <= current_index:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Trip cannot move from {trip.status.value} to {req.status.value}"
+            )
 
         trip.status = req.status
         if req.currentLat and req.currentLng:

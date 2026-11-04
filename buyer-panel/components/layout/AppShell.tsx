@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -11,10 +11,19 @@ import { LanguageModal } from '../buyer/LanguageModal';
 import { AuthModal } from '../buyer/AuthModal';
 import { ScrollToTopButton } from '../common/ScrollToTopButton';
 import { useAppContext } from '../../context/AppContext';
-import { COMMODITY_RATES } from '../../data/mockBuyerData';
+import { buyerApi } from '../../lib/api';
+import { CommodityRate } from '../../types/buyer';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const [rates, setRates] = useState<CommodityRate[]>([]);
+
+  useEffect(() => {
+    buyerApi
+      .getHome()
+      .then((data: any) => setRates(data?.rateTicker ?? []))
+      .catch(() => setRates([]));
+  }, []);
   const {
     location,
     setLocation,
@@ -60,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             }}
             cartCount={currentCart.length}
           />
-          <CommodityTicker rates={COMMODITY_RATES} />
+          <CommodityTicker rates={rates} />
         </div>
 
         <main className="flex-1 pt-[130px] sm:pt-[152px] lg:pt-[104px]">

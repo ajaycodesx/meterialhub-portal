@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  FaLayerGroup,
   FaPlus,
   FaPen,
+  FaTrashCan,
   FaCircleCheck,
   FaXmark,
-  FaSpinner
+  FaSpinner,
+  FaArrowUpFromBracket,
+  FaTriangleExclamation,
+  FaArrowLeft
 } from 'react-icons/fa6';
 import { adminApi } from '../../lib/api';
 import { Modal } from '../ui/Modal';
@@ -20,23 +22,27 @@ export const CategoriesSection: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [form, setForm] = useState<any>({
-    id: '',
-    title: '',
-    subtitle: '',
-    icon_name: 'FaBoxesStacked',
-    color_bg: 'bg-[#FF6500]',
-    item_count: 100,
-    trending_badge: '',
-    image: '/images/cement_aggregates.png',
-    subcategories: '',
-    featured_brands: ''
-  });
+  const [viewMode, setViewMode] = useState<'list' | 'add' | 'edit'>('list');
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<any | null>(null);
 
+  const [formTitle, setFormTitle] = useState('');
+  const [formImage, setFormImage] = useState('/images/cement_aggregates.png');
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getMediaUrl = (src: string) => {
+    if (!src) return '/images/cement_aggregates.png';
+    if (src.startsWith('/uploads')) {
+      const apiHost = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
+      return `${apiHost}${src}`;
+    }
+    return src;
+  };
 
   async function fetchCategories() {
     setLoading(true);
@@ -55,63 +61,72 @@ export const CategoriesSection: React.FC = () => {
     fetchCategories();
   }, []);
 
-  function openCreateModal() {
-    setIsEditing(false);
-    setForm({
-      id: '',
-      title: '',
-      subtitle: '',
-      icon_name: 'FaBoxesStacked',
-      color_bg: 'bg-[#FF6500]',
-      item_count: 50,
-      trending_badge: '',
-      image: '/images/cement_aggregates.png',
-      subcategories: '',
-      featured_brands: ''
-    });
-    setModalOpen(true);
+  function openCreateView() {
+    setEditingId(null);
+    setFormTitle('');
+    setFormImage('/images/cement_aggregates.png');
+    setError(null);
+    setViewMode('add');
   }
 
-  function openEditModal(cat: any) {
-    setIsEditing(true);
-    setForm({
-      id: cat.id,
-      title: cat.title,
-      subtitle: cat.subtitle,
-      icon_name: cat.iconName || 'FaBoxesStacked',
-      color_bg: cat.colorBg || 'bg-[#FF6500]',
-      item_count: cat.itemCount || 100,
-      trending_badge: cat.trendingBadge || '',
-      image: cat.image,
-      subcategories: (cat.subcategories || []).join(', '),
-      featured_brands: (cat.featuredBrands || []).join(', ')
-    });
-    setModalOpen(true);
+  function openEditView(cat: any) {
+    setEditingId(cat.id);
+    setFormTitle(cat.title || '');
+    setFormImage(cat.image || '/images/cement_aggregates.png');
+    setError(null);
+    setViewMode('edit');
+  }
+
+  function openDeleteModal(cat: any) {
+    setCategoryToDelete(cat);
+    setDeleteModalOpen(true);
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const res = await adminApi.uploadImage(file);
+      setFormImage(res.url);
+      setActionSuccess('Image uploaded successfully');
+      setTimeout(() => setActionSuccess(null), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Image upload failed');
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   }
 
   async function handleSubmit() {
+    if (!formTitle.trim()) {
+      setError('Category Name is required');
+      return;
+    }
+
     setSubmitting(true);
     try {
+      const derivedId = editingId || formTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
       const payload = {
-        id: form.id.trim().toLowerCase(),
-        title: form.title,
-        subtitle: form.subtitle,
-        icon_name: form.icon_name,
-        color_bg: form.color_bg,
-        item_count: Number(form.item_count),
-        trending_badge: form.trending_badge || null,
-        image: form.image,
-        subcategories: form.subcategories
-          ? form.subcategories.split(',').map((s: string) => s.trim()).filter(Boolean)
-          : [],
-        featured_brands: form.featured_brands
-          ? form.featured_brands.split(',').map((b: string) => b.trim()).filter(Boolean)
-          : []
+        id: derivedId,
+        title: formTitle.trim(),
+        subtitle: `Wholesale ${formTitle.trim()} Supplies`,
+        icon_name: 'FaBoxesStacked',
+        color_bg: 'bg-[#FF6500]',
+        item_count: 50,
+        trending_badge: null,
+        image: formImage || '/images/cement_aggregates.png',
+        subcategories: [],
+        featured_brands: []
       };
 
       await adminApi.saveCategory(payload);
-      setModalOpen(false);
-      setActionSuccess(`Category "${form.title}" saved successfully`);
+      setViewMode('list');
+      setActionSuccess(viewMode === 'edit' ? `Category "${formTitle}" updated` : `New category "${formTitle}" created`);
       fetchCategories();
       setTimeout(() => setActionSuccess(null), 4000);
     } catch (err: any) {
@@ -121,176 +136,231 @@ export const CategoriesSection: React.FC = () => {
     }
   }
 
+  async function handleDeleteConfirm() {
+    if (!categoryToDelete) return;
+
+    setSubmitting(true);
+    try {
+      await adminApi.deleteCategory(categoryToDelete.id);
+      setDeleteModalOpen(false);
+      setActionSuccess(`Category "${categoryToDelete.title}" removed`);
+      setCategoryToDelete(null);
+      fetchCategories();
+      setTimeout(() => setActionSuccess(null), 4000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete category');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {actionSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
+        <div className="p-3 bg-emerald-50 rounded-2xl flex items-center gap-2.5 text-xs font-medium text-emerald-800">
           <FaCircleCheck className="h-4 w-4 text-emerald-600 shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
+        <div className="p-3 bg-rose-50 rounded-2xl flex items-center justify-between text-xs font-medium text-rose-800">
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800">
+          <button onClick={() => setError(null)} className="text-rose-600 hover:text-rose-800 cursor-pointer">
             <FaXmark className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      <div className="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-        <div>
-          <h2 className="text-sm font-medium text-slate-900">Material Categories Taxonomy</h2>
-          <p className="text-xs text-slate-500">Configure marketplace taxonomy, subcategory chips, and brand linkages</p>
-        </div>
-        <Button size="sm" variant="primary" onClick={openCreateModal} icon={<FaPlus />}>
-          Add Category
-        </Button>
-      </div>
+      {viewMode === 'list' ? (
+        <div className="space-y-4">
+          <div className="p-4 bg-white rounded-2xl shadow-xs flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">Material Categories</h2>
+              <p className="text-xs text-slate-500 font-medium">Add and manage material categories available for vendor products</p>
+            </div>
+            <Button size="sm" variant="primary" onClick={openCreateView} icon={<FaPlus />}>
+              Add Category
+            </Button>
+          </div>
 
-      {loading && categories.length === 0 ? (
-        <div className="py-12 text-center text-slate-400">
-          <FaSpinner className="h-6 w-6 animate-spin mx-auto mb-2 text-[#FF6500]" />
-          <p className="text-xs font-medium">Loading categories...</p>
+          {loading && categories.length === 0 ? (
+            <div className="py-12 text-center text-slate-400">
+              <FaSpinner className="h-6 w-6 animate-spin mx-auto mb-2 text-[#FF6500]" />
+              <p className="text-xs font-medium">Loading categories...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categories.map((c) => (
+                <div
+                  key={c.id}
+                  className="bg-white rounded-2xl shadow-xs overflow-hidden flex flex-col"
+                >
+                  <div className="h-32 bg-slate-900 relative overflow-hidden">
+                    <img
+                      src={getMediaUrl(c.image)}
+                      alt={c.title}
+                      className="w-full h-full object-cover opacity-80"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                    <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+                      <div>
+                        <h3 className="text-base font-semibold text-white leading-tight">{c.title}</h3>
+                        <p className="text-[11px] text-slate-300 font-medium mt-0.5">{c.itemCount || 0} active materials</p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="bg-white/90 hover:bg-white text-xs h-7 px-2"
+                          onClick={() => openEditView(c)}
+                          icon={<FaPen className="h-2.5 w-2.5" />}
+                        >
+                          Edit
+                        </Button>
+                        <button
+                          type="button"
+                          onClick={() => openDeleteModal(c)}
+                          className="h-7 w-7 rounded-xl bg-white/90 hover:bg-rose-50 text-slate-600 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <FaTrashCan className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {categories.map((c) => (
-            <div
-              key={c.id}
-              className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col"
-            >
-              <div className="h-32 bg-slate-900 relative overflow-hidden">
-                {c.image && (
-                  <Image
-                    src={c.image}
-                    alt={c.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover opacity-80"
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
-                  <div>
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-orange-400">
-                      ID: {c.id}
-                    </span>
-                    <h3 className="text-base font-medium text-white mt-1 leading-tight">{c.title}</h3>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="bg-white/90 hover:bg-white text-xs h-7 px-2.5"
-                    onClick={() => openEditModal(c)}
-                    icon={<FaPen className="h-2.5 w-2.5" />}
-                  >
-                    Edit
-                  </Button>
-                </div>
+        <div className="space-y-4">
+          <div className="p-4 bg-white rounded-2xl shadow-xs flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setViewMode('list')}
+                icon={<FaArrowLeft className="h-3 w-3" />}
+              >
+                Back to Categories
+              </Button>
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900">
+                  {viewMode === 'edit' ? 'Edit Material Category' : 'Add Material Category'}
+                </h2>
+                <p className="text-xs text-slate-500 font-medium">
+                  {viewMode === 'edit'
+                    ? 'Update the material category name and display photo'
+                    : 'This category will be immediately available for vendors when adding products'}
+                </p>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setViewMode('list')}>
+                Cancel
+              </Button>
+              <Button variant="primary" size="sm" isLoading={submitting} onClick={handleSubmit}>
+                {viewMode === 'edit' ? 'Save Changes' : 'Create Category'}
+              </Button>
+            </div>
+          </div>
 
-              <div className="p-4 space-y-3 flex-1 flex flex-col justify-between text-xs">
-                <div>
-                  <p className="text-slate-600 font-medium">{c.subtitle}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{c.itemCount || 0} active materials indexed</p>
+          <div className="p-6 bg-white rounded-2xl shadow-xs max-w-2xl space-y-5">
+            <Input
+              label="Category Name"
+              value={formTitle}
+              onChange={(e) => setFormTitle(e.target.value)}
+              placeholder="e.g. Cement & Aggregates, TMT Steel Rods, PVC & Plumbing"
+              required
+            />
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-2">
+                Category Photo
+              </label>
+              <div className="flex items-start gap-4">
+                <div className="h-24 w-36 rounded-2xl bg-slate-100 overflow-hidden relative shrink-0 shadow-xs">
+                  <img
+                    src={getMediaUrl(formImage)}
+                    alt="Category Preview"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-
-                <div className="space-y-2 pt-2 border-t border-slate-100">
-                  <div>
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400 mb-1">
-                      Subcategories
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {(c.subcategories || []).map((sub: string) => (
-                        <span
-                          key={sub}
-                          className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-700"
-                        >
-                          {sub}
-                        </span>
-                      ))}
-                    </div>
+                <div className="flex-1 space-y-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="admin-category-photo-file"
+                  />
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="admin-category-photo-file"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer transition-colors"
+                    >
+                      {uploadingImage ? (
+                        <FaSpinner className="h-3 w-3 animate-spin text-[#FF6500]" />
+                      ) : (
+                        <FaArrowUpFromBracket className="h-3 w-3" />
+                      )}
+                      <span>{uploadingImage ? 'Uploading...' : 'Upload Category Photo'}</span>
+                    </label>
+                    <span className="text-[11px] text-slate-400 font-medium">PNG, JPG, WebP</span>
                   </div>
-
-                  <div>
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400 mb-1">
-                      Associated Brands
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {(c.featuredBrands || []).map((b: string) => (
-                        <span
-                          key={b}
-                          className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-white text-slate-700 border border-slate-200"
-                        >
-                          {b}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <Input
+                    value={formImage}
+                    onChange={(e) => setFormImage(e.target.value)}
+                    placeholder="/images/... or /uploads/..."
+                  />
                 </div>
               </div>
             </div>
-          ))}
+
+            <div className="flex items-center justify-end gap-2 pt-4">
+              <Button variant="outline" size="sm" onClick={() => setViewMode('list')}>
+                Cancel
+              </Button>
+              <Button variant="primary" size="sm" isLoading={submitting} onClick={handleSubmit}>
+                {viewMode === 'edit' ? 'Save Changes' : 'Create Category'}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
       <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={isEditing ? `Edit Category (${form.id})` : 'Create Material Category'}
-        subtitle="Manage category metadata, subcategory taxonomy and brands"
-        maxWidth="md"
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title="Delete Material Category"
+        subtitle="This action cannot be undone"
+        maxWidth="sm"
         footer={
           <div className="flex items-center justify-end gap-2 w-full">
-            <Button variant="outline" size="sm" onClick={() => setModalOpen(false)}>
+            <Button variant="outline" size="sm" onClick={() => setDeleteModalOpen(false)}>
               Cancel
             </Button>
-            <Button variant="primary" size="sm" isLoading={submitting} onClick={handleSubmit}>
-              Save Category
+            <Button
+              variant="danger"
+              size="sm"
+              isLoading={submitting}
+              onClick={handleDeleteConfirm}
+            >
+              Delete Category
             </Button>
           </div>
         }
       >
-        <div className="space-y-3 text-xs">
-          <Input
-            label="Category ID (slug)"
-            disabled={isEditing}
-            value={form.id}
-            onChange={(e) => setForm({ ...form, id: e.target.value })}
-            placeholder="e.g. cement, steel, roofing, timber"
-          />
-          <Input
-            label="Display Title"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="e.g. Cement & Aggregates"
-          />
-          <Input
-            label="Subtitle / Spec Summary"
-            value={form.subtitle}
-            onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-            placeholder="e.g. 53 Grade, PPC, M-Sand, Blue Metal"
-          />
-          <Input
-            label="Image Asset Path"
-            value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
-            placeholder="/images/cement_aggregates.png"
-          />
-          <Input
-            label="Subcategories (Comma-separated)"
-            value={form.subcategories}
-            onChange={(e) => setForm({ ...form, subcategories: e.target.value })}
-            placeholder="53 Grade OPC, PPC Water Shield, Plastering M-Sand"
-          />
-          <Input
-            label="Featured Brands (Comma-separated)"
-            value={form.featured_brands}
-            onChange={(e) => setForm({ ...form, featured_brands: e.target.value })}
-            placeholder="UltraTech, ACC Cement, Dalmia, Ramco"
-          />
+        <div className="text-xs space-y-3">
+          <div className="p-3 bg-rose-50 rounded-2xl flex items-center gap-2 text-rose-800">
+            <FaTriangleExclamation className="h-4 w-4 text-rose-600 shrink-0" />
+            <p className="font-medium">
+              Are you sure you want to delete{' '}
+              <span className="font-semibold">{categoryToDelete?.title}</span>?
+            </p>
+          </div>
         </div>
       </Modal>
     </div>

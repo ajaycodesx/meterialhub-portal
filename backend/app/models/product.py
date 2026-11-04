@@ -21,5 +21,7 @@ class Product(Base):
     weight_kg = Column(Float, default=50.0)
     stock_qty = Column(Integer, default=500)
     merchant_id = Column(String(50), ForeignKey("merchants.id"), nullable=True)
+    status = Column(String(20), default="approved", nullable=False, index=True)
+    rejection_reason = Column(String(500), nullable=True)
     
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

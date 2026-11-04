@@ -36,6 +36,10 @@ const TAB_TITLES: Record<AdminTab, { title: string; subtitle: string }> = {
     title: 'Merchant Governance & KYC',
     subtitle: 'Store roster, GSTIN verification status, store inventory status, and compliance'
   },
+  verifications: {
+    title: 'Vendor & Driver Approvals',
+    subtitle: 'Review applications, approve them, or reject them with a reason the applicant can see'
+  },
   boq: {
     title: 'BOQ Quotes & Bulk Procurement',
     subtitle: 'Contractor Bill of Quantities submissions, site specs, and material estimations'

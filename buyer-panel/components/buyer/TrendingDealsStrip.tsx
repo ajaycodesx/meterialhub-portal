@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { NoData } from '../common/NoData';
 import {
   FaClock,
   FaFire,
@@ -23,79 +24,6 @@ export interface Deal {
   badgeColor: string;
   expiresInSeconds: number;
 }
-
-const DEFAULT_DEALS: Deal[] = [
-  {
-    id: 'd1',
-    material: 'Aggregates 20mm Granite',
-    brand: 'Kakkanad Quarry Depo',
-    image: '/images/cement_aggregates.png',
-    originalRate: 95,
-    dealRate: 83,
-    unit: 'Ton',
-    discountPct: 13,
-    minOrder: '10 Tons Min.',
-    badge: 'Live Stock',
-    badgeColor: 'bg-slate-900',
-    expiresInSeconds: 14200,
-  },
-  {
-    id: 'd2',
-    material: 'Bricks & Fe550D TMT Steel',
-    brand: 'Tata Tiscon & JSW',
-    image: '/images/tmt_steel_rods.png',
-    originalRate: 54600,
-    dealRate: 48160,
-    unit: 'Ton',
-    discountPct: 12,
-    minOrder: '2 Tons Min.',
-    badge: 'Live Stock',
-    badgeColor: 'bg-[#FF6500]',
-    expiresInSeconds: 29400,
-  },
-  {
-    id: 'd3',
-    material: 'UltraTech Cement 53G Bags',
-    brand: 'UltraTech Cement',
-    image: '/images/cement_aggregates.png',
-    originalRate: 1530,
-    dealRate: 1350,
-    unit: 'Ton',
-    discountPct: 12,
-    minOrder: '50 Bags Min.',
-    badge: 'Depot Direct',
-    badgeColor: 'bg-emerald-600',
-    expiresInSeconds: 19800,
-  },
-  {
-    id: 'd4',
-    material: 'Solid Red Clay Wirecut Bricks',
-    brand: 'Kerala Clay Products',
-    image: '/images/hero_banner.png',
-    originalRate: 53,
-    dealRate: 46.9,
-    unit: 'Pc',
-    discountPct: 11,
-    minOrder: '1,000 Pcs Min.',
-    badge: 'Live Stock',
-    badgeColor: 'bg-slate-900',
-    expiresInSeconds: 43200,
-  },
-  {
-    id: 'd5',
-    material: 'Supreme SWR Drainage Pipe 110mm',
-    brand: 'Supreme Pipes',
-    image: '/images/pvc_plumbing_pipes.png',
-    originalRate: 1380,
-    dealRate: 1190,
-    unit: '6m Length',
-    discountPct: 14,
-    minOrder: '20 Lengths Min.',
-    badge: 'Flash Deal',
-    badgeColor: 'bg-[#FF6500]',
-    expiresInSeconds: 31200,
-  },
-];
 
 function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
   const [secs, setSecs] = useState(deal.expiresInSeconds);
@@ -184,8 +112,12 @@ function DealCard({ deal, onClick }: { deal: Deal; onClick: () => void }) {
   );
 }
 
-export function TrendingDealsStrip({ deals = DEFAULT_DEALS }: { deals?: Deal[] }) {
+export function TrendingDealsStrip({ deals = [] }: { deals?: Deal[] }) {
   const router = useRouter();
+
+  if (deals.length === 0) {
+    return <NoData title="No deals right now" description="Deals from verified stores appear here once approved." />;
+  }
 
   return (
     <section className="w-full bg-transparent">

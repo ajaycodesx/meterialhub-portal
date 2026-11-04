@@ -22,7 +22,7 @@ class ApiClient {
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
     if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('driver_access_token');
+      this.token = localStorage.getItem('driver_access_token') || localStorage.getItem('access_token');
     }
   }
 
@@ -31,40 +31,19 @@ class ApiClient {
     if (typeof window !== 'undefined') {
       if (token) {
         localStorage.setItem('driver_access_token', token);
+        localStorage.setItem('access_token', token);
       } else {
         localStorage.removeItem('driver_access_token');
+        localStorage.removeItem('access_token');
       }
     }
   }
 
   getToken(): string | null {
     if (typeof window !== 'undefined' && !this.token) {
-      this.token = localStorage.getItem('driver_access_token');
+      this.token = localStorage.getItem('driver_access_token') || localStorage.getItem('access_token');
     }
     return this.token;
-  }
-
-  private async ensureDriverToken(): Promise<string | null> {
-    if (this.isAuthenticating) return null;
-    this.isAuthenticating = true;
-    try {
-      const res = await fetch(`${this.baseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone_or_email: 'driver@materialhub.in', password: 'driver123' })
-      });
-      const data = await res.json().catch(() => ({}));
-      const newToken = data?.data?.access_token || data?.access_token;
-      if (newToken) {
-        this.setToken(newToken);
-        return newToken;
-      }
-    } catch {
-      return null;
-    } finally {
-      this.isAuthenticating = false;
-    }
-    return null;
   }
 
   private async request<T>(
@@ -72,11 +51,8 @@ class ApiClient {
     options: RequestInit = {},
     isRetry: boolean = false
   ): Promise<T> {
-    let token = this.getToken();
+    const token = this.getToken();
 
-    if (!token && !endpoint.includes('/auth/login') && !isRetry) {
-      token = await this.ensureDriverToken();
-    }
 
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
@@ -99,10 +75,6 @@ class ApiClient {
       if (!response.ok) {
         if ((response.status === 401 || response.status === 403) && !isRetry && !endpoint.includes('/auth/login')) {
           this.setToken(null);
-          const newToken = await this.ensureDriverToken();
-          if (newToken) {
-            return this.request<T>(endpoint, options, true);
-          }
         }
 
         const errorMsg = data?.detail || data?.message || 'Request failed';
@@ -181,8 +153,20 @@ export const driverApi = {
   reportException: (data: { tripId: string; exceptionType: string; description: string; photoEvidenceUrl?: string }) =>
     apiClient.post<any>('/driver/trips/exception', data),
 
-  updateLocation: (data: { tripId?: string; latitude: number; longitude: number; speedKmh?: number; heading?: number }) =>
-    apiClient.post<any>('/driver/location', data),
+  updateLocation: (data: {
+    tripId?: string;
+    latitude: number;
+    longitude: number;
+    speedKmh?: number | null;
+    heading?: number | null;
+  }) => apiClient.post<any>('/driver/location', data),
+
+
+  getOffers: () => apiClient.get<any[]>('/driver/offers'),
+
+  acceptOffer: (offerId: string) => apiClient.post<any>(`/driver/offers/${offerId}/accept`, {}),
+
+  declineOffer: (offerId: string) => apiClient.post<any>(`/driver/offers/${offerId}/decline`, {}),
 
   updateTripStatus: (data: {
     tripId: string;

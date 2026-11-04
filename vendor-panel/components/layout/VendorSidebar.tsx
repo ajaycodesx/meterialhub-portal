@@ -93,7 +93,7 @@ export const VendorSidebar: React.FC<VendorSidebarProps> = ({
   isOpenMobile,
   onCloseMobile,
   isWsConnected,
-  storeName = 'Kakkanad Building Supplies',
+  storeName = '',
   isOnline = true,
   onToggleOnline,
   onLogout

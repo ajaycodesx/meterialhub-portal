@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -42,8 +42,9 @@ import {
   FaRotateLeft
 } from 'react-icons/fa6';
 import { UserProfile, LocationState, HardwareMerchant } from '../../types/buyer';
-import { HARDWARE_MERCHANTS } from '../../data/mockBuyerData';
+import { buyerApi, apiClient } from '../../lib/api';
 import { Button } from '../ui/Button';
+import { NoData } from '../common/NoData';
 import { Input } from '../ui/Input';
 import { PageBanner } from './PageBanner';
 
@@ -65,22 +66,54 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
   onOpenStore
 }) => {
   const router = useRouter();
+  const [suppliers, setSuppliers] = useState<HardwareMerchant[]>([]);
+
+  useEffect(() => {
+    buyerApi
+      .getHome()
+      .then((data: any) => setSuppliers((data?.nearbyMerchants ?? []).slice(0, 3)))
+      .catch(() => setSuppliers([]));
+  }, []);
+
   const [isEditingUser, setIsEditingUser] = useState(false);
-  const [userName, setUserName] = useState(user.name || 'Ajay Kumar');
-  const [userPhone, setUserPhone] = useState(user.phone || '+91 98765 43210');
-  const [userEmail, setUserEmail] = useState(user.email || 'ajay.builder@materialhub.in');
+  const [userName, setUserName] = useState(user.name || '');
+  const [userPhone, setUserPhone] = useState(user.phone || '');
+  const [userEmail, setUserEmail] = useState(user.email || '');
   const [activeTab, setActiveTab] = useState<'sites' | 'orders' | 'payments' | 'wishlist' | 'settings'>('sites');
 
   const handleSaveUser = () => {
     setIsEditingUser(false);
   };
 
-  const RECENT_ORDERS_LIST = [
-    { id: 'MH-ORD-10432', date: '18 Oct 2026', items: 'Cement (50 Bags), TMT (5 Ton)', amount: '₹48,750', status: 'Delivered', statusColor: 'text-emerald-700 bg-emerald-50' },
-    { id: 'MH-ORD-10421', date: '16 Oct 2026', items: 'Steel Rods (3 Ton)', amount: '₹1,24,500', status: 'In Transit', statusColor: 'text-blue-700 bg-blue-50' },
-    { id: 'MH-ORD-10410', date: '12 Oct 2026', items: 'PVC Pipes (50 Nos)', amount: '₹32,800', status: 'Processing', statusColor: 'text-orange-700 bg-orange-50' },
-    { id: 'MH-ORD-10395', date: '10 Oct 2026', items: 'Paints (20 Ltr)', amount: '₹18,600', status: 'Delivered', statusColor: 'text-emerald-700 bg-emerald-50' },
-  ];
+  const STATUS_COLORS: Record<string, string> = {
+    delivered: 'text-emerald-600 font-medium',
+    out_for_delivery: 'text-blue-600 font-medium',
+    packing: 'text-[#FF6500] font-medium',
+    confirmed: 'text-slate-700 font-medium',
+    pending: 'text-slate-700 font-medium',
+    cancelled: 'text-rose-600 font-medium',
+    refunded: 'text-rose-600 font-medium',
+  };
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!apiClient.getToken()) return;
+    buyerApi
+      .getOrders()
+      .then((data: any) =>
+        setRecentOrders(
+          (data?.orders ?? []).map((o: any) => ({
+            id: o.invoiceNumber || o.orderId,
+            date: o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : 'No data',
+            items: o.totalWeightKg ? `${o.totalWeightKg} kg` : 'No data',
+            amount: o.grandTotal != null ? `₹${Number(o.grandTotal).toLocaleString('en-IN')}` : 'No data',
+            status: String(o.status).replace(/_/g, ' '),
+            statusColor: STATUS_COLORS[o.status] ?? 'text-slate-700 font-medium',
+          }))
+        )
+      )
+      .catch(() => setRecentOrders([]));
+  }, []);
 
   return (
     <div className="flex-1 bg-transparent">
@@ -94,7 +127,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         badge={
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
             <FaShieldHalved className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Verified Class-A Contractor</span>
+            <span>Buyer account</span>
           </span>
         }
         icon={
@@ -126,7 +159,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span className="flex items-center gap-1">
               <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
-              Primary Zone: <strong className="text-slate-800 font-medium">Kakkanad IT Zone</strong>
+              Primary Zone: <strong className="text-slate-800 font-medium">No data</strong>
             </span>
           </div>
         }
@@ -285,152 +318,19 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  
-                  <div className="bg-white p-5 rounded-3xl shadow-xs space-y-4 flex flex-col justify-between hover:shadow-md transition-all duration-300">
-                    <div className="space-y-3.5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <img
-                            src="/images/site_tower.jpg"
-                            alt="Kakkanad Commercial Tower"
-                            className="h-12 w-14 rounded-xl object-cover shrink-0 shadow-2xs"
-                          />
-                          <div className="min-w-0">
-                            <h3 className="font-medium text-sm sm:text-base text-slate-900 truncate">
-                              Kakkanad Commercial Tower
-                            </h3>
-                            <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
-                              Primary Default Site <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Zone 14
-                            </p>
-                          </div>
-                        </div>
-
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 shrink-0">
-                          <FaLocationDot className="h-2.5 w-2.5 text-emerald-600" />
-                          <span>GPS Pinned</span>
-                        </span>
+                  {user.savedAddresses && user.savedAddresses.length > 0 ? (
+                    user.savedAddresses.map((site: any) => (
+                      <div key={site.id} className="bg-white p-5 rounded-3xl shadow-xs space-y-2">
+                        <h3 className="font-medium text-sm sm:text-base text-slate-900">{site.label || 'Delivery site'}</h3>
+                        <p className="text-xs text-slate-600">{site.address || 'No data'}</p>
+                        <p className="text-[11px] text-slate-500">Pincode {site.pincode || 'No data'}</p>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-3 pt-1 text-[11px]">
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500]" /> Physical Address
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            Site #14, Kakkanad Zone, Kochi (682030)
-                          </p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaUser className="h-2.5 w-2.5 text-slate-500" /> Site Supervisor
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            Suresh Nair (+91 98765 43210)
-                          </p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaTruckFast className="h-2.5 w-2.5 text-slate-500" /> Truck Compatibility
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            12ft+ Standard Multi-Axle Ready
-                          </p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaClock className="h-2.5 w-2.5 text-slate-500" /> Unloading Time Window
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            08:00 AM - 01:00 PM
-                          </p>
-                        </div>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="md:col-span-2 bg-white rounded-3xl shadow-xs">
+                      <NoData title="No sites saved" description="Your delivery sites appear here once they are added to your account." />
                     </div>
-
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer">
-                      <span className="flex items-center gap-1.5">
-                        <FaPenToSquare className="h-3 w-3 text-slate-400" />
-                        Edit Delivery Protocol
-                      </span>
-                      <FaChevronRight className="h-3 w-3" />
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-5 rounded-3xl shadow-xs space-y-4 flex flex-col justify-between hover:shadow-md transition-all duration-300">
-                    <div className="space-y-3.5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <img
-                            src="/images/site_villa.jpg"
-                            alt="Palariyattom Residential Villa"
-                            className="h-12 w-14 rounded-xl object-cover shrink-0 shadow-2xs"
-                          />
-                          <div className="min-w-0">
-                            <h3 className="font-medium text-sm sm:text-base text-slate-900 truncate">
-                              Palariyattom Residential Villa
-                            </h3>
-                            <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
-                              Secondary Site <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Plot #402
-                            </p>
-                          </div>
-                        </div>
-
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 shrink-0">
-                          <span>Secondary Site</span>
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 pt-1 text-[11px]">
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaLocationDot className="h-2.5 w-2.5 text-[#FF6500]" /> Physical Address
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            Plot #402, Palariyattom, Kochi (682025)
-                          </p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaUser className="h-2.5 w-2.5 text-slate-500" /> Site Supervisor
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            Rajesh Menon (+91 94471 22334)
-                          </p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaTruckFast className="h-2.5 w-2.5 text-slate-500" /> Truck Compatibility
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            Narrow Road (&lt; 10ft Mini Truck)
-                          </p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <p className="text-slate-400 font-medium text-[10px] flex items-center gap-1">
-                            <FaClock className="h-2.5 w-2.5 text-slate-500" /> Unloading Time Window
-                          </p>
-                          <p className="text-slate-800 font-medium leading-snug">
-                            01:00 PM - 06:00 PM
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-700 hover:text-[#FF6500] transition-colors cursor-pointer">
-                      <span className="flex items-center gap-1.5">
-                        <FaPenToSquare className="h-3 w-3 text-slate-400" />
-                        Edit Delivery Protocol
-                      </span>
-                      <FaChevronRight className="h-3 w-3" />
-                    </div>
-                  </div>
-
+                  )}
                 </div>
 
                 <div className="bg-white p-4 sm:p-5 rounded-3xl shadow-xs grid grid-cols-2 lg:grid-cols-4 gap-4 items-center">
@@ -499,7 +399,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       </div>
 
                       <div className="divide-y divide-slate-100 pt-1 text-[11px]">
-                        {RECENT_ORDERS_LIST.map((ord) => (
+                        {recentOrders.map((ord) => (
                           <div
                             key={ord.id}
                             onClick={() => router.push('/tracking')}
@@ -732,7 +632,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                     </a>
 
                     <a
-                      href="https://wa.me/919876543210"
+                      href="#"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-3 rounded-2xl bg-slate-50/80 hover:bg-slate-100 flex items-center gap-3 transition-colors group cursor-pointer"
@@ -742,7 +642,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 uppercase font-medium">WhatsApp</p>
-                        <p className="font-medium text-slate-900">+91 98765 43210</p>
+                        <p className="font-medium text-slate-900">No data</p>
                       </div>
                     </a>
 
@@ -780,15 +680,15 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
               </div>
 
               <div className="divide-y divide-slate-100">
-                {RECENT_ORDERS_LIST.map((ord) => (
+                {recentOrders.map((ord) => (
                   <div key={ord.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 p-2 rounded-2xl transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2.5">
                         <span className="font-medium text-slate-900 text-sm">{ord.id}</span>
-                        <span className={`px-2.5 py-0.5 rounded-lg text-xs font-medium ${ord.statusColor}`}>{ord.status}</span>
+                        <span className={`text-xs ${ord.statusColor}`}>{ord.status}</span>
                       </div>
                       <p className="text-xs text-slate-600 font-medium">{ord.items}</p>
-                      <p className="text-[11px] text-slate-400">Placed on {ord.date} <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Unloading at Kakkanad Zone</p>
+                      <p className="text-[11px] text-slate-400">Placed on {ord.date} <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /></p>
                     </div>
                     <div className="flex items-center gap-3 self-end sm:self-center">
                       <span className="text-sm font-medium text-slate-900">{ord.amount}</span>
@@ -851,7 +751,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {HARDWARE_MERCHANTS.slice(0, 3).map((m) => (
+                {suppliers.map((m) => (
                   <div key={m.id} className="p-4 rounded-2xl bg-slate-50/80 space-y-3 flex flex-col justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">

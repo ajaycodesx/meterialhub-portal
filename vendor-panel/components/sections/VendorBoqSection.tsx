@@ -117,7 +117,7 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
                     </h3>
                     <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-1">
                       <FaLocationDot className="h-3 w-3 text-slate-400 shrink-0" />
-                      <span>{q.deliveryAddress || 'SmartCity Project Site, Kakkanad'}</span>
+                      <span>{q.deliveryAddress || 'No data'}</span>
                     </p>
                   </div>
 
@@ -199,7 +199,7 @@ export const VendorBoqSection: React.FC<VendorBoqSectionProps> = ({
           <div className="space-y-4 text-xs">
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
               <span className="font-medium text-slate-900">Project Location: </span>
-              <p className="text-slate-600">{selectedQuote.deliveryAddress || 'Kakkanad Site'}</p>
+              <p className="text-slate-600">{selectedQuote.deliveryAddress || 'No data'}</p>
             </div>
 
             <Input

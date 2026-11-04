@@ -3,8 +3,6 @@
 # Complete production stack with Nginx, PostgreSQL, Redis, and 4 Frontend Panels
 # ==============================================================================
 
-version: '3.8'
-
 services:
   # ----------------------------------------------------------------------------
   # PostgreSQL Database (Internal only, not exposed publicly)
@@ -97,6 +95,8 @@ services:
       SENTRY_TRACES_SAMPLE_RATE: "0.1"
     expose:
       - "8000"
+    volumes:
+      - prod_backend_uploads:/app/uploads
     networks:
       - materialhub_prod_net
     healthcheck:
@@ -219,6 +219,8 @@ volumes:
     name: materialhub_prod_pg_data
   prod_redis_data:
     name: materialhub_prod_redis_data
+  prod_backend_uploads:
+    name: materialhub_prod_uploads
   nginx_logs:
     name: materialhub_nginx_logs
 

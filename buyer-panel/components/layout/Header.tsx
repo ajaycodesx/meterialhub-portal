@@ -102,7 +102,7 @@ export const Header: React.FC<HeaderProps> = ({
                 Inline Delivery Site
               </div>
               <div className="text-xs font-medium text-white truncate max-w-[150px]">
-                {location.address ? `${location.address.split(',')[0]}, 20km` : 'Site #14, Kakkanad, 20km'}
+                {location.address ? location.address.split(',')[0] : 'Set your site location'}
               </div>
             </div>
             <FaChevronDown className="h-2.5 w-2.5 text-slate-400 shrink-0 ml-0.5" />
@@ -154,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-700 shrink-0 ring-1 ring-slate-600/60">
                     <img
                       src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
-                      alt={user.isLoggedIn ? user.name : 'Ajay Kumar'}
+                      alt={user.isLoggedIn ? user.name : 'Sign in'}
                       className="h-full w-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/images/logo.png';
@@ -164,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="hidden md:flex items-center gap-2">
                     <div className="text-left leading-tight">
                       <div className="text-sm font-medium text-white tracking-tight">
-                        {user.isLoggedIn ? user.name : 'Ajay Kumar'}
+                        {user.isLoggedIn ? user.name : 'Sign in'}
                       </div>
                       <div className="text-xs text-slate-400 font-normal mt-0.5">
                         (Contractor)
@@ -176,8 +176,8 @@ export const Header: React.FC<HeaderProps> = ({
               }
             >
               <div className="px-4 py-2.5 border-b border-slate-100">
-                <p className="text-xs font-medium text-slate-900">{user.isLoggedIn ? user.name : 'Ajay Kumar'}</p>
-                <p className="text-xs text-slate-500 font-normal">{user.phone || '+91 98470 12345'}</p>
+                <p className="text-xs font-medium text-slate-900">{user.isLoggedIn ? user.name : 'Sign in'}</p>
+                <p className="text-xs text-slate-500 font-normal">{user.phone || 'No data'}</p>
               </div>
               <div className="py-1">
                 <Link 

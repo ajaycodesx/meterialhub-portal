@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
 import { CheckoutPage } from '../../components/buyer/CheckoutPage';
-import { HARDWARE_MERCHANTS } from '../../data/mockBuyerData';
+import { NoStoreSelected } from '../../components/buyer/NoStoreSelected';
 
 export default function CheckoutPageRoute() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function CheckoutPageRoute() {
     setPlacedOrderId,
   } = useAppContext();
 
-  const merchant = selectedMerchant || HARDWARE_MERCHANTS[0];
+  const merchant = selectedMerchant;
 
   const vehicle = selectedVehicle || {
     id: 'pickup_truck',
@@ -27,6 +27,8 @@ export default function CheckoutPageRoute() {
     image: '/images/pickup_truck.jpg',
     description: 'Ideal for medium loads up to 3.5 Tons.',
   };
+
+  if (!merchant) return <NoStoreSelected message="Choose a store before checking out." />;
 
   const handleOrderSuccess = (orderId: string) => {
     setPlacedOrderId(orderId);

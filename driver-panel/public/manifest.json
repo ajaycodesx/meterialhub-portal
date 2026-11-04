@@ -1,0 +1,23 @@
+{
+  "name": "MaterialHub Driver Dispatch",
+  "short_name": "MH Driver",
+  "description": "Carrier and logistics dispatch app for MaterialHub verified commercial drivers",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+

@@ -93,7 +93,7 @@ class ConnectionManager:
             Number of users the message was sent to
         """
         sent_count = 0
-        for user_id, connections in self.active_connections.items():
+        for user_id in self.active_connections:
             sent = await self.send_personal_message(message, user_id)
             if sent:
                 sent_count += 1
@@ -155,6 +155,7 @@ class EventType:
     DELIVERY_VERIFICATION = "delivery_verification"
     PAYMENT_STATUS = "payment_status"
     SYSTEM_ALERT = "system_alert"
+    DISPATCH_OFFER = "dispatch_offer"
 
 
 async def send_order_update(user_id: str, order_id: str, status: str) -> bool:
@@ -177,30 +178,6 @@ async def send_order_update(user_id: str, order_id: str, status: str) -> bool:
         }
     }
     return await manager.send_personal_message(message, user_id)
-
-
-async def send_driver_location_update(order_id: str, driver_id: str, location: dict) -> bool:
-    """Send driver location update to order user.
-
-    Args:
-        order_id: Order ID
-        driver_id: Driver ID
-        location: Location dict with lat, lng
-
-    Returns:
-        True if sent successfully
-    """
-    message = {
-        "event": EventType.DRIVER_LOCATION_UPDATE,
-        "data": {
-            "order_id": order_id,
-            "driver_id": driver_id,
-            "location": location,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        }
-    }
-    logger.info(f"Driver location update: order_id={order_id}, driver_id={driver_id}, location={location}")
-    return True
 
 
 async def send_trip_status_update(driver_id: str, trip_id: str, status: str) -> bool:

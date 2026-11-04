@@ -1,6 +1,12 @@
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
+from typing import List, Optional, Dict, Any, Literal
+from pydantic import BaseModel, Field
 from app.models.order import OrderStatus
+
+# Upper bound on a single line item. Keeps a client from requesting absurd
+# quantities that would distort tonnage-based truck selection and stock checks.
+MAX_LINE_QUANTITY = 10000
+
+PaymentMode = Literal["Cash on Unloading", "Wholesale B2B Credit", "Online Payment (Razorpay)"]
 
 
 class CommodityRateSchema(BaseModel):
@@ -48,17 +54,17 @@ class MerchantSchema(BaseModel):
     ownerName: str
     phone: str
     verified: bool
-    rating: float
-    reviewsCount: int
-    distanceKm: float
-    deliveryEtaMinutes: int
-    minOrderValue: int
+    rating: Optional[float] = None
+    reviewsCount: int = 0
+    distanceKm: Optional[float] = None
+    deliveryEtaMinutes: Optional[int] = None
+    minOrderValue: Optional[int] = None
     brands: List[str] = []
-    mainCategory: str
+    mainCategory: Optional[str] = None
     address: str
     pincode: str
     isOnline: bool
-    avatarUrl: str
+    avatarUrl: Optional[str] = None
 
 
 class ProductSchema(BaseModel):
@@ -99,7 +105,7 @@ class BuyerCatalogCompositeResponse(BaseModel):
 
 class CartItemInput(BaseModel):
     productId: str
-    quantity: int
+    quantity: int = Field(..., gt=0, le=MAX_LINE_QUANTITY)
 
 
 class OrderCalculationRequest(BaseModel):
@@ -134,7 +140,10 @@ class OrderCreateRequest(BaseModel):
     deliveryAddress: str
     pincode: str
     siteConstraints: SiteConstraintsInput
-    paymentMode: str = "Cash on Unloading"
+    paymentMode: PaymentMode = "Cash on Unloading"
+    # Pin the site on the map so the driver can be routed to it. Optional.
+    deliveryLatitude: Optional[float] = Field(None, ge=-90, le=90)
+    deliveryLongitude: Optional[float] = Field(None, ge=-180, le=180)
 
 
 class OrderDetailResponse(BaseModel):

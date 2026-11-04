@@ -17,6 +17,7 @@ FaBoxesStacked,
 FaCheck
 } from 'react-icons/fa6';
 import { HardwareMerchant, Product, CartItem } from '../../types/buyer';
+import { getMediaUrl } from '../../lib/api';
 import { Button } from '../ui/Button';
 import { Select, SelectOption } from '../ui/Select';
 import { useAppContext } from '../../context/AppContext';
@@ -447,7 +448,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         <div>
                           <div className="relative h-40 w-full rounded-2xl bg-slate-100 overflow-hidden mb-3">
                             <img
-                              src={product.image}
+                              src={getMediaUrl(product.image)}
                               alt={product.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />

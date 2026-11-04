@@ -5,9 +5,12 @@ from pydantic import BaseModel, Field
 
 
 class PaymentOrderRequest(BaseModel):
-    """Request to create a payment order for an existing MaterialHub order."""
+    """Request to create a payment order for an existing MaterialHub order.
+
+    The amount is deliberately not accepted from the client: it is always
+    derived from the stored order total on the server.
+    """
     order_id: str = Field(..., description="MaterialHub order ID")
-    amount: float = Field(..., gt=0, description="Amount in smallest currency unit (paise for INR)")
     currency: str = Field(default="INR", description="Currency code")
     receipt: Optional[str] = Field(None, description="Optional receipt identifier")
     context: Optional[Dict[str, Any]] = Field(None, description="Optional metadata context")

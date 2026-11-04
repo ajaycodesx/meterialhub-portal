@@ -44,39 +44,13 @@ class ApiClient {
     return this.token;
   }
 
-  private async ensureVendorToken(): Promise<string | null> {
-    if (this.isAuthenticating) return null;
-    this.isAuthenticating = true;
-    try {
-      const res = await fetch(`${this.baseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone_or_email: 'vendor@materialhub.in', password: 'vendor123' })
-      });
-      const data = await res.json().catch(() => ({}));
-      const newToken = data?.data?.access_token || data?.access_token;
-      if (newToken) {
-        this.setToken(newToken);
-        return newToken;
-      }
-    } catch {
-      return null;
-    } finally {
-      this.isAuthenticating = false;
-    }
-    return null;
-  }
-
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
     isRetry: boolean = false
   ): Promise<T> {
-    let token = this.getToken();
+    const token = this.getToken();
 
-    if (!token && !endpoint.includes('/auth/login') && !isRetry) {
-      token = await this.ensureVendorToken();
-    }
 
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
@@ -99,10 +73,6 @@ class ApiClient {
       if (!response.ok) {
         if ((response.status === 401 || response.status === 403) && !isRetry && !endpoint.includes('/auth/login')) {
           this.setToken(null);
-          const newToken = await this.ensureVendorToken();
-          if (newToken) {
-            return this.request<T>(endpoint, options, true);
-          }
         }
 
         const errorMsg = data?.detail || data?.message || 'Request failed';
@@ -141,6 +111,26 @@ class ApiClient {
 
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
+  }
+
+  async upload(file: File): Promise<{ url: string; filename: string }> {
+    const token = this.getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const res = await fetch(`${this.baseUrl}/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new ApiError(res.status, data?.message || 'File upload failed');
+    }
+    return data.data;
   }
 }
 
@@ -191,6 +181,10 @@ export const vendorApi = {
     const qs = query.toString();
     return apiClient.get<any>(`/vendor/products${qs ? `?${qs}` : ''}`);
   },
+
+  getCategories: () => apiClient.get<any[]>('/vendor/categories'),
+
+  uploadImage: (file: File) => apiClient.upload(file),
 
   createProduct: (data: any) => apiClient.post<any>('/vendor/products', data),
 

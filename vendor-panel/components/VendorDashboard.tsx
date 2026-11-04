@@ -40,6 +40,8 @@ function resolveTabFromPath(path: string | null): VendorTab {
   return validTabs.includes(clean as VendorTab) ? (clean as VendorTab) : 'overview';
 }
 
+import { SignInView } from './SignInView';
+
 export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {}) {
   const router = useRouter();
   const pathname = usePathname();
@@ -100,15 +102,14 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
     }
   }
 
+  const [needsSignIn, setNeedsSignIn] = useState(false);
+
   const loadAllData = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsRefreshing(true);
     try {
-      let token = apiClient.getToken();
-      if (!token) {
-        const auth: any = await authApi.login('vendor@materialhub.in', 'vendor123');
-        if (auth?.access_token) {
-          apiClient.setToken(auth.access_token);
-        }
+      if (!apiClient.getToken()) {
+        setNeedsSignIn(true);
+        return;
       }
 
       const results = await Promise.allSettled([
@@ -126,7 +127,7 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
         (r) => r.status === 'rejected' && ((r.reason as any)?.status === 401 || (r.reason as any)?.status === 403)
       );
 
-      let [
+      const [
         dashRes,
         ordersRes,
         prodRes,
@@ -137,32 +138,6 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
         profRes
       ] = results;
 
-      if (isAuthError) {
-        const auth: any = await authApi.login('vendor@materialhub.in', 'vendor123');
-        if (auth?.access_token) {
-          apiClient.setToken(auth.access_token);
-          const retriedResults = await Promise.allSettled([
-            vendorApi.getDashboard(),
-            vendorApi.getOrders(),
-            vendorApi.getProducts(),
-            vendorApi.getBoqQuotes(),
-            vendorApi.getCommodityRates(),
-            vendorApi.getDeals(),
-            vendorApi.getSettlements(),
-            vendorApi.getProfile()
-          ]);
-          [
-            dashRes,
-            ordersRes,
-            prodRes,
-            quotesRes,
-            ratesRes,
-            dealsRes,
-            settleRes,
-            profRes
-          ] = retriedResults;
-        }
-      }
 
       if (dashRes.status === 'fulfilled') setDashboardData(dashRes.value);
       if (ordersRes.status === 'fulfilled') {
@@ -205,7 +180,8 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
 
     function setupWs() {
       if (typeof window === 'undefined') return;
-      const token = localStorage.getItem('access_token') || 'u_vendor_1';
+      const token = apiClient.getToken();
+      if (!token) return;
       const wsUrl =
         process.env.NEXT_PUBLIC_WS_URL ||
         `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
@@ -228,8 +204,9 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
           } catch (e) {
           }
         };
-        socket.onclose = () => {
+        socket.onclose = (event) => {
           setIsWsConnected(false);
+          if (event.code === 4001) return;
           reconnectTimer = setTimeout(setupWs, 3000);
         };
         socket.onerror = () => setIsWsConnected(false);
@@ -421,6 +398,16 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
     }
   }
 
+  if (needsSignIn) {
+    return (
+      <SignInView
+        panelName="Vendor"
+        expectedRole="vendor"
+        onSignedIn={() => { setNeedsSignIn(false); loadAllData(); }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row w-full relative">
       <VendorSidebar
@@ -432,11 +419,12 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
         isOpenMobile={isMobileOpen}
         onCloseMobile={() => setIsMobileOpen(false)}
         isWsConnected={isWsConnected}
-        storeName={profile?.name || dashboardData?.storeName || 'Kakkanad Building Supplies'}
+        storeName={profile?.name || dashboardData?.storeName || 'No data'}
         isOnline={profile?.isOnline ?? dashboardData?.isOnline ?? true}
         onToggleOnline={handleToggleOnline}
         onLogout={() => {
           if (typeof window !== 'undefined') {
+            localStorage.removeItem('vendor_access_token');
             localStorage.removeItem('access_token');
             window.location.reload();
           }
@@ -455,6 +443,26 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
         />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 w-full space-y-6">
+          {profile && profile.verificationStatus !== 'approved' && (
+            <div
+              className={`p-4 rounded-2xl border text-sm ${
+                profile.verificationStatus === 'rejected'
+                  ? 'bg-rose-50 border-rose-200 text-rose-800'
+                  : 'bg-amber-50 border-amber-200 text-amber-900'
+              }`}
+            >
+              <p className="font-medium">
+                {profile.verificationStatus === 'rejected'
+                  ? 'Your store application was rejected'
+                  : 'Your store is awaiting admin verification'}
+              </p>
+              <p className="text-xs mt-1">
+                {profile.verificationStatus === 'rejected'
+                  ? `Reason: ${profile.verificationReason || 'No reason given. Contact MaterialHub operations.'}`
+                  : 'You can prepare your catalogue now. Buyers see your store and products once an admin approves it.'}
+              </p>
+            </div>
+          )}
           {newOrderAlert && (
             <div className="p-4 rounded-2xl bg-[#FF6500] text-white shadow-md flex items-center justify-between animate-in fade-in">
               <div className="flex items-center gap-3">

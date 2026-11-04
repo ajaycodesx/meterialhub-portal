@@ -1,17 +1,9 @@
 import pytest
 import asyncpg
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import select, text
-from alembic import command
-from alembic.config import Config
 
 from app.models.user import User, UserRole
-from app.models.merchant import HardwareMerchant
-from app.models.category import MaterialCategory
-from app.models.product import Product
-from app.models.order import Order, OrderItem, OrderStatus
-from app.models.delivery import DeliveryTrip, TripStatus
-from app.db.seed_data import seed_demo_data
+from app.models.order import Order
 
 import socket
 

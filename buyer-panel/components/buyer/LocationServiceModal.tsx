@@ -63,7 +63,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
       const updated: LocationState = {
         ...locationState,
         pinCode,
-        address: serviceable ? `Site #${pinCode}, Kakkanad Zone` : `Location #${pinCode}`,
+        address: serviceable ? `Pincode ${pinCode}` : `Pincode ${pinCode} (outside service area)`,
         isServiceable: serviceable,
         distanceKm: serviceable ? 8.5 : 34.2,
       };
@@ -311,7 +311,7 @@ export const LocationServiceModal: React.FC<LocationServiceModalProps> = ({
                 <div className="h-10 w-10 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center mx-auto mb-2 shadow-xs">
                   <FaLocationDot className="h-4 w-4" />
                 </div>
-                <h4 className="text-xs font-medium text-white">Pin Dropped: Site #402</h4>
+                <h4 className="text-xs font-medium text-white">Pin dropped</h4>
                 <p className="text-[11px] text-slate-400 font-normal mt-0.5">Lat: 10.0124 | Lng: 76.3150</p>
               </div>
             </div>

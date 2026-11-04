@@ -181,7 +181,7 @@ async def prepare_staging_fixtures():
         }
 
 
-from app.core.rate_limit import limiter
+from app.core.rate_limit import limiter  # noqa: E402
 
 @pytest.mark.asyncio
 async def test_full_business_workflow():

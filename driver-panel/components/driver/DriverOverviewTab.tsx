@@ -46,6 +46,11 @@ export function DriverOverviewTab({
   onVerifyOtp,
   onUpdateStatus,
 }: DriverOverviewTabProps) {
+  const [inlineOtp, setInlineOtp] = useState('');
+  const [otpSubmitting, setOtpSubmitting] = useState(false);
+  const [stepLoading, setStepLoading] = useState(false);
+  const [togglingOnline, setTogglingOnline] = useState(false);
+
   if (loading && !activeTrip) {
     return (
       <div className="space-y-6 animate-pulse">
@@ -58,11 +63,6 @@ export function DriverOverviewTab({
       </div>
     );
   }
-
-  const [inlineOtp, setInlineOtp] = useState('');
-  const [otpSubmitting, setOtpSubmitting] = useState(false);
-  const [stepLoading, setStepLoading] = useState(false);
-  const [togglingOnline, setTogglingOnline] = useState(false);
 
   async function handleToggleStatus() {
     try {
@@ -78,7 +78,8 @@ export function DriverOverviewTab({
     if (!inlineOtp.trim()) return;
     try {
       setOtpSubmitting(true);
-      const tripId = activeTrip?.tripId || activeTrip?.id || 'trip_5501';
+      const tripId = activeTrip?.tripId || activeTrip?.id;
+      if (!tripId) return;
       await onVerifyOtp(tripId, inlineOtp.trim());
       setInlineOtp('');
     } finally {
@@ -90,12 +91,12 @@ export function DriverOverviewTab({
     ? activeTrip.orderId.startsWith('ord_')
       ? `MH-${activeTrip.orderId.slice(4, 8).toUpperCase()}`
       : activeTrip.orderId
-    : 'MH-2051';
+    : 'No data';
 
-  const vendorName = activeTrip?.pickupAddress?.split(',')[0] || 'BuildPro Materials';
-  const vendorAddress = activeTrip?.pickupAddress || 'Industrial Estate Road, Kalamassery';
-  const buyerName = activeTrip?.dropAddress?.split(',')[0] || 'Anjali Traders';
-  const buyerAddress = activeTrip?.dropAddress || 'Market Road, Edappally';
+  const vendorName = activeTrip?.pickupAddress?.split(',')[0] || 'No data';
+  const vendorAddress = activeTrip?.pickupAddress || '';
+  const buyerName = activeTrip?.dropAddress?.split(',')[0] || 'No data';
+  const buyerAddress = activeTrip?.dropAddress || '';
   const fareDisplay = activeTrip?.tripFare
     ? `₹${Math.round(activeTrip.tripFare).toLocaleString('en-IN')}`
     : '₹12,400';
@@ -420,7 +421,7 @@ export function DriverOverviewTab({
                     <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
                       <button
                         type="button"
-                        onClick={() => onRequestOtp(activeTrip?.tripId || 'trip_5501')}
+                        onClick={() => onRequestOtp(activeTrip?.tripId ?? '')}
                         className="font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <FaKey className="h-3 w-3 text-slate-400" />
@@ -470,22 +471,20 @@ export function DriverOverviewTab({
               </span>
             </div>
 
-            <div className="relative w-full h-40 bg-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between p-3.5">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:12px_12px]" />
-              <div className="relative flex items-center justify-between text-white text-xs">
-                <span className="font-medium">Kalamassery to Edappally</span>
-                <span className="font-mono text-[11px] text-slate-300">32 km/h</span>
-              </div>
-
-              <div className="relative text-center">
-                <div className="inline-flex p-2.5 rounded-xl bg-[#FF6500] text-white shadow-md">
-                  <FaLocationArrow className="h-4 w-4" />
+            <div className="w-full rounded-2xl bg-slate-50 border border-slate-200/80 p-4 space-y-3">
+              <div className="flex items-start gap-2.5 text-xs">
+                <FaLocationDot className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-slate-500">Pickup</p>
+                  <p className="font-medium text-slate-900">{activeTrip?.pickupAddress || 'No data'}</p>
                 </div>
               </div>
-
-              <div className="relative flex items-center justify-between text-[11px] text-slate-300">
-                <span>Heavy Commercial Route</span>
-                <span>4.5m Clearance</span>
+              <div className="flex items-start gap-2.5 text-xs">
+                <FaLocationDot className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-slate-500">Drop</p>
+                  <p className="font-medium text-slate-900">{activeTrip?.dropAddress || 'No data'}</p>
+                </div>
               </div>
             </div>
 
@@ -516,7 +515,7 @@ export function DriverOverviewTab({
                 ₹6,850.00
               </span>
               <span className="text-xs text-slate-500 font-medium">
-                12 loads completed · Next payout Tuesday
+                {completedCount} loads completed
               </span>
             </div>
           </div>

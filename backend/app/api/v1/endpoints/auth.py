@@ -155,16 +155,13 @@ async def onboard_vendor(
         email=req.email,
         address=req.address,
         pincode=req.pincode,
-        verified=True,
-        rating=5.0,
-        reviews_count=1,
-        distance_km=2.5,
-        delivery_eta_minutes=45,
-        min_order_value=3000,
-        main_category=req.main_category or "All Hardware & Building Materials",
-        brands=["UltraTech", "Tata Tiscon", "Supreme", "Finolex"],
-        is_online=True,
-        gstin=req.gstin or "32AAACH7409R1ZZ",
+        # Stores are hidden from buyers until an admin verifies the business.
+        verified=False,
+        reviews_count=0,
+        main_category=req.main_category,
+        brands=[],
+        is_online=False,
+        gstin=req.gstin,
         wallet_balance=0.0
     )
     db.add(new_merchant)
@@ -179,7 +176,8 @@ async def onboard_vendor(
         role=UserRole.VENDOR,
         merchant_id=merchant_id,
         is_active=True,
-        is_verified=True
+        # Self-registered vendors cannot operate until an admin verifies them.
+        is_verified=False
     )
     db.add(new_user)
     await db.commit()
@@ -225,7 +223,8 @@ async def onboard_driver(
         vehicle_type=req.vehicle_type,
         driver_license=req.driver_license,
         is_active=True,
-        is_verified=True
+        # Self-registered drivers cannot claim trips until an admin verifies licence and vehicle.
+        is_verified=False
     )
     db.add(new_user)
     await db.commit()

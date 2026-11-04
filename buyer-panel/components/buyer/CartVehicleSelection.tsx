@@ -21,6 +21,7 @@ import {
   FaPhone
 } from 'react-icons/fa6';
 import { HardwareMerchant, CartItem } from '../../types/buyer';
+import { getMediaUrl } from '../../lib/api';
 import { Button } from '../ui/Button';
 import { useAppContext } from '../../context/AppContext';
 import { PageBanner } from './PageBanner';
@@ -221,7 +222,7 @@ export const CartVehicleSelection: React.FC<CartVehicleSelectionProps> = ({
                           <div className="flex items-center gap-3.5 min-w-0">
                             <div className="h-16 w-16 rounded-2xl bg-white p-1 shrink-0 overflow-hidden shadow-2xs border border-slate-100">
                               <img
-                                src={product.image || '/images/products/cement_bag.jpg'}
+                                src={getMediaUrl(product.image || '/images/products/cement_bag.jpg')}
                                 alt={product.title}
                                 className="w-full h-full object-cover rounded-xl"
                               />

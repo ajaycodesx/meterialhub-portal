@@ -127,53 +127,55 @@ async def get_buyer_order_tracking(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    from app.models.delivery import DeliveryTrip
+    from app.models.delivery import DeliveryTrip, TripStatus
+    from app.models.merchant import HardwareMerchant
+    from app.models.dispatch import DispatchOffer
+    from app.services.dispatch_service import haversine_km
     from app.services.otp_service import otp_service
 
-    order_res = await db.execute(
-        select(Order).where(Order.id == order_id)
-    )
-    order = order_res.scalar_one_or_none()
-    if not order:
-        seeded_order_res = await db.execute(
-            select(Order).where(Order.id == "ord_98241")
-        )
-        order = seeded_order_res.scalar_one_or_none()
-        if not order:
-            raise HTTPException(status_code=404, detail="Order not found")
+    order = (await db.execute(select(Order).where(Order.id == order_id))).scalars().first()
+    # 404 for other buyers' orders so their existence is not disclosed.
+    if not order or order.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Order not found")
 
-    trip_res = await db.execute(
-        select(DeliveryTrip).where(DeliveryTrip.order_id == order.id)
-    )
-    trip = trip_res.scalar_one_or_none()
+    trip = (await db.execute(select(DeliveryTrip).where(DeliveryTrip.order_id == order.id))).scalars().first()
+    store = (await db.execute(select(HardwareMerchant).where(HardwareMerchant.id == order.merchant_id))).scalars().first()
 
     driver_info = None
+    driver_location = None
+    eta_minutes = None
+    distance_to_drop_km = None
     if trip and trip.driver_id:
-        driver_res = await db.execute(
-            select(User).where(User.id == trip.driver_id)
-        )
-        driver = driver_res.scalar_one_or_none()
+        driver = (await db.execute(select(User).where(User.id == trip.driver_id))).scalars().first()
         if driver:
             driver_info = {
                 "id": driver.id,
                 "name": driver.name,
                 "phone": driver.phone,
-                "vehicleType": driver.vehicle_type or trip.vehicle_type,
-                "regNumber": trip.vehicle_reg_number
+                "vehicleType": trip.vehicle_type or driver.vehicle_type,
+                "regNumber": trip.vehicle_reg_number or driver.vehicle_reg_number,
             }
+        gps = trip.current_gps or {}
+        if gps.get("lat") is not None and gps.get("lng") is not None:
+            driver_location = {"lat": gps["lat"], "lng": gps["lng"], "updatedAt": gps.get("timestamp")}
+            # Before the load is picked up the driver is heading to the store; after, to the site.
+            if trip.status in (TripStatus.ASSIGNED, TripStatus.ACCEPTED, TripStatus.ARRIVED_AT_STORE):
+                target_lat, target_lng = trip.pickup_lat, trip.pickup_lng
+            else:
+                target_lat, target_lng = trip.drop_lat, trip.drop_lng
+            if target_lat is not None and target_lng is not None:
+                distance_to_drop_km = round(haversine_km(gps["lat"], gps["lng"], target_lat, target_lng), 2)
+                # Average 25 km/h with a 1.3 road factor over straight-line distance.
+                eta_minutes = max(1, round(distance_to_drop_km * 1.3 / 25 * 60))
 
     stored_otp_data = await otp_service.get_stored_otp(f"delivery_{order.id}")
     active_otp = stored_otp_data.get("otp") if stored_otp_data else None
 
-    trip_dict = None
-    if trip:
-        trip_dict = {
-            "tripId": trip.id,
-            "status": trip.status.value if hasattr(trip.status, "value") else str(trip.status),
-            "distanceKm": trip.distance_km,
-            "currentGps": trip.current_gps,
-            "driver": driver_info
-        }
+    pending_offers = 0
+    if trip and trip.driver_id is None:
+        pending_offers = len((await db.execute(
+            select(DispatchOffer.id).where(DispatchOffer.trip_id == trip.id, DispatchOffer.status == "offered")
+        )).all())
 
     return ApiResponse(
         data={
@@ -182,9 +184,27 @@ async def get_buyer_order_tracking(
             "grandTotal": order.grand_total,
             "deliveryAddress": order.delivery_address,
             "invoiceNumber": order.invoice_number,
-            "trip": trip_dict,
-            "verificationOtp": active_otp
+            "store": {
+                "name": store.name if store else None,
+                "address": store.address if store else None,
+                "phone": store.phone if store else None,
+                "lat": store.latitude if store else None,
+                "lng": store.longitude if store else None,
+            },
+            "trip": {
+                "tripId": trip.id,
+                "status": trip.status.value,
+                "dispatchStatus": trip.dispatch_status,
+                "pendingOffers": pending_offers,
+                "distanceKm": trip.distance_km,
+                "pickup": {"lat": trip.pickup_lat, "lng": trip.pickup_lng, "address": trip.pickup_address},
+                "drop": {"lat": trip.drop_lat, "lng": trip.drop_lng, "address": trip.drop_address},
+                "driverLocation": driver_location,
+                "etaMinutes": eta_minutes,
+                "distanceToTargetKm": distance_to_drop_km,
+                "driver": driver_info,
+            } if trip else None,
+            "verificationOtp": active_otp,
         },
         message="Tracking telemetry retrieved"
     )
-

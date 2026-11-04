@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, buyer, vendor, driver, admin, payment, websocket
+from app.api.v1.endpoints import auth, buyer, vendor, driver, admin, payment, websocket, upload
 
 api_router = APIRouter()
 
@@ -10,3 +10,4 @@ api_router.include_router(driver.router)
 api_router.include_router(admin.router)
 api_router.include_router(payment.router)
 api_router.include_router(websocket.router)
+api_router.include_router(upload.router)

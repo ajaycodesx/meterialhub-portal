@@ -79,7 +79,7 @@ export const SettingsSection: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-5xl pb-12">
+    <div className="space-y-6 pb-12">
       {actionSuccess && (
         <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between text-xs font-medium text-emerald-700 shadow-xs">
           <div className="flex items-center gap-2">

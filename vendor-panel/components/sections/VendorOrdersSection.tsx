@@ -219,7 +219,7 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                         </div>
                         <div className="text-[11px] text-slate-500 truncate flex items-center gap-1">
                           <FaLocationDot className="h-3 w-3 text-slate-400 shrink-0" />
-                          <span>{order.deliveryAddress || 'Kakkanad Site'}</span>
+                          <span>{order.deliveryAddress || 'No data'}</span>
                         </div>
                       </td>
 
@@ -353,12 +353,12 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
                 {getStatusBadge(selectedOrder.status)}
               </div>
               <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                {selectedOrder.deliveryAddress || 'Project Construction Site, Kakkanad, Kochi'}
+                {selectedOrder.deliveryAddress || 'No data'}
               </p>
               <div className="text-[11px] text-slate-500 flex items-center gap-2 pt-1 border-t border-slate-200/60">
                 <span>Buyer: {selectedOrder.buyerName || 'Registered Contractor'}</span>
                 <span className="h-2 w-px bg-slate-300 inline-block" />
-                <span>Contact: {selectedOrder.buyerPhone || '+91 98470 12345'}</span>
+                <span>Contact: {selectedOrder.buyerPhone || 'No data'}</span>
               </div>
             </div>
 
@@ -492,9 +492,8 @@ export const VendorOrdersSection: React.FC<VendorOrdersSectionProps> = ({
             <div className="grid grid-cols-2 gap-4 py-2 border-b border-slate-200">
               <div>
                 <span className="font-medium text-slate-900 block mb-1">Consignor (Merchant Depot):</span>
-                <p className="font-medium">Kakkanad Building Supplies</p>
-                <p className="text-slate-500">GSTIN: 32AABCU9603R1ZX</p>
-                <p className="text-slate-500">Seaport-Airport Road, Kakkanad, Kochi</p>
+                <p className="font-medium">No data</p>
+                <p className="text-slate-500">Store address on file: No data</p>
               </div>
               <div>
                 <span className="font-medium text-slate-900 block mb-1">Consignee (Project Site):</span>

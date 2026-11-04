@@ -8,6 +8,7 @@ import { AdminHeader } from './layout/AdminHeader';
 import { OverviewSection } from './sections/OverviewSection';
 import { OrdersSection } from './sections/OrdersSection';
 import { MerchantsSection } from './sections/MerchantsSection';
+import { VerificationsSection } from './sections/VerificationsSection';
 import { ProductsSection } from './sections/ProductsSection';
 import { CategoriesSection } from './sections/CategoriesSection';
 import { BuyersSection } from './sections/BuyersSection';
@@ -41,6 +42,8 @@ function getTabFromSlug(slugOrPath?: string): AdminTab {
       return 'orders';
     case 'merchants':
       return 'merchants';
+    case 'verifications':
+      return 'verifications';
     case 'boq':
       return 'boq';
     case 'finance':
@@ -77,6 +80,7 @@ const TAB_TO_SLUG: Record<AdminTab, string> = {
   reports: 'reports',
   orders: 'orders',
   merchants: 'merchants',
+  verifications: 'verifications',
   boq: 'boq',
   finance: 'finance',
   disputes: 'disputes',
@@ -92,6 +96,8 @@ const TAB_TO_SLUG: Record<AdminTab, string> = {
   settings: 'settings'
 };
 
+import { SignInView } from './SignInView';
+
 export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
   const pathname = usePathname();
   const router = useRouter();
@@ -104,14 +110,13 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
   const [isWsConnected, setIsWsConnected] = useState<boolean>(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
 
+  const [needsSignIn, setNeedsSignIn] = useState<boolean>(false);
+
   async function fetchOverview() {
     try {
-      let token = apiClient.getToken();
-      if (!token) {
-        const auth: any = await authApi.login('admin@materialhub.in', 'admin123');
-        if (auth?.access_token) {
-          apiClient.setToken(auth.access_token);
-        }
+      if (!apiClient.getToken()) {
+        setNeedsSignIn(true);
+        return;
       }
 
       try {
@@ -119,13 +124,9 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
         setData(dashboardData);
       } catch (innerErr: any) {
         if (innerErr?.status === 401 || innerErr?.status === 403) {
-          const auth: any = await authApi.login('admin@materialhub.in', 'admin123');
-          if (auth?.access_token) {
-            apiClient.setToken(auth.access_token);
-            const dashboardData = await adminApi.getOverview();
-            setData(dashboardData);
-            return;
-          }
+          apiClient.setToken(null);
+          setNeedsSignIn(true);
+          return;
         }
         throw innerErr;
       }
@@ -147,7 +148,8 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
 
     function setupWs() {
       if (typeof window === 'undefined') return;
-      const token = localStorage.getItem('access_token') || 'u_admin_1';
+      const token = apiClient.getToken();
+      if (!token) return;
       const wsUrl =
         process.env.NEXT_PUBLIC_WS_URL ||
         `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
@@ -159,9 +161,9 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
           try {
             const msg = JSON.parse(event.data);
             if (
-              msg.type === 'NEW_ORDER' ||
-              msg.type === 'ORDER_STATUS_UPDATE' ||
-              msg.type === 'TRIP_STATUS_UPDATE'
+              msg.event === 'new_order' ||
+              msg.event === 'order_status_update' ||
+              msg.event === 'trip_status_update'
             ) {
               fetchOverview();
             }
@@ -169,8 +171,9 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
             console.error('WS parse error:', e);
           }
         };
-        socket.onclose = () => {
+        socket.onclose = (event) => {
           setIsWsConnected(false);
+          if (event.code === 4001) return;
           reconnectTimer = setTimeout(setupWs, 5000);
         };
         socket.onerror = () => {
@@ -206,6 +209,16 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
     router.push(`/${slug}`);
   }
 
+  if (needsSignIn) {
+    return (
+      <SignInView
+        panelName="Admin"
+        expectedRole="admin"
+        onSignedIn={() => { setNeedsSignIn(false); fetchOverview(); }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col lg:flex-row w-full">
       <AdminSidebar
@@ -238,6 +251,7 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
           {activeTab === 'orders' && <OrdersSection />}
 
           {activeTab === 'merchants' && <MerchantsSection />}
+          {activeTab === 'verifications' && <VerificationsSection />}
 
           {activeTab === 'products' && <ProductsSection />}
 

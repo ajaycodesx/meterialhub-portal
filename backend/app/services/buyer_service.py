@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Dict, Optional
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
@@ -11,6 +11,7 @@ from app.models.deal import Deal
 from app.models.product import Product
 from app.models.order import Order, OrderItem, OrderStatus
 from app.models.delivery import DeliveryTrip, TripStatus
+from app.services import dispatch_service
 from app.schemas.buyer import (
     BuyerHomeCompositeResponse,
     BuyerCatalogCompositeResponse,
@@ -41,10 +42,10 @@ class BuyerService:
         cat_res = await db.execute(select(MaterialCategory))
         categories = cat_res.scalars().all()
         
-        deal_res = await db.execute(select(Deal))
+        deal_res = await db.execute(select(Deal).where(Deal.status == "approved"))
         deals = deal_res.scalars().all()
         
-        merch_res = await db.execute(select(HardwareMerchant).where(HardwareMerchant.verified == True).limit(6))
+        merch_res = await db.execute(select(HardwareMerchant).where(HardwareMerchant.verified == True).limit(6))  # noqa: E712 - SQLAlchemy column comparison
         merchants = merch_res.scalars().all()
         
         rate_res = await db.execute(select(CommodityRate))
@@ -132,10 +133,7 @@ class BuyerService:
         merchant_id: Optional[str] = None,
         query: Optional[str] = None
     ) -> BuyerCatalogCompositeResponse:
-        """
-        Single aggregated API endpoint returning filtered products + merchant stock + category facets.
-        """
-        stmt = select(Product)
+        stmt = select(Product).where(or_(Product.status == "approved", Product.status.is_(None)))
         if category and category != "all":
             stmt = stmt.where(Product.category == category)
         if brand and brand != "all":
@@ -278,20 +276,29 @@ class BuyerService:
         """
         Creates order, items, GST invoice, and automatically dispatches delivery trip in one transaction.
         """
-        validated_products = []
+        # Merge duplicate cart lines so the same SKU cannot pass the stock check
+        # once per line and then oversell when the stock is decremented.
+        merged_quantities: Dict[str, int] = {}
         for item in req.items:
-            res = await db.execute(select(Product).where(Product.id == item.productId))
+            merged_quantities[item.productId] = merged_quantities.get(item.productId, 0) + item.quantity
+
+        validated_products = []
+        for product_id, quantity in merged_quantities.items():
+            # Row lock so concurrent orders cannot both see the same stock level.
+            res = await db.execute(select(Product).where(Product.id == product_id).with_for_update())
             prod = res.scalars().first()
             if not prod:
-                raise HTTPException(status_code=404, detail=f"Product {item.productId} not found")
+                raise HTTPException(status_code=404, detail=f"Product {product_id} not found")
             if prod.merchant_id != req.merchantId:
                 raise HTTPException(status_code=400, detail=f"Product {prod.id} does not belong to merchant {req.merchantId}")
-            if prod.stock_qty is not None and prod.stock_qty < item.quantity:
+            if prod.status != "approved":
+                raise HTTPException(status_code=400, detail=f"Product {prod.id} is not available for sale")
+            if prod.stock_qty is not None and prod.stock_qty < quantity:
                 raise HTTPException(
                     status_code=400,
-                    detail=f"Insufficient stock for {prod.title}. Available: {prod.stock_qty}, requested: {item.quantity}"
+                    detail=f"Insufficient stock for {prod.title}. Available: {prod.stock_qty}, requested: {quantity}"
                 )
-            validated_products.append((item, prod))
+            validated_products.append((quantity, prod))
 
         calc = await BuyerService.calculate_order_payload(
             db,
@@ -306,6 +313,10 @@ class BuyerService:
         order_id = f"ord_{uuid.uuid4().hex[:8]}"
         invoice_num = f"MH-INV-{datetime.now().year}-{uuid.uuid4().hex[:6].upper()}"
         
+        # Online payments stay PENDING until the Razorpay signature and amount are
+        # verified, so unpaid orders are never confirmed or dispatched.
+        is_online_payment = req.paymentMode == "Online Payment (Razorpay)"
+
         new_order = Order(
             id=order_id,
             user_id=user_id,
@@ -319,24 +330,25 @@ class BuyerService:
             delivery_address=req.deliveryAddress,
             pincode=req.pincode,
             site_constraints=req.siteConstraints.model_dump(),
-            status=OrderStatus.CONFIRMED,
+            status=OrderStatus.PENDING if is_online_payment else OrderStatus.CONFIRMED,
             payment_mode=req.paymentMode,
             invoice_number=invoice_num
         )
         db.add(new_order)
-        
+
         order_items_list = []
-        for item, prod in validated_products:
+        for quantity, prod in validated_products:
             item_id = f"item_{uuid.uuid4().hex[:6]}"
-            subtotal = prod.price * item.quantity
-            prod.stock_qty = max(0, (prod.stock_qty or 100) - item.quantity)
+            subtotal = prod.price * quantity
+            if prod.stock_qty is not None:
+                prod.stock_qty = prod.stock_qty - quantity
             db_item = OrderItem(
                 id=item_id,
                 order_id=order_id,
                 product_id=prod.id,
                 product_title=prod.title,
                 unit_price=prod.price,
-                quantity=item.quantity,
+                quantity=quantity,
                 unit=prod.unit,
                 weight_kg=prod.weight_kg,
                 subtotal=subtotal
@@ -345,7 +357,7 @@ class BuyerService:
             order_items_list.append({
                 "id": item_id,
                 "title": prod.title,
-                "quantity": item.quantity,
+                "quantity": quantity,
                 "unit": prod.unit,
                 "price": prod.price,
                 "subtotal": subtotal
@@ -357,6 +369,7 @@ class BuyerService:
         merchant_phone = merchant.phone if merchant else "+91 98470 12345"
         merchant_address = merchant.address if merchant else "Civil Station Junction, Kakkanad"
         
+        store_has_location = merchant is not None and merchant.latitude is not None and merchant.longitude is not None
         trip = DeliveryTrip(
             id=f"trip_{uuid.uuid4().hex[:6]}",
             order_id=order_id,
@@ -366,12 +379,23 @@ class BuyerService:
             drop_address=req.deliveryAddress,
             distance_km=3.5,
             trip_fare=calc.deliveryFee,
-            status=TripStatus.UNASSIGNED
+            status=TripStatus.UNASSIGNED,
+            pickup_lat=merchant.latitude if store_has_location else None,
+            pickup_lng=merchant.longitude if store_has_location else None,
+            drop_lat=req.deliveryLatitude,
+            drop_lng=req.deliveryLongitude,
+            # Without a store location no driver can be matched; admin must set it.
+            dispatch_status="searching" if store_has_location else "no_store_location",
         )
         db.add(trip)
         
         await db.commit()
         await db.refresh(new_order)
+        await db.refresh(trip)
+
+        # Cash and credit orders are confirmed now; online orders dispatch after payment.
+        if new_order.status == OrderStatus.CONFIRMED:
+            await dispatch_service.dispatch_trip(db, trip)
         
         return OrderDetailResponse(
             orderId=order_id,

@@ -9,6 +9,7 @@ from app.models.order import Order, OrderItem
 from app.models.delivery import DeliveryTrip
 from app.models.boq_quote import BoqQuote
 from app.models.audit_log import AuditLog
+from app.models.dispatch import DispatchOffer
 
 __all__ = [
     "Base",
@@ -23,4 +24,5 @@ __all__ = [
     "DeliveryTrip",
     "BoqQuote",
     "AuditLog",
+    "DispatchOffer",
 ]

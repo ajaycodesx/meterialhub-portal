@@ -3,8 +3,6 @@
 # Reproducible staging stack with FastAPI, PostgreSQL, Redis, and 4 Frontend Panels
 # ==============================================================================
 
-version: '3.8'
-
 services:
   # ----------------------------------------------------------------------------
   # PostgreSQL Database (Internal only, not exposed publicly)

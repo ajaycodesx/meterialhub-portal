@@ -174,7 +174,7 @@ export const VendorHandoverSection: React.FC<VendorHandoverSectionProps> = ({
                   MaterialHub Transport Challan
                 </h3>
                 <p className="text-slate-500">Document No: MH-DC-{(selectedChallan.id || selectedChallan.orderId || '').slice(0, 8).toUpperCase()}</p>
-                <p className="text-slate-500">Dispatch Yard: Seaport-Airport Road, Kakkanad Depot</p>
+                <p className="text-slate-500">Dispatch Yard: {selectedChallan.pickupAddress || 'No data'}</p>
               </div>
               <div className="text-right">
                 <p className="font-medium text-slate-900">Date: {new Date().toLocaleDateString('en-IN')}</p>
@@ -185,13 +185,13 @@ export const VendorHandoverSection: React.FC<VendorHandoverSectionProps> = ({
             <div className="grid grid-cols-2 gap-4 py-2 border-b border-slate-200">
               <div>
                 <span className="font-medium text-slate-900 block mb-1">Carrier Details:</span>
-                <p className="font-medium">Assigned Marketplace Logistics Truck</p>
-                <p className="text-slate-500">Vehicle Type: Heavy Commercial Flatbed</p>
-                <p className="text-slate-500">Permit: Commercial Goods Carrier KL-07</p>
+                <p className="font-medium">{selectedChallan.vehicleRegNumber || 'No data'}</p>
+                <p className="text-slate-500">Vehicle Type: {selectedChallan.vehicleType || 'No data'}</p>
+                <p className="text-slate-500">Driver: {selectedChallan.driverName || 'No data'}</p>
               </div>
               <div>
                 <span className="font-medium text-slate-900 block mb-1">Delivery Destination:</span>
-                <p className="font-medium">{selectedChallan.buyerName || 'Project Construction Site'}</p>
+                <p className="font-medium">{selectedChallan.buyerName || 'No data'}</p>
                 <p className="text-slate-500">{selectedChallan.deliveryAddress || 'Site Delivery'}</p>
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { NoData } from '../common/NoData';
 import { useRouter } from 'next/navigation';
 import { FaArrowTrendUp, FaArrowTrendDown, FaMinus, FaRotateRight, FaChevronRight } from 'react-icons/fa6';
 
@@ -21,79 +22,28 @@ interface Category {
   rows: RateRow[];
 }
 
-const RATE_DATA: Category[] = [
-  {
-    id: 'cement',
-    label: 'Cement',
-    unitName: '50kg Bag',
-    rows: [
-      { brand: 'UltraTech Cement', spec: '53 Grade OPC', tradeIndex: '200 class', rate: 385, unit: '50kg Bag', trend: 'up', change: 2.025 },
-      { brand: 'ACC Cement', spec: 'Suraksha Power PPC', tradeIndex: '180 class', rate: 365, unit: '50kg Bag', trend: 'up', change: 0.850 },
-      { brand: 'Dalmia DSP', spec: 'Super Roof Special', tradeIndex: '190 class', rate: 358, unit: '50kg Bag', trend: 'down', change: 1.080 },
-      { brand: 'Ramco Cements', spec: 'Super Grade PPC', tradeIndex: '185 class', rate: 372, unit: '50kg Bag', trend: 'down', change: 1.650 },
-    ],
-  },
-  {
-    id: 'steel',
-    label: 'TMT Steel',
-    unitName: 'Ton',
-    rows: [
-      { brand: 'Tata Tiscon', spec: 'Fe550D Super Ductile 12mm', tradeIndex: '5,000 tason', rate: 58500, unit: 'Ton', trend: 'up', change: 0.850 },
-      { brand: 'JSW Neosteel', spec: 'Fe550D High Strength 16mm', tradeIndex: '4,800 tason', rate: 57200, unit: 'Ton', trend: 'up', change: 1.150 },
-      { brand: 'Vizag Steel', spec: 'Fe500D Primary Billet 8mm', tradeIndex: '4,750 tason', rate: 56800, unit: 'Ton', trend: 'down', change: 0.950 },
-      { brand: 'Indus TMT', spec: 'Fe550D Seismic Grade 10mm', tradeIndex: '4,600 tason', rate: 55500, unit: 'Ton', trend: 'down', change: 1.250 },
-    ],
-  },
-  {
-    id: 'coarse',
-    label: 'Coarse & Aggregates',
-    unitName: 'Ton',
-    rows: [
-      { brand: 'Blue Metal Granite', spec: '20mm Machine Crushed', tradeIndex: '1.80 coarse', rate: 830, unit: 'Ton', trend: 'up', change: 1.200 },
-      { brand: 'Granite Metal 40mm', spec: 'Foundation Grade', tradeIndex: '1.60 coarse', rate: 780, unit: 'Ton', trend: 'down', change: 0.750 },
-      { brand: 'Aggregate G10', spec: 'Graded Road Base GSB', tradeIndex: '1.90 coarse', rate: 690, unit: 'Ton', trend: 'up', change: 0.600 },
-      { brand: 'Pea Gravel Shingle', spec: '10mm Concrete Mix', tradeIndex: '1.50 coarse', rate: 890, unit: 'Ton', trend: 'down', change: 1.100 },
-    ],
-  },
-  {
-    id: 'sand',
-    label: 'Sand & M-Sand',
-    unitName: 'Ton',
-    rows: [
-      { brand: 'Manufactured M-Sand', spec: 'Concrete Grade Washed', tradeIndex: '2.10 sand', rate: 950, unit: 'Ton', trend: 'up', change: 0.950 },
-      { brand: 'Plastering P-Sand', spec: 'Double Washed Graded', tradeIndex: '2.30 sand', rate: 1050, unit: 'Ton', trend: 'up', change: 1.400 },
-      { brand: 'Filtered River Sand', spec: 'Govt Authorized Source', tradeIndex: '2.80 sand', rate: 1680, unit: 'Ton', trend: 'down', change: 0.800 },
-      { brand: 'Graded Silica Sand', spec: 'Fine Finish Texture', tradeIndex: '2.50 sand', rate: 1420, unit: 'Ton', trend: 'down', change: 1.500 },
-    ],
-  },
-  {
-    id: 'pvc',
-    label: 'PVC Pipes',
-    unitName: '6m Length',
-    rows: [
-      { brand: 'Supreme Pipes', spec: 'SWR 110mm Class 2 Ringfit', tradeIndex: '3.10 tement', rate: 1240, unit: '6m Length', trend: 'down', change: 0.520 },
-      { brand: 'Astral Pipes', spec: 'CPVC SDR11 1 Inch Hot/Cold', tradeIndex: '2.80 astral', rate: 850, unit: '3m Length', trend: 'up', change: 1.200 },
-      { brand: 'Finolex Pipes', spec: 'UPVC 75mm 6kg/cm2 Pressure', tradeIndex: '2.90 finolex', rate: 680, unit: '6m Length', trend: 'down', change: 0.900 },
-      { brand: 'Prince Pipes', spec: 'SWR Drainage 160mm Heavy', tradeIndex: '3.40 prince', rate: 1650, unit: '6m Length', trend: 'up', change: 0.700 },
-    ],
-  },
-  {
-    id: 'paints',
-    label: 'Paints & Putty',
-    unitName: 'Bucket / Bag',
-    rows: [
-      { brand: 'Asian Paints', spec: 'Apex Exterior Weatherproof 20L', tradeIndex: '4.20 apex', rate: 4650, unit: '20L Bucket', trend: 'down', change: 3.100 },
-      { brand: 'Berger Paints', spec: 'WeatherCoat Long Life 20L', tradeIndex: '3.90 berger', rate: 4320, unit: '20L Bucket', trend: 'down', change: 1.500 },
-      { brand: 'Birla White Putty', spec: 'Polymer Modified Putty 40kg', tradeIndex: '1.40 putty', rate: 980, unit: '40kg Bag', trend: 'up', change: 0.800 },
-      { brand: 'Dulux Weathershield', spec: 'Max Protection Exterior 20L', tradeIndex: '4.10 dulux', rate: 4800, unit: '20L Bucket', trend: 'up', change: 0.500 },
-    ],
-  },
-];
-
-export function WholesaleRateIndex() {
+export function WholesaleRateIndex({ rates = [] }: { rates?: any[] }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('cement');
+  const RATE_DATA: Category[] = rates.length > 0 ? [{
+    id: 'live',
+    label: 'Live rates',
+    unitName: 'Unit',
+    rows: rates.map((r: any) => ({
+      brand: r.materialName,
+      spec: r.unit,
+      tradeIndex: '—',
+      rate: r.wholesaleRate,
+      unit: r.unit,
+      trend: r.trend === 'up' || r.trend === 'down' ? r.trend : 'stable',
+      change: r.changePercent ?? 0,
+    })),
+  }] : [];
+  const [activeTab, setActiveTab] = useState('live');
   const category = RATE_DATA.find(c => c.id === activeTab) || RATE_DATA[0];
+
+  if (RATE_DATA.length === 0) {
+    return <NoData title="No market rates yet" description="Rates are published by MaterialHub operations." />;
+  }
 
   return (
     <section className="w-full bg-transparent">
@@ -203,7 +153,7 @@ export function WholesaleRateIndex() {
           </div>
 
           <div className="px-5 py-3 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500 font-normal">
-            <span>Direct depot rate verified across Kakkanad, Aluva, and Ernakulam hubs.</span>
+            <span>Rates are published by MaterialHub operations.</span>
             <span className="font-medium text-slate-700">All prices exclusive of 18% / 28% GST (Tax Invoiced at Checkout)</span>
           </div>
         </div>

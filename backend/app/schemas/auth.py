@@ -1,5 +1,5 @@
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from app.models.user import UserRole
 
 
@@ -26,7 +26,7 @@ class RegisterRequest(BaseModel):
     name: str
     email: EmailStr
     phone: str
-    password: str
+    password: str = Field(min_length=8, max_length=128)
     role: UserRole = UserRole.BUYER
     site_address: Optional[str] = None
     pincode: Optional[str] = None

@@ -1,5 +1,5 @@
-from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from typing import List, Dict, Any, Literal, Optional
+from pydantic import BaseModel, Field
 
 
 class AdminOverviewCompositeResponse(BaseModel):
@@ -95,17 +95,27 @@ class AdminProductUpdateRequest(BaseModel):
     merchant_id: Optional[str] = None
 
 
+class AdminProductRejectRequest(BaseModel):
+    reason: str
+
+
 class AdminCategorySaveRequest(BaseModel):
-    id: str
+    id: Optional[str] = None
     title: str
-    subtitle: str
-    icon_name: str
+    subtitle: Optional[str] = "Wholesale Material Supplies"
+    icon_name: Optional[str] = "FaBoxesStacked"
     color_bg: Optional[str] = "bg-[#FF6500]"
     item_count: Optional[int] = 100
     trending_badge: Optional[str] = None
-    image: str
+    image: Optional[str] = "/images/cement_aggregates.png"
     subcategories: Optional[List[str]] = []
     featured_brands: Optional[List[str]] = []
+
+
+class AdminVerificationDecisionRequest(BaseModel):
+    approve: bool
+    # Required when rejecting; the applicant sees it on their panel.
+    reason: Optional[str] = Field(None, min_length=5, max_length=500)
 
 
 class AdminUserToggleRequest(BaseModel):
@@ -142,6 +152,8 @@ class AdminDealSaveRequest(BaseModel):
     badge: Optional[str] = "Flash Deal"
     badge_color: Optional[str] = "bg-[#FF6500]"
     expires_in_seconds: Optional[int] = 18000
+    # Set to 'approved' to publish a vendor-proposed deal, or 'rejected' to withdraw it.
+    status: Optional[Literal["pending", "approved", "rejected"]] = None
 
 
 class AdminDisputeUpdateRequest(BaseModel):

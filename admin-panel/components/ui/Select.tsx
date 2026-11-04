@@ -88,7 +88,7 @@ export const Select: React.FC<SelectProps> = ({
   }, [isOpen, direction]);
 
   const activePosition = direction !== 'auto' ? direction : dropdownPosition;
-  const selectedOption = options.find((opt) => opt.value === value);
+  const selectedOption = options.find((opt) => opt.value === value || String(opt.value).toLowerCase() === String(value).toLowerCase() || opt.label.toLowerCase() === String(value).toLowerCase());
 
   const getSizeClasses = (s: 'sm' | 'md' | 'lg') => {
     switch (s) {

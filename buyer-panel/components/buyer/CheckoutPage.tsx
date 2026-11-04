@@ -25,7 +25,8 @@ import { HardwareMerchant, CartItem, LocationState } from '../../types/buyer';
 import { VehicleOption } from './CartVehicleSelection';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
-import { buyerApi, authApi, apiClient, paymentApi } from '../../lib/api';
+import { buyerApi, paymentApi, apiClient } from '../../lib/api';
+import { useAppContext } from '../../context/AppContext';
 import { PageBanner } from './PageBanner';
 
 interface CheckoutPageProps {
@@ -47,6 +48,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   onBackToCart,
   onPlaceOrderSuccess
 }) => {
+  const { setIsAuthModalOpen } = useAppContext();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,23 +86,17 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   };
 
   const handleConfirmOrder = async () => {
-    setIsPlacingOrder(true);
     setError(null);
 
-    try {
-      const demoEmail = process.env.NEXT_PUBLIC_DEMO_BUYER_EMAIL || 'buyer@materialhub.in';
-      const demoPassword = process.env.NEXT_PUBLIC_DEMO_BUYER_PASSWORD || 'buyer123';
+    if (!apiClient.getToken()) {
+      setIsAuthModalOpen(true);
+      setError('Sign in to place your order. Your cart is saved, so you can continue here.');
+      return;
+    }
 
-      if (!localStorage.getItem('access_token')) {
-        try {
-          const auth: any = await authApi.login(demoEmail, demoPassword);
-          if (auth?.access_token) {
-            apiClient.setToken(auth.access_token);
-          }
-        } catch (loginErr) {
-          console.warn('Initial auto-login attempt failed:', loginErr);
-        }
-      }
+    setIsPlacingOrder(true);
+
+    try {
 
       const orderData = {
         merchantId: merchant.id,
@@ -122,22 +118,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
           : 'Online Payment (Razorpay)'
       };
 
-      let response: any;
-      try {
-        response = await buyerApi.createOrder(orderData);
-      } catch (orderErr: any) {
-        if (orderErr?.status === 401 || orderErr?.message?.includes('credentials')) {
-          const auth: any = await authApi.login(demoEmail, demoPassword);
-          if (auth?.access_token) {
-            apiClient.setToken(auth.access_token);
-            response = await buyerApi.createOrder(orderData);
-          } else {
-            throw orderErr;
-          }
-        } else {
-          throw orderErr;
-        }
-      }
+      const response: any = await buyerApi.createOrder(orderData);
 
       const placedId = response?.orderId || response?.id || `MH-${Date.now().toString().slice(-6)}`;
 
@@ -148,7 +129,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
       const paymentOrder: any = await paymentApi.createOrder({
         order_id: placedId,
-        amount: grandTotal * 100,
         currency: 'INR',
         receipt: `rcpt_${placedId}`
       });
@@ -177,11 +157,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 setError(verifyErr.message || 'Payment verification failed');
               }
             },
-            prefill: {
-              name: 'Ajay Construction Corp',
-              email: 'buyer@materialhub.in',
-              contact: '+919876543210'
-            },
+            prefill: {},
             theme: {
               color: '#FF6500'
             }
@@ -195,7 +171,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       setRazorpayOrderData({
         orderId: placedId,
         razorpayOrderId: paymentOrder.id,
-        amount: grandTotal,
+        amount: paymentOrder.amount / 100,
         keyId,
         method: paymentMethod
       });
@@ -278,14 +254,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="text-xs sm:text-sm font-medium text-slate-900 flex items-center gap-2">
                       <FaBuilding className="h-3.5 w-3.5 text-orange-500 shrink-0" />
-                      {location.address || 'Kakkanad Construction Site Zone'}
+                      {location.address || 'No data'}
                     </span>
                   </div>
 
                   <div className="text-xs text-slate-600 font-normal space-y-1 pt-1.5 border-t border-slate-200/50">
                     <p>Pincode: <strong className="font-medium text-slate-800">{location.pinCode || '682030'}</strong></p>
                     <p>Site Access Width: <strong className="font-medium text-slate-800">{location.siteConstraints?.roadWidth || '12ft+ (Standard Truck Access)'}</strong></p>
-                    <p>Site Supervisor Contact: <strong className="font-medium text-slate-800">+91 98765 43210 (Suresh Nair)</strong></p>
                   </div>
                 </div>
               </div>
@@ -545,7 +520,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
           iconBg="bg-orange-500/15 border border-orange-500/25"
           iconColor="text-[#FF6500]"
           title="Complete Online Payment"
-          subtitle={`Merchant: ${merchant.name} · Razorpay Secure 256-Bit SSL`}
+          subtitle={`Merchant: ${merchant.name} Â· Razorpay Secure 256-Bit SSL`}
           maxWidth="md"
         >
           <div className="space-y-4">

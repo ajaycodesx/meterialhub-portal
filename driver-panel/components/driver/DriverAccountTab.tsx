@@ -1,5 +1,6 @@
 'use client';
 
+import { NoData } from '../common/NoData';
 import React from 'react';
 import {
   FaUserCheck,
@@ -35,18 +36,14 @@ export function DriverAccountTab({
     }
   }
 
-  const name = profile?.name || 'Manoj K';
-  const phone = profile?.phone || '+91 98470 54321';
-  const email = profile?.email || 'driver@materialhub.in';
-  const vehicleName = profile?.vehicleType || 'Ashok Leyland 1618';
-  const regNumber = profile?.vehicleRegNumber || 'KL 07 AB 1234';
-  const licenseNumber = profile?.licenseNumberMasked || 'KL-07-2024-0012345';
-  const payloadCapacity = profile?.payloadCapacityTons || 16;
-  const rating = profile?.rating || 4.95;
-  const completedTrips = profile?.completedTripsLifetime || 128;
-  const bankName = profile?.bankName || 'State Bank of India';
-  const bankAccount = profile?.bankAccountMasked || '•••• •••• •••• 9214';
-  const ifsc = profile?.ifsc || 'SBIN0007821';
+  const name = profile?.name || '';
+  const phone = profile?.phone || '';
+  const email = profile?.email || '';
+  const vehicleName = profile?.vehicleType || '';
+  const regNumber = profile?.vehicleRegNumber || '';
+  const licenseNumber = profile?.licenseNumberMasked || '';
+  const payloadCapacity = profile?.payloadCapacityTons;
+  const completedTrips = profile?.completedTripsLifetime ?? 0;
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8">
@@ -74,7 +71,7 @@ export function DriverAccountTab({
                 </span>
               </div>
               <h2 className="text-base font-medium text-slate-900">
-                {isOnline ? 'Active · Accepting Dispatches' : 'Inactive · Availability Paused'}
+                {isOnline ? 'Active Â· Accepting Dispatches' : 'Inactive Â· Availability Paused'}
               </h2>
               <p className="text-xs text-slate-500 font-medium">
                 {isOnline
@@ -123,11 +120,10 @@ export function DriverAccountTab({
             <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
               <div className="p-3 bg-slate-50 rounded-2xl">
                 <span className="text-[10px] font-medium text-slate-400 uppercase block">
-                  CARRIER RATING
+                  COMPLETED TRIPS
                 </span>
                 <div className="flex items-center gap-1 pt-0.5">
-                  <FaStar className="h-3.5 w-3.5 text-amber-500" />
-                  <span className="text-sm font-medium text-slate-900">{rating} / 5.0</span>
+                  <span className="text-sm font-medium text-slate-900">{completedTrips}</span>
                 </div>
               </div>
 
@@ -144,7 +140,7 @@ export function DriverAccountTab({
 
           <div className="space-y-2 pt-1">
             <a
-              href="tel:+919876543210"
+              href="tel:18004259999"
               className="w-full py-3 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-medium rounded-2xl flex items-center justify-center gap-2 text-xs transition-colors cursor-pointer"
             >
               <FaHeadset className="h-4 w-4 text-[#FF6500]" />
@@ -205,24 +201,7 @@ export function DriverAccountTab({
               </h3>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500 font-medium">Bank Name</span>
-                <span className="font-medium text-slate-900">{bankName}</span>
-              </div>
-              <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500 font-medium">Account Number</span>
-                <span className="font-mono font-medium text-slate-900">{bankAccount}</span>
-              </div>
-              <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500 font-medium">IFSC Code</span>
-                <span className="font-mono font-medium text-slate-900">{ifsc}</span>
-              </div>
-              <div className="flex items-center justify-between py-1.5">
-                <span className="text-slate-500 font-medium">Payout Cycle</span>
-                <span className="font-medium text-emerald-700">Every Tuesday Direct Deposit</span>
-              </div>
-            </div>
+            <NoData title="No payout account on file" description="Payout details are managed by MaterialHub operations." />
           </div>
         </div>
       </div>

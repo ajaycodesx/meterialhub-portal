@@ -49,7 +49,7 @@ export const VendorOverviewSection: React.FC<VendorOverviewSectionProps> = ({
   const resolvedData = dashboardData || data || {};
   const stats = resolvedData?.stats || {};
   const recentOrders = orders.length > 0 ? orders : (resolvedData?.recentOrders || []);
-  const storeName = resolvedData?.storeName || 'Kakkanad Building Supplies';
+  const storeName = resolvedData?.storeName || 'No data';
 
   const awaitingCount = stats.ordersAwaitingAction ?? recentOrders.filter((o: any) => o.status === 'confirmed' || o.status === 'packing').length ?? 0;
   const readyCount = stats.ordersReadyForPickup ?? recentOrders.filter((o: any) => o.status === 'ready_for_pickup').length ?? 0;

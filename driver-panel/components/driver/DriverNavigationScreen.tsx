@@ -30,10 +30,10 @@ export function DriverNavigationScreen({
 }: DriverNavigationScreenProps) {
   const [navTarget, setNavTarget] = useState<'vendor' | 'buyer'>('vendor');
 
-  const vendorName = trip?.pickupAddress?.split(',')[0] || trip?.vendorName || 'BuildPro Materials';
-  const vendorAddress = trip?.pickupAddress || trip?.vendorAddress || 'Industrial Estate Road, Kalamassery';
-  const buyerName = trip?.dropAddress?.split(',')[0] || trip?.buyerName || 'Anjali Traders';
-  const buyerAddress = trip?.dropAddress || trip?.buyerAddress || 'Market Road, Edappally';
+  const vendorName = trip?.pickupAddress?.split(',')[0] || trip?.vendorName || 'No data';
+  const vendorAddress = trip?.pickupAddress || trip?.vendorAddress || '';
+  const buyerName = trip?.dropAddress?.split(',')[0] || trip?.buyerName || 'No data';
+  const buyerAddress = trip?.dropAddress || trip?.buyerAddress || '';
 
   const currentDestination = navTarget === 'vendor' ? vendorName : buyerName;
   const currentAddress = navTarget === 'vendor' ? vendorAddress : buyerAddress;
@@ -118,7 +118,7 @@ export function DriverNavigationScreen({
                   </span>
                   <span className="text-sm font-medium text-slate-900 flex items-center justify-center gap-1">
                     <FaRoad className="h-3 w-3 text-slate-400" />
-                    <span>{navTarget === 'vendor' ? '3.2 km' : '6.8 km'}</span>
+                    <span>No data</span>
                   </span>
                 </div>
 
@@ -128,7 +128,7 @@ export function DriverNavigationScreen({
                   </span>
                   <span className="text-sm font-medium text-emerald-700 flex items-center justify-center gap-1">
                     <FaClock className="h-3 w-3 text-emerald-500" />
-                    <span>{navTarget === 'vendor' ? '12 min' : '24 min'}</span>
+                    <span>No data</span>
                   </span>
                 </div>
 
@@ -156,9 +156,9 @@ export function DriverNavigationScreen({
                   </div>
                   <div className="space-y-0.5">
                     <p className="font-medium text-slate-900">
-                      Head straight on {navTarget === 'vendor' ? 'Kalamassery Depot Access' : 'Express Highway'}
+                      Head straight on {navTarget === 'vendor' ? 'the store pickup point' : 'the drop point'}
                     </p>
-                    <p className="text-slate-500 font-medium">Continue for 1.8 km</p>
+                    <p className="text-slate-500 font-medium">Turn-by-turn route not available yet</p>
                   </div>
                 </div>
 
@@ -197,7 +197,7 @@ export function DriverNavigationScreen({
                 <div className="flex items-center justify-between">
                   <div className="py-1 px-3 bg-slate-900/90 rounded-xl backdrop-blur-md text-[11px] font-medium text-white flex items-center gap-1.5 border border-slate-700">
                     <span className={`w-2 h-2 rounded-xs ${gpsActive ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                    <span>{gpsActive ? 'Carrier GPS Live' : 'Simulated Depot Telemetry'}</span>
+                    <span>{gpsActive ? 'Carrier GPS Live' : 'Location unavailable'}</span>
                   </div>
 
                   <div className="py-1 px-3 bg-slate-900/90 rounded-xl backdrop-blur-md text-[11px] font-medium text-slate-300 border border-slate-700">

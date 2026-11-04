@@ -9,6 +9,7 @@ from app.models.user import User, UserRole
 from app.models.delivery import DeliveryTrip, TripStatus
 from app.models.order import Order, OrderStatus
 from app.services.driver_service import DriverService
+from app.services import dispatch_service
 from app.services.otp_service import otp_service
 from app.services.audit_service import audit_service
 from app.schemas.driver import (
@@ -25,6 +26,9 @@ from app.schemas.driver import (
 from app.schemas.common import ApiResponse
 
 router = APIRouter(prefix="/driver", tags=["Driver BFF Endpoints"])
+
+# Delivery OTPs are only issued and accepted while the truck is at or heading to the site.
+DELIVERY_OTP_TRIP_STATUSES = [TripStatus.IN_TRANSIT, TripStatus.ARRIVED_AT_SITE]
 
 
 @router.get("/feed", response_model=ApiResponse[DriverFeedCompositeResponse])
@@ -159,6 +163,9 @@ async def request_delivery_otp(
     if trip.driver_id != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied. Trip does not belong to current driver.")
 
+    if trip.status not in DELIVERY_OTP_TRIP_STATUSES:
+        raise HTTPException(status_code=400, detail="Delivery OTP is only available once the truck reaches the site")
+
     order_result = await db.execute(
         select(Order).where(Order.id == trip.order_id)
     )
@@ -224,6 +231,9 @@ async def verify_delivery_otp(
     if trip.driver_id != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied. Trip does not belong to current driver.")
 
+    if trip.status not in DELIVERY_OTP_TRIP_STATUSES:
+        raise HTTPException(status_code=400, detail="Delivery OTP is only accepted once the truck reaches the site")
+
     is_valid = await otp_service.validate_delivery_otp(trip.order_id, target_otp)
 
     if not is_valid:
@@ -272,3 +282,45 @@ async def verify_delivery_otp(
         data={"verified": True, "tripId": target_trip_id, "orderId": trip.order_id},
         message="OTP verified successfully. Delivery completed."
     )
+
+
+@router.get("/offers", response_model=ApiResponse[List[Dict[str, Any]]])
+async def list_dispatch_offers(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Incoming trip requests that are still open, with the seconds left to respond."""
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+    offers = await dispatch_service.get_driver_offers(db, current_user.id)
+    return ApiResponse(data=offers, message="Dispatch offers retrieved")
+
+
+@router.post("/offers/{offer_id}/accept", response_model=ApiResponse[Dict[str, Any]])
+async def accept_dispatch_offer(
+    offer_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+    try:
+        data = await dispatch_service.accept_offer(db, offer_id, current_user.id)
+    except dispatch_service.DispatchError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+    return ApiResponse(data=data, message="Trip accepted")
+
+
+@router.post("/offers/{offer_id}/decline", response_model=ApiResponse[Dict[str, Any]])
+async def decline_dispatch_offer(
+    offer_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.DRIVER:
+        raise HTTPException(status_code=403, detail="Access denied. Driver role required.")
+    try:
+        data = await dispatch_service.decline_offer(db, offer_id, current_user.id)
+    except dispatch_service.DispatchError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+    return ApiResponse(data=data, message="Trip declined")

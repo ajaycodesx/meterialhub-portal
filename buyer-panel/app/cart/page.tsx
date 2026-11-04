@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
 import { CartVehicleSelection, VehicleOption } from '../../components/buyer/CartVehicleSelection';
-import { HARDWARE_MERCHANTS } from '../../data/mockBuyerData';
+import { NoStoreSelected } from '../../components/buyer/NoStoreSelected';
 import { CartItem } from '../../types/buyer';
 
 export default function CartPage() {
@@ -17,7 +17,9 @@ export default function CartPage() {
     setSelectedVehicle,
   } = useAppContext();
 
-  const merchant = selectedMerchant || HARDWARE_MERCHANTS[0];
+  const merchant = selectedMerchant;
+
+  if (!merchant) return <NoStoreSelected message="Choose a store to see your cart." />;
 
   const handleProceedToCheckout = (vehicle: VehicleOption, finalCart: CartItem[]) => {
     setSelectedVehicle(vehicle);

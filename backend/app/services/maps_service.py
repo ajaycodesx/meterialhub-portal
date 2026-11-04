@@ -120,7 +120,7 @@ class MapsService:
             )
 
             if not result or result[0]["status"] != "OK":
-                logger.error(f"Directions request failed")
+                logger.error("Directions request failed")
                 raise Exception("Directions calculation failed")
 
             route = result[0]

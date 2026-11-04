@@ -17,6 +17,7 @@ FaBuilding,
 FaRoute
 } from 'react-icons/fa6';
 import { MaterialCategory, HardwareMerchant } from '../../types/buyer';
+import { getMediaUrl } from '../../lib/api';
 import { Select, SelectOption } from '../ui/Select';
 import { Button } from '../ui/Button';
 
@@ -253,7 +254,7 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl overflow-hidden shrink-0 bg-slate-100 shadow-2xs">
-                        <img src={cat.image} alt={cat.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img src={getMediaUrl(cat.image)} alt={cat.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       </div>
 
                       <div>

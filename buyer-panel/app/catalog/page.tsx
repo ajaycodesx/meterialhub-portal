@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
 import { ProductCatalog } from '../../components/buyer/ProductCatalog';
 import { buyerApi } from '../../lib/api';
-import { CATALOG_PRODUCTS, HARDWARE_MERCHANTS } from '../../data/mockBuyerData';
+import { NoStoreSelected } from '../../components/buyer/NoStoreSelected';
 import { CartItem, Product, HardwareMerchant } from '../../types/buyer';
 
 export default function CatalogPage() {
   const router = useRouter();
   const { selectedMerchant, setSelectedMerchant, setCurrentCart } = useAppContext();
-  const [products, setProducts] = useState<Product[]>(CATALOG_PRODUCTS);
-  const [merchants, setMerchants] = useState<HardwareMerchant[]>(HARDWARE_MERCHANTS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [merchants, setMerchants] = useState<HardwareMerchant[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -105,6 +105,8 @@ export default function CatalogPage() {
       </div>
     );
   }
+
+  if (!merchant) return <NoStoreSelected message="No verified stores are available right now." />;
 
   return (
     <ProductCatalog

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
 import { LiveTrackingPage } from '../../components/buyer/LiveTrackingPage';
-import { HARDWARE_MERCHANTS } from '../../data/mockBuyerData';
+import { NoStoreSelected } from '../../components/buyer/NoStoreSelected';
 
 export default function TrackingPage() {
   const router = useRouter();
@@ -15,7 +15,11 @@ export default function TrackingPage() {
     handleResetToHome,
   } = useAppContext();
 
-  const merchant = selectedMerchant || HARDWARE_MERCHANTS[0];
+  const merchant = selectedMerchant;
+
+  if (!merchant || !placedOrderId) {
+    return <NoStoreSelected message="No active order to track." />;
+  }
 
   const handleReturnHome = () => {
     handleResetToHome();
@@ -24,7 +28,7 @@ export default function TrackingPage() {
 
   return (
     <LiveTrackingPage
-      orderId={placedOrderId || 'ord_98241'}
+      orderId={placedOrderId}
       merchant={merchant}
       vehicle={selectedVehicle}
       location={location}

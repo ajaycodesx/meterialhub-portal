@@ -34,10 +34,10 @@ async def websocket_endpoint(
     try:
         from app.core.security import verify_token
         user_id = verify_token(token)
-        if not user_id and (token.startswith("u_") or token in ["buyer", "driver", "vendor", "admin", "demo-token"]):
-            user_id = "u_buyer_1" if token in ["buyer", "demo-token"] else (f"u_{token}_1" if token in ["driver", "vendor", "admin"] else token)
         if not user_id:
-            await websocket.close(code=4001, reason="Invalid token")
+            # Accept first so the client receives close code 4001 instead of a bare HTTP 403.
+            await websocket.accept()
+            await websocket.close(code=4001, reason="Invalid or expired token")
             return
 
         await manager.connect(websocket, user_id)

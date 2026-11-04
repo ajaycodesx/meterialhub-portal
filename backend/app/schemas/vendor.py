@@ -1,5 +1,5 @@
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 
 class VendorDashboardCompositeResponse(BaseModel):
@@ -24,8 +24,8 @@ class VendorDashboardCompositeResponse(BaseModel):
 
 class StockUpdateRequest(BaseModel):
     productId: str
-    newStockQty: int
-    newPrice: Optional[float] = None
+    newStockQty: int = Field(..., ge=0)
+    newPrice: Optional[float] = Field(None, gt=0)
     reason: Optional[str] = "Manual stock reconciliation"
 
 
@@ -36,46 +36,49 @@ class VendorOrderUpdateRequest(BaseModel):
 
 
 class VendorProfileUpdateRequest(BaseModel):
+    # GSTIN and bank account are deliberately not editable by vendors. Changing
+    # them redirects settlements, so they go through admin verification instead.
     name: Optional[str] = None
     owner_name: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
     address: Optional[str] = None
     pincode: Optional[str] = None
-    min_order_value: Optional[int] = None
-    delivery_eta_minutes: Optional[int] = None
-    gstin: Optional[str] = None
-    bank_account: Optional[str] = None
+    min_order_value: Optional[int] = Field(None, ge=0)
+    delivery_eta_minutes: Optional[int] = Field(None, ge=0)
+    # Store location for driver dispatch: drivers are matched within 15 km of this point.
+    latitude: Optional[float] = Field(None, ge=-90, le=90)
+    longitude: Optional[float] = Field(None, ge=-180, le=180)
 
 
 class VendorProductCreateRequest(BaseModel):
     title: str
     category: str
     brand: str
-    price: float
+    price: float = Field(..., gt=0)
     unit: str
-    moq: Optional[int] = 1
+    moq: Optional[int] = Field(1, ge=1)
     weight_spec: Optional[str] = "Standard"
     image: str
     grade: Optional[str] = None
     gauge: Optional[str] = None
-    weight_kg: Optional[float] = 50.0
-    stock_qty: Optional[int] = 500
+    weight_kg: Optional[float] = Field(50.0, gt=0)
+    stock_qty: Optional[int] = Field(500, ge=0)
 
 
 class VendorProductUpdateRequest(BaseModel):
     title: Optional[str] = None
     category: Optional[str] = None
     brand: Optional[str] = None
-    price: Optional[float] = None
+    price: Optional[float] = Field(None, gt=0)
     unit: Optional[str] = None
-    moq: Optional[int] = None
+    moq: Optional[int] = Field(None, ge=1)
     weight_spec: Optional[str] = None
     image: Optional[str] = None
     grade: Optional[str] = None
     gauge: Optional[str] = None
-    weight_kg: Optional[float] = None
-    stock_qty: Optional[int] = None
+    weight_kg: Optional[float] = Field(None, gt=0)
+    stock_qty: Optional[int] = Field(None, ge=0)
 
 
 class VendorStockAdjustRequest(BaseModel):
@@ -86,7 +89,7 @@ class VendorStockAdjustRequest(BaseModel):
 
 class VendorBoqQuoteSubmitRequest(BaseModel):
     quoteId: str
-    estimatedTotal: float
+    estimatedTotal: float = Field(..., gt=0)
     notes: Optional[str] = None
 
 
@@ -94,9 +97,16 @@ class VendorDealProposeRequest(BaseModel):
     material: str
     brand: str
     image: str
-    originalRate: float
-    dealRate: float
+    originalRate: float = Field(..., gt=0)
+    dealRate: float = Field(..., gt=0)
     unit: str
-    discountPct: Optional[int] = 10
+    discountPct: Optional[int] = Field(10, ge=1, le=50)
     minOrder: Optional[str] = "100 Bags Min."
     badge: Optional[str] = "Merchant Deal"
+
+    @model_validator(mode="after")
+    def deal_must_be_discount(self) -> "VendorDealProposeRequest":
+        # A deal that is not actually cheaper than the list rate is misleading to buyers.
+        if self.dealRate >= self.originalRate:
+            raise ValueError("dealRate must be lower than originalRate")
+        return self

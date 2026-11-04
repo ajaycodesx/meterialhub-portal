@@ -338,7 +338,7 @@ export const MerchantsSection: React.FC = () => {
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Bank Account</p>
-                <p className="font-medium text-slate-900">{selectedMerchant.bankAccount || '9876543210123'}</p>
+                <p className="font-medium text-slate-900">{selectedMerchant.bankAccount || 'No data'}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Escrow Wallet Balance</p>

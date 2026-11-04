@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import uuid
+import re
 from typing import Optional, List, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
@@ -14,6 +15,7 @@ from app.models.deal import Deal
 from app.models.commodity_rate import CommodityRate
 from app.models.audit_log import AuditLog
 from app.schemas.admin import AdminOverviewCompositeResponse
+from app.services.payment_service import payment_service
 
 PLATFORM_SETTINGS_STORE = {
     "platformCommissionPercent": 5.0,
@@ -58,19 +60,8 @@ COMMUNICATION_TEMPLATES_STORE = [
     }
 ]
 
-DISPUTES_STORE = [
-    {
-        "id": "disp_88201",
-        "orderId": "ord_98241",
-        "buyerName": "Ajay Construction Corp",
-        "merchantName": "Kakkanad Building Supplies",
-        "issueType": "Damaged Bags on Unloading",
-        "reportedDate": "2026-10-24T14:30:00Z",
-        "amount": 2500.0,
-        "status": "under_investigation",
-        "resolutionNotes": "Driver photos uploaded. 5 cement bags damaged during transit. Merchant agreed to replacement credit."
-    }
-]
+# No disputes table exists yet, so there is no real data to list.
+DISPUTES_STORE = []
 
 
 class AdminService:
@@ -630,6 +621,11 @@ class AdminService:
         merchant.verified = verified
         merchant.is_online = is_online
 
+        # The store's vendor accounts gate operations on user.is_verified, so keep them in step.
+        vendor_res = await db.execute(select(User).where(User.merchant_id == merchant.id, User.role == UserRole.VENDOR))
+        for vendor_user in vendor_res.scalars().all():
+            vendor_user.is_verified = verified
+
         audit_entry = AuditLog(
             id=str(uuid.uuid4()),
             action="merchant.admin_verification_update",
@@ -697,6 +693,7 @@ class AdminService:
         category: Optional[str] = None,
         brand: Optional[str] = None,
         search: Optional[str] = None,
+        status: Optional[str] = None,
         page: int = 1,
         limit: int = 50
     ) -> Dict[str, Any]:
@@ -706,6 +703,10 @@ class AdminService:
 
         filtered = []
         for p in all_prods:
+            if status and status != "all":
+                current_status = (p.status or "approved").lower()
+                if current_status != status.lower():
+                    continue
             if category and category != "all" and p.category.lower() != category.lower():
                 continue
             if brand and brand != "all" and p.brand.lower() != brand.lower():
@@ -739,6 +740,8 @@ class AdminService:
                 "weightKg": p.weight_kg,
                 "stockQty": p.stock_qty,
                 "merchantId": p.merchant_id,
+                "status": p.status or "approved",
+                "rejectionReason": p.rejection_reason,
                 "createdAt": p.created_at.isoformat() if p.created_at else None
             } for p in paged
         ]
@@ -870,7 +873,13 @@ class AdminService:
         data: Dict[str, Any],
         admin_id: str
     ) -> bool:
-        cat_id = data["id"]
+        cat_id = data.get("id")
+        if not cat_id:
+            title = data.get("title", "").strip()
+            cat_id = re.sub(r'[^a-z0-9]+', '_', title.lower()).strip('_')
+            if not cat_id:
+                cat_id = f"cat_{uuid.uuid4().hex[:6]}"
+
         res = await db.execute(select(MaterialCategory).where(MaterialCategory.id == cat_id))
         cat = res.scalars().first()
         if cat:
@@ -881,14 +890,14 @@ class AdminService:
             cat = MaterialCategory(
                 id=cat_id,
                 title=data["title"],
-                subtitle=data["subtitle"],
-                icon_name=data["icon_name"],
-                color_bg=data.get("color_bg", "bg-[#FF6500]"),
-                item_count=data.get("item_count", 100),
+                subtitle=data.get("subtitle") or f"Wholesale {data['title']} supplies",
+                icon_name=data.get("icon_name") or "FaBoxesStacked",
+                color_bg=data.get("color_bg") or "bg-[#FF6500]",
+                item_count=data.get("item_count") or 100,
                 trending_badge=data.get("trending_badge"),
-                image=data["image"],
-                subcategories=data.get("subcategories", []),
-                featured_brands=data.get("featured_brands", [])
+                image=data.get("image") or "/images/cement_aggregates.png",
+                subcategories=data.get("subcategories") or [],
+                featured_brands=data.get("featured_brands") or []
             )
             db.add(cat)
 
@@ -900,6 +909,89 @@ class AdminService:
             target_type="category",
             target_id=cat_id,
             changes=data,
+            status="success"
+        )
+        db.add(audit_entry)
+        await db.commit()
+        return True
+
+    @staticmethod
+    async def delete_category(
+        db: AsyncSession,
+        category_id: str,
+        admin_id: str
+    ) -> bool:
+        res = await db.execute(select(MaterialCategory).where(MaterialCategory.id == category_id))
+        cat = res.scalars().first()
+        if not cat:
+            return False
+
+        await db.delete(cat)
+        audit_entry = AuditLog(
+            id=str(uuid.uuid4()),
+            action="catalog.admin_delete_category",
+            actor_id=admin_id,
+            actor_role="admin",
+            target_type="category",
+            target_id=category_id,
+            changes={"deleted": True},
+            status="success"
+        )
+        db.add(audit_entry)
+        await db.commit()
+        return True
+
+    @staticmethod
+    async def approve_product(
+        db: AsyncSession,
+        product_id: str,
+        admin_id: str
+    ) -> bool:
+        res = await db.execute(select(Product).where(Product.id == product_id))
+        prod = res.scalars().first()
+        if not prod:
+            return False
+
+        prod.status = "approved"
+        prod.rejection_reason = None
+
+        audit_entry = AuditLog(
+            id=str(uuid.uuid4()),
+            action="catalog.admin_approve_product",
+            actor_id=admin_id,
+            actor_role="admin",
+            target_type="product",
+            target_id=product_id,
+            changes={"status": "approved"},
+            status="success"
+        )
+        db.add(audit_entry)
+        await db.commit()
+        return True
+
+    @staticmethod
+    async def reject_product(
+        db: AsyncSession,
+        product_id: str,
+        reason: str,
+        admin_id: str
+    ) -> bool:
+        res = await db.execute(select(Product).where(Product.id == product_id))
+        prod = res.scalars().first()
+        if not prod:
+            return False
+
+        prod.status = "rejected"
+        prod.rejection_reason = reason
+
+        audit_entry = AuditLog(
+            id=str(uuid.uuid4()),
+            action="catalog.admin_reject_product",
+            actor_id=admin_id,
+            actor_role="admin",
+            target_type="product",
+            target_id=product_id,
+            changes={"status": "rejected", "reason": reason},
             status="success"
         )
         db.add(audit_entry)
@@ -956,6 +1048,76 @@ class AdminService:
             "page": page,
             "limit": limit
         }
+
+    @staticmethod
+    async def list_verification_queue(db: AsyncSession, role: str, status: str) -> Dict[str, Any]:
+        user_role = UserRole.VENDOR if role == "vendor" else UserRole.DRIVER
+        res = await db.execute(select(User).where(User.role == user_role, User.is_verified.is_(False)))
+        users = res.scalars().all()
+
+        items = []
+        for user in users:
+            is_rejected = bool(user.verification_reason)
+            if (status == "rejected") != is_rejected:
+                continue
+            item = {
+                "userId": user.id,
+                "name": user.name,
+                "email": user.email,
+                "phone": user.phone,
+                "submittedAt": user.created_at.isoformat() if user.created_at else None,
+                "reason": user.verification_reason,
+            }
+            if user_role == UserRole.VENDOR:
+                store = (await db.execute(select(HardwareMerchant).where(HardwareMerchant.id == user.merchant_id))).scalars().first()
+                item.update({
+                    "storeName": store.name if store else None,
+                    "address": store.address if store else None,
+                    "pincode": store.pincode if store else None,
+                    "gstin": store.gstin if store else None,
+                })
+            else:
+                item.update({
+                    "vehicleType": user.vehicle_type,
+                    "vehicleRegNumber": user.vehicle_reg_number,
+                    "payloadCapacityTons": user.payload_capacity_tons,
+                    "licenseNumber": user.driver_license,
+                })
+            items.append(item)
+        return {"items": items, "count": len(items)}
+
+    @staticmethod
+    async def decide_verification(
+        db: AsyncSession,
+        user_id: str,
+        approve: bool,
+        reason: Optional[str],
+        admin_id: str
+    ) -> None:
+        user = (await db.execute(select(User).where(User.id == user_id))).scalars().first()
+        if user is None or user.role not in (UserRole.VENDOR, UserRole.DRIVER):
+            raise LookupError("Applicant not found")
+
+        user.is_verified = approve
+        user.verification_reason = None if approve else reason
+        if not approve and user.role == UserRole.DRIVER:
+            user.is_online = False
+        if user.role == UserRole.VENDOR and user.merchant_id:
+            store = (await db.execute(select(HardwareMerchant).where(HardwareMerchant.id == user.merchant_id))).scalars().first()
+            if store:
+                store.verified = approve
+
+        db.add(AuditLog(
+            id=str(uuid.uuid4()),
+            action="user.admin_verification_decision",
+            actor_id=admin_id,
+            actor_role="admin",
+            target_type="user",
+            target_id=user.id,
+            changes={"approved": approve, "reason": reason, "role": user.role.value},
+            status="success"
+        ))
+        await db.commit()
 
     @staticmethod
     async def toggle_user_status(
@@ -1237,8 +1399,28 @@ class AdminService:
         if not order:
             return False
 
-        refund_amount = amount if amount is not None else order.grand_total
-        order.status = OrderStatus.REFUNDED
+        # Only a captured Razorpay payment can be refunded. Marking an unpaid or
+        # already-refunded order as refunded would record money that never moved.
+        if not order.payment_id:
+            raise ValueError("Order has no captured payment to refund")
+        if order.status == OrderStatus.REFUNDED:
+            raise ValueError("Order has already been refunded")
+
+        paid_rupees = round(order.grand_total, 2)
+        refund_rupees = paid_rupees if amount is None else round(float(amount), 2)
+        if refund_rupees <= 0 or refund_rupees > paid_rupees:
+            raise ValueError(f"Refund amount must be between 0.01 and {paid_rupees}")
+
+        is_full_refund = refund_rupees == paid_rupees
+        # Razorpay takes amounts in paise; the admin panel works in rupees.
+        refund = await payment_service.refund_payment(
+            razorpay_payment_id=order.payment_id,
+            amount=int(round(refund_rupees * 100)),
+            context={"reason": reason, "orderId": order.id}
+        )
+
+        if is_full_refund:
+            order.status = OrderStatus.REFUNDED
 
         audit_entry = AuditLog(
             id=str(uuid.uuid4()),
@@ -1247,7 +1429,12 @@ class AdminService:
             actor_role="admin",
             target_type="order",
             target_id=order.id,
-            changes={"refundAmount": refund_amount, "reason": reason, "orderStatus": "refunded"},
+            changes={
+                "refundAmount": refund_rupees,
+                "refundId": refund.get("id"),
+                "reason": reason,
+                "orderStatus": order.status.value
+            },
             status="success"
         )
         db.add(audit_entry)
@@ -1406,6 +1593,7 @@ class AdminService:
                 "badge": d.badge,
                 "badgeColor": d.badge_color,
                 "expiresInSeconds": d.expires_in_seconds,
+                "status": d.status,
                 "createdAt": d.created_at.isoformat() if d.created_at else None
             } for d in deals
         ]
@@ -1440,7 +1628,8 @@ class AdminService:
                 min_order=data.get("min_order", "100 Bags Min."),
                 badge=data.get("badge", "Flash Deal"),
                 badge_color=data.get("badge_color", "bg-[#FF6500]"),
-                expires_in_seconds=int(data.get("expires_in_seconds", 18000))
+                expires_in_seconds=int(data.get("expires_in_seconds", 18000)),
+                status=data.get("status") or "approved"
             )
             db.add(deal)
 
@@ -1588,15 +1777,15 @@ class AdminService:
         logs = res.scalars().all()
         return [
             {
-                "id": l.id,
-                "action": l.action,
-                "actorId": l.actor_id,
-                "actorRole": l.actor_role,
-                "targetType": l.target_type,
-                "targetId": l.target_id,
-                "status": l.status,
-                "changes": l.changes,
-                "ipAddress": l.ip_address,
-                "createdAt": l.created_at.isoformat() if l.created_at else None
-            } for l in logs
+                "id": log.id,
+                "action": log.action,
+                "actorId": log.actor_id,
+                "actorRole": log.actor_role,
+                "targetType": log.target_type,
+                "targetId": log.target_id,
+                "status": log.status,
+                "changes": log.changes,
+                "ipAddress": log.ip_address,
+                "createdAt": log.created_at.isoformat() if log.created_at else None
+            } for log in logs
         ]

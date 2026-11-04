@@ -213,12 +213,12 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-medium text-slate-900 truncate">Manoj K (KL-07-CD-8921)</span>
+                      <span className="text-xs font-medium text-slate-900 truncate">Assigned after dispatch</span>
                       <span className="h-2.5 w-px bg-slate-300 inline-block" />
                       <span className="text-xs text-slate-600 font-medium">Standard 6-Wheeler</span>
                     </div>
                     <p className="text-xs text-slate-500 font-normal truncate mt-0.5">
-                      Passing Kakkanad Industrial Bypass · Unloading OTP will be sent on site arrival
+                      Unloading OTP is sent to you when the driver arrives on site
                     </p>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-medium text-sm sm:text-base text-slate-900 whitespace-nowrap">
-                        Kakkanad Building Supplies Co.
+                        Store details on your invoice
                       </h3>
                       <span className="h-3 w-px bg-slate-300 inline-block" />
                       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 whitespace-nowrap">
@@ -254,7 +254,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
                     </div>
                     <p className="text-xs text-slate-500 font-normal flex items-center gap-1 mt-0.5 whitespace-nowrap">
                       <FaLocationDot className="h-3 w-3 text-[#FF6500]" />
-                      <span>Kakkanad Industrial Zone, Metro Pillar #412</span>
+                      <span>Delivery address on your invoice</span>
                     </p>
                   </div>
                 </div>
@@ -387,7 +387,7 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({
               </div>
 
               <a
-                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`MaterialHub Site Delivery Update: Order #${displayOrderId} is confirmed for site unloading today. Track live: http://localhost:3000/tracking`)}`}
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`MaterialHub Site Delivery Update: Order #${displayOrderId} is confirmed for site unloading today. Track live: ${typeof window !== 'undefined' ? window.location.origin : 'https://buyer.materialhub.in'}/tracking`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full px-4 py-3 rounded-2xl bg-[#00895A] hover:bg-[#007A50] text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"

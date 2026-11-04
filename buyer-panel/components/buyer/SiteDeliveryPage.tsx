@@ -38,8 +38,8 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
 }) => {
   const [accessOption, setAccessOption] = useState<'narrow' | 'no_heavy' | 'crane' | 'ground'>('ground');
   const [laborAssistance, setLaborAssistance] = useState<'none' | 'two_helpers' | 'four_helpers'>('two_helpers');
-  const [supervisorName, setSupervisorName] = useState('Suresh Nair (Site Supervisor)');
-  const [supervisorPhone, setSupervisorPhone] = useState('+91 98765 43210');
+  const [supervisorName, setSupervisorName] = useState('');
+  const [supervisorPhone, setSupervisorPhone] = useState('');
 
   const handleSave = () => {
     onSaveInstructions({
@@ -281,7 +281,7 @@ export const SiteDeliveryPage: React.FC<SiteDeliveryPageProps> = ({
                     <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Target Site</span>
                     <p className="font-medium text-slate-900 flex items-center gap-1.5">
                       <FaBuilding className="h-3 w-3 text-[#FF6500]" />
-                      {location.address || 'Site #14, Kakkanad Zone'}
+                      {location.address || 'No data'}
                     </p>
                   </div>
 

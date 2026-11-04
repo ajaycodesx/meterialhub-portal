@@ -21,6 +21,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "MaterialHub - Wholesale Construction Materials Platform",
   description: "Direct B2B and retail marketplace for Cement, TMT Steel, PVC Pipes, Paints & Hardware.",
+  manifest: "/manifest.json",
   robots: {
     index: false,
     follow: false,
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#FF6500",
 };
 
 export default function RootLayout({

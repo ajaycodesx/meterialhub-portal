@@ -44,39 +44,13 @@ class ApiClient {
     return this.token;
   }
 
-  private async ensureAdminToken(): Promise<string | null> {
-    if (this.isAuthenticating) return null;
-    this.isAuthenticating = true;
-    try {
-      const res = await fetch(`${this.baseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone_or_email: 'admin@materialhub.in', password: 'admin123' })
-      });
-      const data = await res.json().catch(() => ({}));
-      const newToken = data?.data?.access_token || data?.access_token;
-      if (newToken) {
-        this.setToken(newToken);
-        return newToken;
-      }
-    } catch {
-      return null;
-    } finally {
-      this.isAuthenticating = false;
-    }
-    return null;
-  }
-
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
     isRetry: boolean = false
   ): Promise<T> {
-    let token = this.getToken();
+    const token = this.getToken();
 
-    if (!token && !endpoint.includes('/auth/login') && !isRetry) {
-      token = await this.ensureAdminToken();
-    }
 
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
@@ -99,10 +73,6 @@ class ApiClient {
       if (!response.ok) {
         if ((response.status === 401 || response.status === 403) && !isRetry && !endpoint.includes('/auth/login')) {
           this.setToken(null);
-          const newToken = await this.ensureAdminToken();
-          if (newToken) {
-            return this.request<T>(endpoint, options, true);
-          }
         }
 
         const errorMsg = data?.detail || data?.message || 'Request failed';
@@ -142,6 +112,26 @@ class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
+
+  async upload(file: File): Promise<{ url: string; filename: string }> {
+    const token = this.getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const res = await fetch(`${this.baseUrl}/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new ApiError(res.status, data?.message || 'File upload failed');
+    }
+    return data.data;
+  }
 }
 
 export const apiClient = new ApiClient();
@@ -157,6 +147,12 @@ export const authApi = {
 };
 
 export const adminApi = {
+  getVerificationQueue: (role: 'vendor' | 'driver', status: 'pending' | 'rejected') =>
+    apiClient.get<any>(`/admin/verifications?role=${role}&status=${status}`),
+
+  decideVerification: (userId: string, approve: boolean, reason?: string) =>
+    apiClient.post<any>(`/admin/verifications/${userId}/decision`, { approve, reason }),
+
   getOverview: () => apiClient.get<any>('/admin/overview'),
   
   getOrders: (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
@@ -198,11 +194,12 @@ export const adminApi = {
   toggleMerchant: (data: { merchantId: string; field?: string }) =>
     apiClient.post('/admin/merchants/toggle', data),
 
-  getProducts: (params?: { category?: string; brand?: string; search?: string; page?: number; limit?: number }) => {
+  getProducts: (params?: { category?: string; brand?: string; search?: string; status?: string; page?: number; limit?: number }) => {
     const query = new URLSearchParams();
     if (params?.category) query.set('category', params.category);
     if (params?.brand) query.set('brand', params.brand);
     if (params?.search) query.set('search', params.search);
+    if (params?.status) query.set('status', params.status);
     if (params?.page) query.set('page', params.page.toString());
     if (params?.limit) query.set('limit', params.limit.toString());
     const qs = query.toString();
@@ -215,9 +212,17 @@ export const adminApi = {
 
   deleteProduct: (productId: string) => apiClient.delete(`/admin/products/${productId}`),
 
+  approveProduct: (productId: string) => apiClient.post(`/admin/products/${productId}/approve`, {}),
+
+  rejectProduct: (productId: string, reason: string) => apiClient.post(`/admin/products/${productId}/reject`, { reason }),
+
   getCategories: () => apiClient.get<any[]>('/admin/categories'),
 
   saveCategory: (data: any) => apiClient.post('/admin/categories', data),
+
+  deleteCategory: (categoryId: string) => apiClient.delete(`/admin/categories/${categoryId}`),
+
+  uploadImage: (file: File) => apiClient.upload(file),
 
   getBuyers: (params?: { search?: string; page?: number; limit?: number }) => {
     const query = new URLSearchParams();

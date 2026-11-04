@@ -121,6 +121,34 @@ export const DealsSection: React.FC = () => {
     }
   }
 
+  async function handleReviewDeal(d: any, status: 'approved' | 'rejected') {
+    setSubmitting(true);
+    try {
+      await adminApi.saveDeal({
+        id: d.id,
+        material: d.material,
+        brand: d.brand,
+        image: d.image,
+        original_rate: d.originalRate,
+        deal_rate: d.dealRate,
+        unit: d.unit,
+        discount_pct: d.discountPct,
+        min_order: d.minOrder,
+        badge: d.badge,
+        badge_color: d.badgeColor || 'bg-[#FF6500]',
+        expires_in_seconds: d.expiresInSeconds || 18000,
+        status
+      });
+      setActionSuccess(`Promotion "${d.material}" ${status === 'approved' ? 'published' : 'rejected'}`);
+      fetchDeals();
+      setTimeout(() => setActionSuccess(null), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to review deal');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   async function handleDeleteSubmit() {
     if (!activeDealId) return;
     setSubmitting(true);
@@ -198,6 +226,13 @@ export const DealsSection: React.FC = () => {
                       {d.discountPct}% OFF
                     </span>
                   </div>
+                  {d.status && d.status !== 'approved' && (
+                    <span className={`inline-block text-[10px] font-semibold uppercase tracking-wider ${
+                      d.status === 'pending' ? 'text-amber-600' : 'text-rose-600'
+                    }`}>
+                      {d.status === 'pending' ? 'Awaiting review' : 'Rejected'}
+                    </span>
+                  )}
                   <h3 className="text-sm font-medium text-slate-900 leading-tight">{d.material}</h3>
                   <p className="text-xs font-medium text-slate-500">{d.brand}</p>
                 </div>
@@ -219,6 +254,16 @@ export const DealsSection: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                {d.status === 'pending' && (
+                  <>
+                    <Button size="sm" variant="primary" isLoading={submitting} onClick={() => handleReviewDeal(d, 'approved')} icon={<FaCircleCheck />}>
+                      Approve
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-rose-600 hover:bg-rose-50" disabled={submitting} onClick={() => handleReviewDeal(d, 'rejected')} icon={<FaXmark />}>
+                      Reject
+                    </Button>
+                  </>
+                )}
                 <Button size="sm" variant="outline" onClick={() => openEditModal(d)} icon={<FaPen />}>
                   Edit
                 </Button>

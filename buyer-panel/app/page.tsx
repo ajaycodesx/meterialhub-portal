@@ -6,13 +6,10 @@ import { HeroSection } from '../components/buyer/HeroSection';
 import { QuickDispatchAndShipments } from '../components/buyer/QuickDispatchAndShipments';
 import { TrendingDealsStrip } from '../components/buyer/TrendingDealsStrip';
 import { WholesaleRateIndex } from '../components/buyer/WholesaleRateIndex';
-import { FeaturedBrandsShowcase } from '../components/buyer/FeaturedBrandsShowcase';
 import { CategoriesGrid } from '../components/buyer/CategoriesGrid';
-import { ContractorTestimonials } from '../components/buyer/ContractorTestimonials';
 import { useAppContext } from '../context/AppContext';
 import { buyerApi } from '../lib/api';
 import { HardwareMerchant, MaterialCategory, CommodityRate } from '../types/buyer';
-import { MATERIAL_CATEGORIES, HARDWARE_MERCHANTS } from '../data/mockBuyerData';
 
 interface BuyerHomePayload {
   categories?: MaterialCategory[];
@@ -95,13 +92,9 @@ export default function HomePage() {
     );
   }
 
-  const categories = (homeData?.categories && homeData.categories.length > 0)
-    ? homeData.categories
-    : MATERIAL_CATEGORIES;
+  const categories = homeData?.categories ?? [];
 
-  const merchants = (homeData?.nearbyMerchants && homeData.nearbyMerchants.length > 0)
-    ? homeData.nearbyMerchants
-    : HARDWARE_MERCHANTS;
+  const merchants = homeData?.nearbyMerchants ?? [];
 
   return (
     <div className="w-full flex flex-col pt-3 sm:pt-5 lg:pt-6 space-y-8 sm:space-y-12 lg:space-y-16 pb-0">
@@ -114,15 +107,14 @@ export default function HomePage() {
       </div>
 
       <div className="gsap-reveal-section">
-        <TrendingDealsStrip />
+        <TrendingDealsStrip deals={(homeData?.trendingDeals as any[]) ?? []} />
       </div>
 
       <div id="wholesale-rates" className="w-full gsap-reveal-section">
-        <WholesaleRateIndex />
+        <WholesaleRateIndex rates={homeData?.rateTicker ?? []} />
       </div>
 
       <div className="gsap-reveal-section">
-        <FeaturedBrandsShowcase />
       </div>
 
       <div className="gsap-reveal-section">
@@ -136,7 +128,6 @@ export default function HomePage() {
       </div>
 
       <div className="gsap-reveal-section">
-        <ContractorTestimonials />
       </div>
     </div>
   );

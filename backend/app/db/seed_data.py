@@ -1,4 +1,6 @@
 import asyncio
+import logging
+import sys
 from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
 from app.core.security import get_password_hash
@@ -8,8 +10,6 @@ from app.models.category import MaterialCategory
 from app.models.product import Product
 from app.models.deal import Deal
 from app.models.commodity_rate import CommodityRate
-from app.models.order import Order, OrderItem, OrderStatus
-from app.models.delivery import DeliveryTrip, TripStatus
 
 CATEGORIES_SEED = [
     {
@@ -100,6 +100,8 @@ MERCHANTS_SEED = [
         "main_category": "Cement, TMT Steel & Hardware",
         "address": "Civil Station Junction, Kakkanad, Kochi",
         "pincode": "682030",
+        "latitude": 10.0159,
+        "longitude": 76.3419,
         "is_online": True,
         "avatar_url": "/images/logo.png",
         "wallet_balance": 284000.0,
@@ -207,9 +209,6 @@ PRODUCTS_SEED = [
 ]
 
 
-import logging
-import sys
-
 logger = logging.getLogger(__name__)
 
 
@@ -262,7 +261,10 @@ async def seed_demo_data(force: bool = False) -> bool:
                 hashed_password=get_password_hash("driver123"),
                 role=UserRole.DRIVER,
                 vehicle_type="Mini Commercial Truck (3 Ton)",
-                driver_license="KL-07-2019-004521"
+                vehicle_reg_number="KL-07-CD-8921",
+                payload_capacity_tons=3.0,
+                driver_license="KL-07-2019-004521",
+                is_online=False
             ),
             User(
                 id="u_admin_1",
@@ -309,55 +311,6 @@ async def seed_demo_data(force: bool = False) -> bool:
                 db.add(Product(**p))
             elif force or prod.stock_qty <= 10:
                 prod.stock_qty = 500
-
-        existing_order = await db.execute(select(Order).where(Order.id == "ord_98241"))
-        if not existing_order.scalars().first():
-            sample_order = Order(
-                id="ord_98241",
-                user_id="u_buyer_1",
-                merchant_id="m1",
-                items_total=46200.0,
-                delivery_fee=850.0,
-                gst_amount=8316.0,
-                grand_total=55366.0,
-                total_weight_kg=2500.0,
-                vehicle_recommended="Mini Commercial Truck (3 Ton)",
-                delivery_address="Plot 14, Infopark Phase 2, Kakkanad",
-                pincode="682030",
-                site_constraints={"roadWidth": "12ft+", "craneNeeded": False, "unloadingTimeSlot": "Morning (8 AM - 12 PM)"},
-                status=OrderStatus.OUT_FOR_DELIVERY,
-                payment_mode="Cash on Unloading",
-                invoice_number="MH-INV-2026-0891"
-            )
-            db.add(sample_order)
-
-            sample_item = OrderItem(
-                id="item_1",
-                order_id="ord_98241",
-                product_id="p1",
-                product_title="UltraTech 53 Grade OPC Cement (50kg)",
-                unit_price=385.0,
-                quantity=120,
-                unit="50kg Bag",
-                weight_kg=50.0,
-                subtotal=46200.0
-            )
-            db.add(sample_item)
-
-            sample_trip = DeliveryTrip(
-                id="trip_5501",
-                order_id="ord_98241",
-                driver_id="u_driver_1",
-                vehicle_type="Mini Commercial Truck (3 Ton)",
-                vehicle_reg_number="KL-07-CD-8921",
-                pickup_address="Civil Station Junction, Kakkanad, Kochi",
-                drop_address="Plot 14, Infopark Phase 2, Kakkanad",
-                distance_km=3.2,
-                trip_fare=850.0,
-                status=TripStatus.IN_TRANSIT,
-                current_gps={"lat": 10.0159, "lng": 76.3419}
-            )
-            db.add(sample_trip)
 
         await db.commit()
         logger.info("Demo data seeding completed successfully.")

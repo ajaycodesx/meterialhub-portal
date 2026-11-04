@@ -1,6 +1,9 @@
+import asyncio
+import os
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,9 +18,25 @@ from app.core.rate_limit import limiter, rate_limit_exceeded_handler
 from app.core.database import get_db
 from app.api.v1.api import api_router
 from app.db.seed_data import seed_demo_data
+from app.core.database import AsyncSessionLocal
+from app.services import dispatch_service
 
 setup_logging(log_level=settings.LOG_LEVEL, log_format=settings.LOG_FORMAT)
 logger = logging.getLogger(__name__)
+
+
+DISPATCH_SWEEP_SECONDS = 5
+
+
+async def dispatch_loop() -> None:
+    """Expire unanswered driver offers and keep unassigned trips moving to the next driver."""
+    while True:
+        try:
+            async with AsyncSessionLocal() as db:
+                await dispatch_service.run_cycle(db)
+        except Exception:
+            logger.exception("Dispatch cycle failed; retrying")
+        await asyncio.sleep(DISPATCH_SWEEP_SECONDS)
 
 
 @asynccontextmanager
@@ -34,8 +53,10 @@ async def lifespan(app: FastAPI):
             settings.ENVIRONMENT,
         )
 
+    sweeper = asyncio.create_task(dispatch_loop())
     yield
 
+    sweeper.cancel()
     logger.info("Shutting down MaterialHub API cleanly.")
 
 
@@ -67,6 +88,9 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["X-Request-ID"],
 )
+
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 

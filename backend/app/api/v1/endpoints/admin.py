@@ -5,6 +5,7 @@ from app.core.database import get_db
 from app.api.deps import get_current_user
 from app.models.user import User, UserRole
 from app.services.admin_service import AdminService
+from app.schemas.admin import AdminVerificationDecisionRequest
 from app.schemas.admin import (
     AdminOverviewCompositeResponse,
     UpdateCommodityRateRequest,
@@ -15,6 +16,7 @@ from app.schemas.admin import (
     AdminOrderReassignDriverRequest,
     AdminProductCreateRequest,
     AdminProductUpdateRequest,
+    AdminProductRejectRequest,
     AdminCategorySaveRequest,
     AdminUserToggleRequest,
     AdminTripStatusUpdateRequest,
@@ -187,6 +189,7 @@ async def get_admin_products(
     category: Optional[str] = Query(None),
     brand: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
     limit: int = Query(50, ge=1, le=100),
     current_user: User = Depends(get_current_user),
@@ -195,7 +198,7 @@ async def get_admin_products(
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
     
-    data = await AdminService.get_products(db, category, brand, search, page, limit)
+    data = await AdminService.get_products(db, category, brand, search, status, page, limit)
     return ApiResponse(data=data, message="Products retrieved successfully")
 
 
@@ -243,6 +246,37 @@ async def delete_admin_product(
     return ApiResponse(data={"deleted": True, "productId": product_id}, message="Product deleted successfully")
 
 
+@router.post("/products/{product_id}/approve", response_model=ApiResponse[dict])
+async def approve_admin_product(
+    product_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
+    
+    success = await AdminService.approve_product(db, product_id, current_user.id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return ApiResponse(data={"approved": True, "productId": product_id}, message="Product approved successfully")
+
+
+@router.post("/products/{product_id}/reject", response_model=ApiResponse[dict])
+async def reject_admin_product(
+    product_id: str,
+    req: AdminProductRejectRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
+    
+    success = await AdminService.reject_product(db, product_id, req.reason, current_user.id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return ApiResponse(data={"rejected": True, "productId": product_id, "reason": req.reason}, message="Product rejected successfully")
+
+
 @router.get("/categories", response_model=ApiResponse[list])
 async def get_admin_categories(
     current_user: User = Depends(get_current_user),
@@ -264,8 +298,23 @@ async def save_admin_category(
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
     
-    success = await AdminService.save_category(db, req.model_dump(), current_user.id)
+    await AdminService.save_category(db, req.model_dump(), current_user.id)
     return ApiResponse(data={"saved": True, "categoryId": req.id}, message="Category saved successfully")
+
+
+@router.delete("/categories/{category_id}", response_model=ApiResponse[dict])
+async def delete_admin_category(
+    category_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
+    
+    success = await AdminService.delete_category(db, category_id, current_user.id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return ApiResponse(data={"deleted": True, "categoryId": category_id}, message="Category deleted successfully")
 
 
 @router.get("/buyers", response_model=ApiResponse[dict])
@@ -369,7 +418,12 @@ async def process_admin_refund(
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
     
-    success = await AdminService.process_refund(db, req.orderId, req.amount, req.reason, current_user.id)
+    try:
+        success = await AdminService.process_refund(db, req.orderId, req.amount, req.reason, current_user.id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception:
+        raise HTTPException(status_code=502, detail="Refund could not be completed with the payment gateway") from None
     if not success:
         raise HTTPException(status_code=404, detail="Order not found for refund")
     return ApiResponse(data={"refunded": True, "orderId": req.orderId}, message="Refund processed successfully")
@@ -456,7 +510,7 @@ async def save_admin_deal(
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
     
-    success = await AdminService.save_deal(db, req.model_dump(), current_user.id)
+    await AdminService.save_deal(db, req.model_dump(), current_user.id)
     return ApiResponse(data={"saved": True}, message="Deal saved successfully")
 
 
@@ -564,3 +618,38 @@ async def get_admin_audit_logs(
     
     logs = await AdminService.get_audit_logs(db, limit)
     return ApiResponse(data=logs, message="Audit logs retrieved successfully")
+
+
+@router.get("/verifications", response_model=ApiResponse[dict])
+async def list_verification_queue(
+    role: str = Query("vendor", pattern="^(vendor|driver)$"),
+    status: str = Query("pending", pattern="^(pending|rejected)$"),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Vendors and drivers waiting for approval, or previously rejected with a reason."""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
+    data = await AdminService.list_verification_queue(db, role, status)
+    return ApiResponse(data=data, message="Verification queue retrieved")
+
+
+@router.post("/verifications/{user_id}/decision", response_model=ApiResponse[dict])
+async def decide_verification(
+    user_id: str,
+    req: AdminVerificationDecisionRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
+    if not req.approve and not req.reason:
+        raise HTTPException(status_code=400, detail="A reason is required when rejecting")
+    try:
+        await AdminService.decide_verification(db, user_id, req.approve, req.reason, current_user.id)
+    except LookupError:
+        raise HTTPException(status_code=404, detail="Applicant not found") from None
+    return ApiResponse(
+        data={"userId": user_id, "approved": req.approve, "reason": None if req.approve else req.reason},
+        message="Applicant approved" if req.approve else "Applicant rejected with reason"
+    )

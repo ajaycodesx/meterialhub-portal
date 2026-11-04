@@ -16,7 +16,8 @@ interface DriverJobsTabProps {
   availableTrips: any[];
   activeTrip: any;
   tripHistory: any[];
-  onAcceptTrip: (tripId: string) => Promise<void>;
+  onAcceptTrip: (tripId: string) => Promise<void> | void;
+  onDeclineTrip?: (tripId: string) => void;
   onOpenMap: (trip: any) => void;
   actionLoading: string | null;
 }
@@ -26,6 +27,7 @@ export function DriverJobsTab({
   activeTrip,
   tripHistory,
   onAcceptTrip,
+  onDeclineTrip,
   onOpenMap,
   actionLoading,
 }: DriverJobsTabProps) {
@@ -40,48 +42,21 @@ export function DriverJobsTab({
         ? activeTrip.orderId.startsWith('ord_')
           ? `MH-${activeTrip.orderId.slice(4, 8).toUpperCase()}`
           : activeTrip.orderId
-        : 'MH-2051',
+        : 'No data',
       status: activeTrip.status || 'awaiting_otp',
       statusLabel: 'Awaiting OTP',
-      vendorName: activeTrip.pickupAddress?.split(',')[0] || 'BuildPro Materials',
-      vendorAddress: activeTrip.pickupAddress || 'Industrial Estate Road, Kalamassery',
-      buyerName: activeTrip.dropAddress?.split(',')[0] || 'Anjali Traders',
-      buyerAddress: activeTrip.dropAddress || 'Market Road, Edappally',
-      loadSpecs: activeTrip.vehicleType || '20mm Metal · 8 tons',
+      vendorName: activeTrip.pickupAddress?.split(',')[0] || 'No data',
+      vendorAddress: activeTrip.pickupAddress || '',
+      buyerName: activeTrip.dropAddress?.split(',')[0] || 'No data',
+      buyerAddress: activeTrip.dropAddress || '',
+      loadSpecs: activeTrip.vehicleType || 'No data',
       fareDisplay: activeTrip.tripFare
         ? `₹${Math.round(activeTrip.tripFare).toLocaleString('en-IN')}`
         : '₹12,400',
     });
   }
 
-  const defaultMockHistory = [
-    {
-      id: 'trip_demo_prev',
-      displayId: 'MH-2048',
-      status: 'picked_up',
-      statusLabel: 'Picked up',
-      vendorName: 'Kalamassery Depot Hub',
-      vendorAddress: 'NH-544 Depot, Kalamassery',
-      buyerName: 'Royal Builders Site',
-      buyerAddress: 'Infopark Expressway, Kakkanad',
-      loadSpecs: '53-Grade OPC · 120 Bags',
-      fareDisplay: '₹3,200',
-    },
-    {
-      id: 'trip_demo_completed',
-      displayId: 'MH-2042',
-      status: 'delivered',
-      statusLabel: 'Delivered',
-      vendorName: 'Supreme Steel Yards',
-      vendorAddress: 'Container Road, Eloor',
-      buyerName: 'Skyline Meadows',
-      buyerAddress: 'Civil Station, Kakkanad',
-      loadSpecs: '12mm TMT Fe550D · 4 tons',
-      fareDisplay: '₹4,800',
-    }
-  ];
-
-  const historyMapped = (tripHistory.length > 0 ? tripHistory : defaultMockHistory).map((t: any) => ({
+  const historyMapped = tripHistory.map((t: any) => ({
     id: t.tripId || t.id,
     displayId: t.orderId
       ? t.orderId.startsWith('ord_')
@@ -90,8 +65,8 @@ export function DriverJobsTab({
       : t.displayId || 'MH-2048',
     status: t.status || 'delivered',
     statusLabel: t.status === 'delivered' ? 'Delivered' : t.statusLabel || 'Delivered',
-    vendorName: t.pickupAddress?.split(',')[0] || t.vendorName || 'Kalamassery Depot Hub',
-    vendorAddress: t.pickupAddress || t.vendorAddress || 'NH-544 Depot, Kalamassery',
+    vendorName: t.pickupAddress?.split(',')[0] || t.vendorName || '',
+    vendorAddress: t.pickupAddress || t.vendorAddress || '',
     buyerName: t.dropAddress?.split(',')[0] || t.buyerName || 'Royal Builders Site',
     buyerAddress: t.dropAddress || t.buyerAddress || 'Infopark Expressway, Kakkanad',
     loadSpecs: t.vehicleType || t.loadSpecs || 'Building Materials',
@@ -167,7 +142,7 @@ export function DriverJobsTab({
                   ? `MH-${trip.orderId.slice(4, 8).toUpperCase()}`
                   : trip.orderId
                 : 'MH-NEW';
-              const isLoadingThis = actionLoading === `accept_${tripId}`;
+              const isLoadingThis = actionLoading === `accept_${trip.offerId}`;
 
               return (
                 <div
@@ -179,7 +154,7 @@ export function DriverJobsTab({
                       {displayId}
                     </span>
                     <span className="text-xs font-medium text-emerald-600">
-                      ₹{Math.round(trip.tripFare || 850).toLocaleString('en-IN')}
+                      {trip.tripFare != null ? `₹${Math.round(trip.tripFare).toLocaleString('en-IN')}` : 'No data'}
                     </span>
                   </div>
 
@@ -196,8 +171,19 @@ export function DriverJobsTab({
 
                   <div className="flex items-center justify-between pt-1">
                     <span className="text-xs text-slate-400 font-medium">
-                      {trip.vehicleType || 'Commercial Load'} · {trip.distanceKm || 3.5} km
+                      {trip.vehicleRequired || 'Vehicle not specified'}
+                      {trip.distanceToPickupKm != null ? ` · ${trip.distanceToPickupKm} km to pickup` : ''}
                     </span>
+                    <div className="flex items-center gap-2">
+                    {onDeclineTrip && (
+                      <button
+                        onClick={() => onDeclineTrip(tripId)}
+                        disabled={Boolean(actionLoading)}
+                        className="py-2 px-3 border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium rounded-xl text-xs transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Decline
+                      </button>
+                    )}
                     <button
                       onClick={() => onAcceptTrip(tripId)}
                       disabled={Boolean(actionLoading)}
@@ -210,6 +196,7 @@ export function DriverJobsTab({
                       )}
                       <span>Accept Delivery</span>
                     </button>
+                    </div>
                   </div>
                 </div>
               );

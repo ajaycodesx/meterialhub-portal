@@ -39,6 +39,14 @@ class ApiClient {
     }
   }
 
+  getToken(): string | null {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('buyer_access_token') || localStorage.getItem('access_token');
+      if (stored) this.token = stored;
+    }
+    return this.token;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit & { _isRetry?: boolean } = {}
@@ -77,24 +85,6 @@ class ApiClient {
       if (!response.ok) {
         if (response.status === 401) {
           this.setToken(null);
-          if (!endpoint.startsWith('/auth/') && !options._isRetry && typeof window !== 'undefined') {
-            try {
-              const demoEmail = process.env.NEXT_PUBLIC_DEMO_BUYER_EMAIL || 'buyer@materialhub.in';
-              const demoPassword = process.env.NEXT_PUBLIC_DEMO_BUYER_PASSWORD || 'buyer123';
-              const loginRes = await fetch(`${this.baseUrl}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone_or_email: demoEmail, password: demoPassword })
-              });
-              const loginData = await loginRes.json();
-              const freshToken = loginData?.data?.access_token || loginData?.access_token;
-              if (freshToken) {
-                this.setToken(freshToken);
-                return this.request<T>(endpoint, { ...options, _isRetry: true });
-              }
-            } catch {
-            }
-          }
         }
         const errorMsg = data?.message || data?.detail || `HTTP ${response.status} Request Failed`;
         throw new ApiError(response.status, errorMsg);
@@ -193,7 +183,7 @@ export const driverApi = {
 };
 
 export const paymentApi = {
-  createOrder: (data: { order_id: string; amount: number; currency?: string; receipt?: string }) =>
+  createOrder: (data: { order_id: string; currency?: string; receipt?: string }) =>
     apiClient.post('/payment/create-order', data),
   verifyPayment: (data: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) =>
     apiClient.post('/payment/verify', data),
@@ -203,3 +193,12 @@ export const paymentApi = {
 export const adminApi = {
   getOverview: () => apiClient.get('/admin/overview'),
 };
+
+export function getMediaUrl(src?: string | null): string {
+  if (!src) return '/images/hero_banner.png';
+  if (src.startsWith('/uploads')) {
+    const apiHost = API_BASE_URL.replace('/api/v1', '');
+    return `${apiHost}${src}`;
+  }
+  return src;
+}

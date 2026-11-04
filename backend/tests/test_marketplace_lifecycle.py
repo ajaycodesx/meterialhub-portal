@@ -1,12 +1,13 @@
 import pytest
-import asyncio
 from httpx import AsyncClient
 from app.core.config import settings
 from app.core.security import create_access_token
 
 pytestmark = pytest.mark.asyncio
 
-async def test_full_marketplace_lifecycle_end_to_end(async_client: AsyncClient):
+async def test_full_marketplace_lifecycle_end_to_end(async_client: AsyncClient, monkeypatch):
+    from tests.helpers import use_simulated_gateway
+    use_simulated_gateway(monkeypatch)
     buyer_token = create_access_token(subject="u_buyer_1")
     vendor_token = create_access_token(subject="u_vendor_1")
     driver1_token = create_access_token(subject="u_driver_1")
@@ -112,23 +113,59 @@ async def test_full_marketplace_lifecycle_end_to_end(async_client: AsyncClient):
     )
     assert order_status_res.status_code == 200
 
+    from tests.helpers import isolate_driver
+    await isolate_driver("u_driver_1")
+
+    # The order's load needs a 10 ton vehicle; the driver declares that capacity first.
+    capacity_res = await async_client.put(
+        f"{settings.API_V1_STR}/driver/profile",
+        json={"payloadCapacityTons": 10},
+        headers=driver1_headers
+    )
+    assert capacity_res.status_code == 200
+
+    # Store and driver locations are needed for dispatch.
+    store_res = await async_client.put(
+        f"{settings.API_V1_STR}/vendor/profile",
+        json={"latitude": 10.0159, "longitude": 76.3419},
+        headers=vendor_headers
+    )
+    assert store_res.status_code == 200
+
+    location_res = await async_client.post(
+        f"{settings.API_V1_STR}/driver/location",
+        json={"latitude": 10.0170, "longitude": 76.3430},
+        headers=driver1_headers
+    )
+    assert location_res.status_code == 200
+
     feed_res = await async_client.get(f"{settings.API_V1_STR}/driver/feed", headers=driver1_headers)
     assert feed_res.status_code == 200
-    available_trips = feed_res.json()["data"]["availableTrips"]
-    assert len(available_trips) > 0
-    target_trip = available_trips[0]
-    trip_id = target_trip["tripId"]
+    if not feed_res.json()["data"]["isOnline"]:
+        toggle_res = await async_client.post(f"{settings.API_V1_STR}/driver/toggle-online", headers=driver1_headers)
+        assert toggle_res.status_code == 200
+
+    # Dispatch runs in the background in production; run one cycle explicitly here.
+    from app.core.database import AsyncSessionLocal
+    from app.services.dispatch_service import run_cycle
+    async with AsyncSessionLocal() as session:
+        await run_cycle(session)
+
+    offers_res = await async_client.get(f"{settings.API_V1_STR}/driver/offers", headers=driver1_headers)
+    assert offers_res.status_code == 200
+    assert any(o["orderId"] == order_id for o in offers_res.json()["data"]), (order_id, offers_res.json())
+    offer = next(o for o in offers_res.json()["data"] if o["orderId"] == order_id)
+    trip_id = offer["tripId"]
 
     claim_1 = await async_client.post(
-        f"{settings.API_V1_STR}/driver/update-trip",
-        json={"tripId": trip_id, "status": "accepted"},
+        f"{settings.API_V1_STR}/driver/offers/{offer['offerId']}/accept",
         headers=driver1_headers
     )
     assert claim_1.status_code == 200
 
+    # A second driver cannot take an offer that was not made to them.
     claim_2 = await async_client.post(
-        f"{settings.API_V1_STR}/driver/update-trip",
-        json={"tripId": trip_id, "status": "accepted"},
+        f"{settings.API_V1_STR}/driver/offers/{offer['offerId']}/accept",
         headers=driver2_headers
     )
     assert claim_2.status_code in [403, 404]
@@ -170,7 +207,7 @@ async def test_full_marketplace_lifecycle_end_to_end(async_client: AsyncClient):
     assert "devOtp" not in otp_data
     assert otp_data["otpSent"] is True
 
-    trip_order_id = target_trip["orderId"]
+    trip_order_id = order_id
     from app.services.otp_service import otp_service
     stored_otp_data = await otp_service.get_stored_otp(f"delivery_{trip_order_id}")
     assert stored_otp_data is not None
@@ -207,11 +244,24 @@ async def test_marketplace_failure_paths_and_invariants(async_client: AsyncClien
     buyer_headers = {"Authorization": f"Bearer {buyer_token}"}
     vendor_headers = {"Authorization": f"Bearer {vendor_token}"}
 
-    insufficient_stock_res = await async_client.post(
+    over_cap_res = await async_client.post(
         f"{settings.API_V1_STR}/buyer/orders",
         json={
             "merchantId": "m1",
             "items": [{"productId": "p1", "quantity": 999999}],
+            "deliveryAddress": "Site 4",
+            "pincode": "682030",
+            "siteConstraints": {"roadWidth": "12ft+", "craneNeeded": False, "unloadingTimeSlot": "Morning"}
+        },
+        headers=buyer_headers
+    )
+    assert over_cap_res.status_code == 422
+
+    insufficient_stock_res = await async_client.post(
+        f"{settings.API_V1_STR}/buyer/orders",
+        json={
+            "merchantId": "m1",
+            "items": [{"productId": "p1", "quantity": 9999}],
             "deliveryAddress": "Site 4",
             "pincode": "682030",
             "siteConstraints": {"roadWidth": "12ft+", "craneNeeded": False, "unloadingTimeSlot": "Morning"}

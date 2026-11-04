@@ -20,6 +20,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "MaterialHub Driver Dispatch | Heavy Materials Logistics",
   description: "Driver partner dispatch and route execution console for MaterialHub construction marketplace",
+  manifest: "/manifest.json",
   robots: {
     index: false,
     follow: false,
@@ -31,6 +32,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: "#0F172A",
 };
 
 export default function RootLayout({
@@ -44,7 +46,7 @@ export default function RootLayout({
       className={`${urbanist.variable} ${manrope.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col font-sans bg-[#F8FAFC] text-slate-900" suppressHydrationWarning>
         {children}
       </body>
     </html>

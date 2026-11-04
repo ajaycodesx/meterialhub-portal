@@ -22,6 +22,7 @@ class AuditAction(str, enum.Enum):
     PAYMENT_REFUNDED = "payment_refunded"
     TRIP_ASSIGNED = "trip_assigned"
     TRIP_STATUS_UPDATED = "trip_status_updated"
+    TRIP_EXCEPTION_REPORTED = "trip_exception_reported"
     DELIVERY_VERIFIED = "delivery_verified"
     USER_CREATED = "user_created"
     USER_UPDATED = "user_updated"

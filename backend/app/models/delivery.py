@@ -23,11 +23,20 @@ class DeliveryTrip(Base):
     driver_id = Column(String(50), ForeignKey("users.id"), nullable=True, index=True)
     
     vehicle_type = Column(String(50), default="Mini Commercial Truck (3 Ton)")
-    vehicle_reg_number = Column(String(20), default="KL-07-CD-8921")
+    # Copied from the accepting driver when the trip is assigned.
+    vehicle_reg_number = Column(String(20), nullable=True)
     
     pickup_address = Column(String(255), nullable=False)
     drop_address = Column(String(255), nullable=False)
     distance_km = Column(Float, default=4.5)
+
+    pickup_lat = Column(Float, nullable=True)
+    pickup_lng = Column(Float, nullable=True)
+    drop_lat = Column(Float, nullable=True)
+    drop_lng = Column(Float, nullable=True)
+
+    # 'searching' while offers are being made, 'assigned' once a driver accepts.
+    dispatch_status = Column(String(20), default="searching", nullable=False)
     
     trip_fare = Column(Float, default=750.0)
     tip_amount = Column(Float, default=0.0)

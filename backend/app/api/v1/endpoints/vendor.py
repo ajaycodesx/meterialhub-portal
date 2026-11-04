@@ -21,9 +21,20 @@ from app.schemas.common import ApiResponse
 router = APIRouter(prefix="/vendor", tags=["Vendor BFF Endpoints"])
 
 
+def get_vendor_merchant_id(current_user: User) -> str:
+    """Vendor's store id, without requiring admin verification (used for profile and catalogue)."""
+    if current_user.role != UserRole.VENDOR:
+        raise HTTPException(status_code=403, detail="Access denied. Vendor role required.")
+    if not current_user.merchant_id:
+        raise HTTPException(status_code=400, detail="Vendor has no merchant store assigned.")
+    return current_user.merchant_id
+
+
 def get_verified_merchant_id(current_user: User) -> str:
     if current_user.role != UserRole.VENDOR:
         raise HTTPException(status_code=403, detail="Access denied. Vendor role required.")
+    if not current_user.is_verified:
+        raise HTTPException(status_code=403, detail="Vendor account is pending admin verification.")
     merchant_id = current_user.merchant_id
     if not merchant_id:
         raise HTTPException(status_code=400, detail="Vendor has no merchant store assigned.")
@@ -45,10 +56,15 @@ async def get_vendor_profile(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    merchant_id = get_verified_merchant_id(current_user)
+    merchant_id = get_vendor_merchant_id(current_user)
     profile = await VendorService.get_profile(db, merchant_id)
     if not profile:
         raise HTTPException(status_code=404, detail="Merchant profile record not found")
+    profile["verificationStatus"] = (
+        "approved" if current_user.is_verified
+        else ("rejected" if current_user.verification_reason else "pending")
+    )
+    profile["verificationReason"] = current_user.verification_reason
     return ApiResponse(data=profile, message="Vendor profile retrieved")
 
 
@@ -129,6 +145,16 @@ async def reject_vendor_order(
     return ApiResponse(data={"cancelled": True, "orderId": order_id}, message="Order rejected and inventory restored")
 
 
+@router.get("/categories", response_model=ApiResponse[list])
+async def get_vendor_categories(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    get_verified_merchant_id(current_user)
+    data = await VendorService.get_categories(db)
+    return ApiResponse(data=data, message="Categories retrieved successfully")
+
+
 @router.get("/products", response_model=ApiResponse[dict])
 async def get_vendor_products(
     category: Optional[str] = Query(None),
@@ -193,7 +219,7 @@ async def adjust_vendor_stock(
         res = await VendorService.adjust_stock(db, merchant_id, product_id, req.adjustmentQty, req.reason, current_user.id)
         return ApiResponse(data=res, message="Inventory stock adjusted successfully")
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/update-stock", response_model=ApiResponse[dict])
@@ -202,8 +228,8 @@ async def update_product_stock_direct(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    get_verified_merchant_id(current_user)
-    success = await VendorService.update_stock(db, req)
+    merchant_id = get_verified_merchant_id(current_user)
+    success = await VendorService.update_stock(db, merchant_id, req, current_user.id)
     if not success:
         raise HTTPException(status_code=404, detail="Product not found")
     return ApiResponse(data={"updated": True, "productId": req.productId}, message="Stock updated successfully")
@@ -273,7 +299,7 @@ async def propose_vendor_deal(
     db: AsyncSession = Depends(get_db)
 ):
     merchant_id = get_verified_merchant_id(current_user)
-    success = await VendorService.propose_deal(db, merchant_id, req.model_dump(), current_user.id)
+    await VendorService.propose_deal(db, merchant_id, req.model_dump(), current_user.id)
     return ApiResponse(data={"proposed": True}, message="Promotional deal proposed successfully")
 
 

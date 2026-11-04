@@ -27,8 +27,8 @@ interface DriverHeaderProps {
 export const DriverHeader: React.FC<DriverHeaderProps> = ({
   activeTab,
   onTabChange,
-  driverName = 'Manoj K',
-  vehicleType = 'Mini Commercial Truck (3 Ton)',
+  driverName = '',
+  vehicleType = '',
   isOnline,
   onToggleOnline,
   isWsConnected,
@@ -70,7 +70,7 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
             onClick={onRequestGps}
             className={`px-2.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
               gpsActive
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                ? 'bg-slate-100 text-emerald-600'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -79,7 +79,7 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
           </button>
 
           <div
-            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-600"
+            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 text-xs font-medium text-slate-600"
             title="Telemetry Socket Stream"
           >
             <span
@@ -94,8 +94,8 @@ export const DriverHeader: React.FC<DriverHeaderProps> = ({
             onClick={onToggleOnline}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer ${
               isOnline
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
+                ? 'bg-[#0F172A] text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             <span

@@ -146,7 +146,7 @@ export const DriversSection: React.FC = () => {
                       {d.vehicleType || 'Commercial Mini Truck (3T)'}
                     </td>
                     <td className="py-3.5 font-medium text-slate-700">
-                      {d.driverLicense || 'KL-07-2019-004521'}
+                      {d.driverLicense || 'No data'}
                     </td>
                     <td className="py-3.5 text-center font-medium text-slate-900">
                       {d.completedTripsCount || 0}

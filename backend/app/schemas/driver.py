@@ -6,7 +6,7 @@ from app.models.delivery import TripStatus
 class DriverFeedCompositeResponse(BaseModel):
     driverId: str
     driverName: str
-    vehicleType: str
+    vehicleType: Optional[str] = None
     vehicleRegNumber: Optional[str] = None
     isOnline: bool
     todayEarnings: float
@@ -17,25 +17,19 @@ class DriverFeedCompositeResponse(BaseModel):
 
 
 class DriverProfileResponse(BaseModel):
+    # Every field is null until the driver or admin has recorded it.
     driverId: str
     name: str
     phone: str
     email: Optional[str] = None
     isOnline: bool
     isVerified: bool
-    licenseNumberMasked: str
-    licenseExpiry: str
-    vehicleType: str
-    vehicleRegNumber: str
-    payloadCapacityTons: float
-    permitStatus: str
-    insuranceExpiry: str
-    fitnessExpiry: str
-    bankName: str
-    bankAccountMasked: str
-    ifsc: str
-    rating: float
-    completedTripsLifetime: int
+    verificationReason: Optional[str] = None
+    licenseNumberMasked: Optional[str] = None
+    vehicleType: Optional[str] = None
+    vehicleRegNumber: Optional[str] = None
+    payloadCapacityTons: Optional[float] = None
+    completedTripsLifetime: int = 0
 
 
 class DriverProfileUpdateRequest(BaseModel):

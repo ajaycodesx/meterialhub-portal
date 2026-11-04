@@ -74,7 +74,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
             <div className="flex items-center gap-1.5 text-xs text-slate-500 shrink-0 self-start md:self-center">
               <FaLocationDot className="h-3.5 w-3.5 text-[#FF6500]" />
               <span>
-                Active Site: <strong className="font-medium text-slate-900">{location.address.split(',')[0] || 'Site #14, Kakkanad'}</strong>
+                Active Site: <strong className="font-medium text-slate-900">{location.address.split(',')[0] || 'No data'}</strong>
               </span>
             </div>
           </div>
@@ -89,7 +89,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
                   </h3>
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
                     <FaCircleCheck className="h-3 w-3" />
-                    Delivered to Site #14
+                    Delivered to your site
                   </span>
                 </div>
 
@@ -203,7 +203,7 @@ export const QuickSiteDispatchCard: React.FC = () => {
               </div>
 
               <div className="text-[11px] text-slate-500 text-center pt-2 border-t border-orange-100/60">
-                Direct dispatch from Kakkanad local verified building stores
+                Direct dispatch from verified building stores
               </div>
             </div>
 

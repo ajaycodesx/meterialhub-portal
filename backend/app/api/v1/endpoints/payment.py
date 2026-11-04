@@ -31,6 +31,14 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/payment", tags=["Payment Endpoints"])
 
+ONLINE_PAYMENT_MODE = "Online Payment (Razorpay)"
+
+
+def _require_live_gateway_in_production() -> None:
+    """Simulation mode accepts any payment, so it must never run in production."""
+    if payment_service.simulation_mode and settings.ENVIRONMENT.lower() in ["production", "prod"]:
+        raise HTTPException(status_code=503, detail="Payment gateway is not configured")
+
 
 @router.post("/create-order", response_model=ApiResponse[PaymentOrderResponse])
 @limiter.limit(settings.RATE_LIMIT_CREATE_ORDER)
@@ -57,16 +65,26 @@ async def create_payment_order(
     if order.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied. Order does not belong to current user.")
 
-    if order.status not in [OrderStatus.PENDING, OrderStatus.CONFIRMED]:
+    _require_live_gateway_in_production()
+
+    if order.status != OrderStatus.PENDING or order.payment_mode != ONLINE_PAYMENT_MODE:
         raise HTTPException(
             status_code=400,
             detail=f"Cannot create payment for order with status: {order.status.value}"
         )
 
+    if order.payment_id:
+        raise HTTPException(status_code=400, detail="Order has already been paid")
+
+    # The charge amount is always the stored order total, never a client value.
+    amount_paise = int(round(order.grand_total * 100))
+    if amount_paise <= 0:
+        raise HTTPException(status_code=400, detail="Order total is invalid")
+
     try:
         razorpay_order = await payment_service.create_payment_order(
             order_id=req.order_id,
-            amount=req.amount,
+            amount=amount_paise,
             currency=req.currency,
             receipt=req.receipt,
             context=req.context
@@ -84,11 +102,13 @@ async def create_payment_order(
             f"materialhub_order_id={req.order_id}, user_id={current_user.id}"
         )
 
-        return ApiResponse(data=PaymentOrderResponse(**razorpay_order), message="Payment order created successfully")
+        # The checkout needs the public key id; Razorpay's order object does not include it.
+        order_payload = {**razorpay_order, "key_id": settings.RAZORPAY_KEY_ID or ""}
+        return ApiResponse(data=PaymentOrderResponse(**order_payload), message="Payment order created successfully")
 
     except Exception as e:
         logger.error(f"Failed to create payment order for order_id={req.order_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to create payment order")
+        raise HTTPException(status_code=500, detail="Failed to create payment order") from e
 
 
 @router.post("/verify", response_model=ApiResponse[PaymentVerificationResponse])
@@ -115,6 +135,11 @@ async def verify_payment(
         if order.user_id != current_user.id:
             raise HTTPException(status_code=403, detail="Access denied. Order does not belong to current user.")
 
+        _require_live_gateway_in_production()
+
+        if order.status != OrderStatus.PENDING:
+            raise HTTPException(status_code=400, detail="Order is not awaiting payment")
+
         is_valid = await payment_service.verify_payment(
             razorpay_order_id=req.razorpay_order_id,
             razorpay_payment_id=req.razorpay_payment_id,
@@ -125,9 +150,32 @@ async def verify_payment(
             logger.warning(f"Payment verification failed for order_id={order.id}, payment_id={req.razorpay_payment_id}")
             raise HTTPException(status_code=400, detail="Payment verification failed. Invalid signature.")
 
+        # A single Razorpay payment must never confirm two orders.
+        reused_res = await db.execute(
+            select(Order.id).where(Order.payment_id == req.razorpay_payment_id)
+        )
+        if reused_res.first():
+            raise HTTPException(status_code=400, detail="Payment has already been used for an order")
+
+        # The signature only proves Razorpay issued the IDs. Confirm the captured
+        # amount and currency match what the order costs before trusting it.
+        if not payment_service.simulation_mode:
+            payment = await payment_service.get_payment_details(req.razorpay_payment_id)
+            expected_paise = int(round(order.grand_total * 100))
+            if (
+                payment.get("order_id") != req.razorpay_order_id
+                or int(payment.get("amount") or 0) != expected_paise
+                or payment.get("currency") != "INR"
+                or payment.get("status") != "captured"
+            ):
+                logger.warning(
+                    f"Payment amount/status mismatch for order_id={order.id}, payment_id={req.razorpay_payment_id}"
+                )
+                raise HTTPException(status_code=400, detail="Payment does not match the order amount")
+
         await db.execute(
             update(Order)
-            .where(Order.id == order.id)
+            .where(Order.id == order.id, Order.status == OrderStatus.PENDING)
             .values(
                 status=OrderStatus.CONFIRMED,
                 payment_id=req.razorpay_payment_id,
@@ -135,6 +183,12 @@ async def verify_payment(
             )
         )
         await db.commit()
+
+        from app.services import dispatch_service
+        from app.models.delivery import DeliveryTrip
+        trip = (await db.execute(select(DeliveryTrip).where(DeliveryTrip.order_id == order.id))).scalars().first()
+        if trip:
+            await dispatch_service.dispatch_trip(db, trip)
 
         logger.info(
             f"Payment verified and order confirmed: order_id={order.id}, "
@@ -172,7 +226,7 @@ async def verify_payment(
         raise
     except Exception as e:
         logger.error(f"Error in verify_payment: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"verify_payment failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"verify_payment failed: {str(e)}") from e
 
 
 @router.post("/refund", response_model=ApiResponse[RefundResponse])
@@ -184,8 +238,15 @@ async def refund_payment(
     """
     Process a refund for a payment.
 
-    Only accessible to admin users or for orders belonging to the current user.
+    Admin only. Buyers and vendors cannot trigger refunds on their own orders,
+    and the refund can never exceed the amount that was actually paid.
     """
+    from app.models.user import UserRole
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied. Admin role required.")
+
+    _require_live_gateway_in_production()
+
     order_result = await db.execute(
         select(Order).where(Order.payment_id == req.payment_id)
     )
@@ -194,22 +255,32 @@ async def refund_payment(
     if not order:
         raise HTTPException(status_code=404, detail="Order not found for the given payment ID")
 
-    from app.models.user import UserRole
-    if current_user.role != UserRole.ADMIN and order.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Access denied.")
+    if order.status == OrderStatus.REFUNDED:
+        raise HTTPException(status_code=400, detail="Order has already been refunded")
+
+    paid_paise = int(round(order.grand_total * 100))
+    refund_paise = paid_paise if req.amount is None else int(round(req.amount))
+    if refund_paise <= 0 or refund_paise > paid_paise:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Refund amount must be between 1 and {paid_paise} paise"
+        )
+    is_full_refund = refund_paise == paid_paise
 
     try:
         refund = await payment_service.refund_payment(
             razorpay_payment_id=req.payment_id,
-            amount=req.amount,
+            amount=refund_paise,
             context=req.context
         )
 
-        await db.execute(
-            update(Order)
-            .where(Order.id == order.id)
-            .values(status=OrderStatus.REFUNDED)
-        )
+        # Only a full refund closes the order; a partial refund leaves it open.
+        if is_full_refund:
+            await db.execute(
+                update(Order)
+                .where(Order.id == order.id)
+                .values(status=OrderStatus.REFUNDED)
+            )
         await db.commit()
 
         logger.info(
@@ -229,7 +300,7 @@ async def refund_payment(
 
     except Exception as e:
         logger.error(f"Failed to process refund for payment_id={req.payment_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to process refund")
+        raise HTTPException(status_code=500, detail="Failed to process refund") from e
 
 
 @router.get("/status/{payment_id}", response_model=ApiResponse)
@@ -259,4 +330,4 @@ async def get_payment_status(
         return ApiResponse(data=payment_details, message="Payment details retrieved successfully")
     except Exception as e:
         logger.error(f"Failed to fetch payment details for payment_id={payment_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch payment details")
+        raise HTTPException(status_code=500, detail="Failed to fetch payment details") from e

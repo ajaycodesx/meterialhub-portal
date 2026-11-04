@@ -47,6 +47,8 @@ COPY --chown=appuser:appgroup alembic/ ./alembic/
 COPY --chown=appuser:appgroup app/ ./app/
 COPY --chown=appuser:appgroup scripts/ ./scripts/
 
+RUN mkdir -p /app/uploads && chown -R appuser:appgroup /app/uploads
+
 USER appuser
 
 EXPOSE 8000

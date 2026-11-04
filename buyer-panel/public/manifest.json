@@ -1,0 +1,23 @@
+{
+  "name": "MaterialHub Wholesale Materials",
+  "short_name": "MaterialHub",
+  "description": "Direct marketplace for wholesale construction supplies, cement, steel, and site delivery",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF6500",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   FaCircleCheck,
@@ -8,10 +8,10 @@ import {
   FaXmark,
   FaKey,
   FaShieldHalved,
-  FaTruckFast,
+
   FaBell
 } from 'react-icons/fa6';
-import { driverApi, authApi, apiClient } from '../lib/api';
+import { driverApi, apiClient } from '../lib/api';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
@@ -24,6 +24,8 @@ import { DriverAlertsTab } from './driver/DriverAlertsTab';
 import { DriverAccountTab } from './driver/DriverAccountTab';
 import { DriverBottomNav, DriverNavTab } from './driver/DriverBottomNav';
 import { DriverSidebar } from './driver/DriverSidebar';
+import { DispatchOfferModal } from './driver/DispatchOfferModal';
+import { NoData } from './common/NoData';
 
 function resolveDriverTabFromPath(path: string | null): DriverNavTab {
   if (!path) return 'overview';
@@ -58,6 +60,7 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
   const [error, setError] = useState<string | null>(null);
 
   const [feedData, setFeedData] = useState<any>(null);
+  const [offers, setOffers] = useState<any[]>([]);
   const [tripHistory, setTripHistory] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
 
@@ -75,6 +78,9 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [gpsActive, setGpsActive] = useState(false);
 
+  const lastLocationSentAt = useRef(0);
+
+
   function requestBrowserGps() {
     if (typeof window === 'undefined' || !navigator.geolocation) {
       return;
@@ -82,18 +88,8 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        setGpsCoords(coords);
+        setGpsCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
         setGpsActive(true);
-        driverApi.updateLocation({
-          latitude: coords.lat,
-          longitude: coords.lng,
-          speedKmh: position.coords.speed ? position.coords.speed * 3.6 : 30.0,
-          heading: position.coords.heading || 0
-        }).catch(() => {});
       },
       () => {
         setGpsActive(false);
@@ -102,35 +98,61 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
     );
   }
 
+
+  function startLocationTracking() {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      return () => {};
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+        setGpsCoords(coords);
+        setGpsActive(true);
+
+        const now = Date.now();
+        if (now - lastLocationSentAt.current < 10000) return;
+        lastLocationSentAt.current = now;
+        driverApi.updateLocation({
+          latitude: coords.lat,
+          longitude: coords.lng,
+          speedKmh: position.coords.speed != null ? position.coords.speed * 3.6 : null,
+          heading: position.coords.heading ?? null
+        }).catch(() => {});
+      },
+      () => {
+        setGpsActive(false);
+      },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }
+
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsRefreshing(true);
     try {
       if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('access_token');
+        const token = apiClient.getToken() || localStorage.getItem('driver_access_token') || localStorage.getItem('access_token');
         if (!token) {
-          const auth: any = await authApi.login('driver@materialhub.in', 'driver123');
-          if (auth?.access_token) {
-            apiClient.setToken(auth.access_token);
-            setIsAuthenticated(true);
-          } else {
-            setIsAuthenticated(false);
-            setLoading(false);
-            return;
-          }
-        } else {
-          setIsAuthenticated(true);
+          setIsAuthenticated(false);
+          setLoading(false);
+          return;
         }
+        setIsAuthenticated(true);
       }
 
-      const [feedRes, historyRes, profileRes] = await Promise.allSettled([
+      const [feedRes, historyRes, profileRes, offersRes] = await Promise.allSettled([
         driverApi.getFeed(),
         driverApi.getTripHistory(),
-        driverApi.getProfile()
+        driverApi.getProfile(),
+        driverApi.getOffers()
       ]);
 
       if (feedRes.status === 'fulfilled') setFeedData(feedRes.value);
       if (historyRes.status === 'fulfilled') setTripHistory(historyRes.value || []);
       if (profileRes.status === 'fulfilled') setProfile(profileRes.value);
+      if (offersRes.status === 'fulfilled') setOffers(offersRes.value || []);
 
       setError(null);
     } catch (err: any) {
@@ -147,7 +169,8 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
 
     function setupWs() {
       if (typeof window === 'undefined') return;
-      const token = localStorage.getItem('access_token') || 'u_driver_1';
+      const token = apiClient.getToken();
+      if (!token) return;
       const wsUrl =
         process.env.NEXT_PUBLIC_WS_URL ||
         `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
@@ -160,6 +183,7 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
             if (
               [
                 'trip_status_update',
+                'dispatch_offer',
                 'order_status_update',
                 'delivery_verification',
                 'notification',
@@ -171,7 +195,9 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
           } catch (e) {
           }
         };
-        socket.onclose = () => {
+        socket.onclose = (event) => {
+
+          if (event.code === 4001) return;
           reconnectTimer = setTimeout(setupWs, 4000);
         };
       } catch (e) {
@@ -180,14 +206,15 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
 
     loadData();
     setupWs();
-    requestBrowserGps();
+    const stopTracking = startLocationTracking();
 
-    const pollTimer = setInterval(() => loadData(true), 7000);
+    const pollTimer = setInterval(() => loadData(true), 5000);
 
     return () => {
       if (socket) socket.close();
       clearTimeout(reconnectTimer);
       clearInterval(pollTimer);
+      stopTracking();
     };
   }, [loadData]);
 
@@ -206,20 +233,46 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
     }
   }
 
-  async function handleAcceptTrip(tripId: string) {
-    setActionLoading(`accept_${tripId}`);
+  async function handleAcceptOffer(offerId: string) {
+    setActionLoading(`accept_${offerId}`);
     setActionError(null);
     setActionSuccess(null);
     try {
-      await driverApi.updateTripStatus({ tripId, status: 'accepted' });
-      setActionSuccess('Delivery accepted. Proceed to vendor depot for material pickup.');
+      await driverApi.acceptOffer(offerId);
+      setActionSuccess('Trip accepted. Head to the store for material pickup.');
       await loadData(true);
       setActiveTab('overview');
     } catch (err: any) {
-      setActionError(err.message || 'Failed to accept trip.');
+      setActionError(err.message || 'This trip request is no longer available.');
+      await loadData(true);
     } finally {
       setActionLoading(null);
     }
+  }
+
+  async function handleDeclineOffer(offerId: string) {
+    setActionLoading(`accept_${offerId}`);
+    setActionError(null);
+    try {
+      await driverApi.declineOffer(offerId);
+      setActionSuccess('Trip request declined.');
+      await loadData(true);
+    } catch (err: any) {
+      setActionError(err.message || 'Could not decline this request.');
+      await loadData(true);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+
+  function handleAcceptTrip(tripId: string) {
+    const offer = offers.find((o) => o.tripId === tripId);
+    if (!offer) {
+      setActionError('This trip request has expired.');
+      return;
+    }
+    return handleAcceptOffer(offer.offerId);
   }
 
   async function handleUpdateStatus(tripId: string, nextStatus: string, successMsg: string) {
@@ -275,7 +328,11 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
   }
 
   async function handleVerifyOtpModal() {
-    const targetTripId = feedData?.activeTrip?.tripId || 'trip_5501';
+    const targetTripId = feedData?.activeTrip?.tripId;
+    if (!targetTripId) {
+      setOtpModalError('There is no active trip to verify.');
+      return;
+    }
     if (!otpValue.trim()) {
       setOtpModalError('Please enter the OTP.');
       return;
@@ -297,6 +354,7 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
 
   function handleLogout() {
     if (typeof window !== 'undefined') {
+      localStorage.removeItem('driver_access_token');
       localStorage.removeItem('access_token');
       apiClient.setToken(null);
       setIsAuthenticated(false);
@@ -318,11 +376,11 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
   }
 
 
-  const driverName = profile?.name || feedData?.driverName || 'Ajay';
-  const isOnline = profile?.isOnline ?? feedData?.isOnline ?? true;
+  const driverName = profile?.name || feedData?.driverName || '';
+  const isOnline = profile?.isOnline ?? feedData?.isOnline ?? false;
   const activeTrip = feedData?.activeTrip;
-  const availableTrips = feedData?.availableTrips || [];
-  const completedCount = feedData?.todayTripsCount ?? profile?.completedTripsLifetime ?? 12;
+  const availableTrips = offers;
+  const completedCount = feedData?.todayTripsCount ?? profile?.completedTripsLifetime ?? 0;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row w-full">
@@ -330,26 +388,30 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
         activeTab={activeTab}
         onTabChange={(tab) => handleTabChange(tab)}
         driverName={driverName}
-        vehicleType={profile?.vehicleType || feedData?.vehicleType || 'Commercial Carrier'}
+        vehicleType={profile?.vehicleType || feedData?.vehicleType || ''}
         isOnline={isOnline}
         onToggleOnline={handleToggleOnline}
         onLogout={handleLogout}
-        unreadAlertsCount={4}
+        unreadAlertsCount={offers.length}
       />
 
       <div className="flex-1 min-w-0 flex flex-col min-h-screen">
         <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/70 shadow-xs">
           <div className="w-full max-w-md md:max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-[#F5A623] text-slate-900 rounded-xl flex items-center justify-center shadow-xs">
-                <FaTruckFast className="h-4 w-4" />
+              <div className="relative h-9 w-9 flex items-center justify-center shrink-0">
+                <img
+                  src="/images/logo_dark.png"
+                  alt="MaterialHub Logo"
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div>
                 <span className="text-xs font-medium text-slate-900 tracking-wider block leading-tight">
-                  MATERIALHUB
+                  Material<span className="text-[#FF6500]">Hub</span>
                 </span>
                 <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest block">
-                  DRIVER LOGISTICS
+                  Carrier Dispatch
                 </span>
               </div>
             </div>
@@ -392,9 +454,11 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
                 className="relative w-8 h-8 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-colors cursor-pointer"
               >
                 <FaBell className="h-3.5 w-3.5" />
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#F5A623] text-slate-950 font-medium text-[8px] rounded-xs flex items-center justify-center shadow-xs">
-                  4
-                </span>
+                {offers.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#F5A623] text-slate-950 font-medium text-[8px] rounded-xs flex items-center justify-center shadow-xs">
+                    {offers.length}
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -490,6 +554,10 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
               activeTrip={activeTrip}
               tripHistory={tripHistory}
               onAcceptTrip={handleAcceptTrip}
+              onDeclineTrip={(tripId: string) => {
+                const offer = offers.find((o) => o.tripId === tripId);
+                if (offer) handleDeclineOffer(offer.offerId);
+              }}
               onOpenMap={(trip) => setNavTrip(trip)}
               actionLoading={actionLoading}
             />
@@ -511,10 +579,17 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
           <DriverBottomNav
             activeTab={activeTab}
             onTabChange={(tab) => handleTabChange(tab)}
-            unreadAlertsCount={4}
+            unreadAlertsCount={offers.length}
           />
         </div>
       </div>
+
+        <DispatchOfferModal
+          offers={offers}
+          busyOfferId={actionLoading?.startsWith('accept_') ? actionLoading.replace('accept_', '') : null}
+          onAccept={handleAcceptOffer}
+          onDecline={handleDeclineOffer}
+        />
 
         {navTrip && (
           <DriverNavigationScreen

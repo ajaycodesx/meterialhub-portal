@@ -60,15 +60,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
 
           <a 
             id="support" 
-            href="tel:+919876543210" 
+            href={process.env.NEXT_PUBLIC_SUPPORT_PHONE ? `tel:${process.env.NEXT_PUBLIC_SUPPORT_PHONE}` : undefined} 
             className="bg-white p-3.5 sm:p-4 rounded-2xl shadow-xs flex items-center gap-2.5 hover:bg-slate-50 transition-colors"
           >
             <div className="h-9 w-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
               <FaHeadset className="h-4 w-4 text-slate-800" />
             </div>
             <div>
-              <h4 className="text-xs font-medium text-slate-900 leading-tight">24x7 Site Support</h4>
-              <p className="text-xs text-slate-500 font-normal">Call 1800-425-9999</p>
+              <h4 className="text-xs font-medium text-slate-900 leading-tight">Site Support</h4>
+              <p className="text-xs text-slate-500 font-normal">{process.env.NEXT_PUBLIC_SUPPORT_PHONE || 'No support number configured'}</p>
             </div>
           </a>
         </div>

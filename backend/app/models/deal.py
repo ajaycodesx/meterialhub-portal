@@ -18,5 +18,7 @@ class Deal(Base):
     badge = Column(String(50), default="Flash Deal")
     badge_color = Column(String(50), default="bg-[#FF6500]")
     expires_in_seconds = Column(Integer, default=18000)
-    
+    # 'pending' until an admin approves; only 'approved' deals are shown to buyers.
+    status = Column(String(20), default="approved", nullable=False, server_default="approved", index=True)
+
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

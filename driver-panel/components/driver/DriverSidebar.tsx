@@ -178,10 +178,7 @@ export function DriverSidebar({
               <FaShieldHalved className="h-3 w-3 text-emerald-600 shrink-0" />
             </div>
             <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
-              <FaStar className="h-3 w-3 text-amber-500" />
-              <span>4.95</span>
-              <span className="text-slate-300">·</span>
-              <span className="truncate">{vehicleType.split(' ')[0]}</span>
+              <span className="truncate">{vehicleType ? vehicleType.split(' ')[0] : 'Vehicle not set'}</span>
             </div>
           </div>
         </div>

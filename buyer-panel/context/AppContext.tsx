@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { authApi, apiClient } from '../lib/api';
 import {
 LocationState,
 LanguageCode,
@@ -9,7 +10,6 @@ HardwareMerchant,
 CartItem,
 } from '../types/buyer';
 import { VehicleOption } from '../components/buyer/CartVehicleSelection';
-import { CATALOG_PRODUCTS } from '../data/mockBuyerData';
 
 interface AppContextValue {
   location: LocationState;
@@ -64,34 +64,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const [location, setLocation] = useState<LocationState>({
-    address: 'Site #14, Kakkanad Zone',
-    pinCode: '682030',
-    isServiceable: true,
-    distanceKm: 8.5,
+    address: '',
+    pinCode: '',
+    isServiceable: false,
+    distanceKm: 0,
     siteConstraints: {
-      roadWidth: '12ft+ (Standard Truck)',
-      heavyVehicleAccess: true,
+      roadWidth: '',
+      heavyVehicleAccess: false,
       craneNeeded: false,
-      unloadingTimeSlot: '08:00 AM - 01:00 PM',
+      unloadingTimeSlot: '',
     },
   });
 
   const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('en');
 
   const [user, setUser] = useState<UserProfile>({
-    name: 'Ajay Kumar',
-    phone: '+91 98765 43210',
-    email: 'ajay.builder@materialhub.in',
-    isLoggedIn: true,
+    name: '',
+    phone: '',
+    email: '',
+    isLoggedIn: false,
     savedAddresses: [],
   });
 
+  useEffect(() => {
+    if (!apiClient.getToken()) return;
+    authApi
+      .getProfile()
+      .then((profile: any) =>
+        setUser({
+          name: profile?.name || '',
+          phone: profile?.phone || '',
+          email: profile?.email || '',
+          isLoggedIn: true,
+          savedAddresses: profile?.savedAddresses || [],
+        })
+      )
+      .catch(() => {});
+  }, []);
+
   const [selectedMerchant, setSelectedMerchant] = useState<HardwareMerchant | null>(null);
 
-  const [currentCart, setCurrentCart] = useState<CartItem[]>([
-    { product: CATALOG_PRODUCTS[0], quantity: 50 },
-    { product: CATALOG_PRODUCTS[1], quantity: 20 },
-  ]);
+  const [currentCart, setCurrentCart] = useState<CartItem[]>([]);
 
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleOption | null>({
     id: 'pickup_truck',
@@ -107,7 +120,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [placedOrderId, setPlacedOrderId] = useState<string>('MH-842910');
 
   const handleLogout = () => {
-    setUser({ name: 'Guest Buyer', phone: '', email: '', isLoggedIn: false, savedAddresses: [] });
+    apiClient.setToken(null);
+    setUser({ name: '', phone: '', email: '', isLoggedIn: false, savedAddresses: [] });
   };
 
   const handleUpdateCartQty = (productId: string, newQty: number) => {

@@ -27,10 +27,10 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
   onToggleOnline
 }) => {
   const [showEditModal, setShowEditModal] = useState(false);
-  const [storeName, setStoreName] = useState(profile?.name || 'Kakkanad Building Supplies');
-  const [proprietorName, setProprietorName] = useState(profile?.proprietorName || 'Ramesh Kumar');
-  const [phone, setPhone] = useState(profile?.phone || '+91 98470 12345');
-  const [address, setAddress] = useState(profile?.address || 'Seaport-Airport Road, Kakkanad, Kochi');
+  const [storeName, setStoreName] = useState(profile?.name || '');
+  const [proprietorName, setProprietorName] = useState(profile?.proprietorName || '');
+  const [phone, setPhone] = useState(profile?.phone || '');
+  const [address, setAddress] = useState(profile?.address || '');
   const [pincode, setPincode] = useState(profile?.pincode || '682030');
   const [gstin, setGstin] = useState(profile?.gstin || '32AABCU9603R1ZX');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,8 +43,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
         proprietorName,
         phone,
         address,
-        pincode,
-        gstin
+        pincode
       });
       setShowEditModal(false);
     } finally {
@@ -64,7 +63,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-medium text-slate-900">
-                {profile?.name || 'Kakkanad Building Supplies'}
+                {profile?.name || 'No data'}
               </h2>
               <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
                 <FaCircleCheck className="h-3 w-3" />
@@ -74,7 +73,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
             <p className="text-xs text-slate-500 font-medium flex items-center gap-2">
               <span>Registered Merchant ID: {profile?.id || 'm1'}</span>
               <span className="h-2.5 w-px bg-slate-300 inline-block" />
-              <span>Proprietor: {profile?.proprietorName || 'Ramesh Kumar'}</span>
+              <span>Proprietor: {profile?.proprietorName || 'No data'}</span>
             </p>
           </div>
         </div>
@@ -102,10 +101,10 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
             icon={<FaPen className="h-3.5 w-3.5" />}
             iconPosition="left"
             onClick={() => {
-              setStoreName(profile?.name || 'Kakkanad Building Supplies');
-              setProprietorName(profile?.proprietorName || 'Ramesh Kumar');
-              setPhone(profile?.phone || '+91 98470 12345');
-              setAddress(profile?.address || 'Seaport-Airport Road, Kakkanad, Kochi');
+              setStoreName(profile?.name || '');
+              setProprietorName(profile?.proprietorName || '');
+              setPhone(profile?.phone || '');
+              setAddress(profile?.address || '');
               setPincode(profile?.pincode || '682030');
               setGstin(profile?.gstin || '32AABCU9603R1ZX');
               setShowEditModal(true);
@@ -129,7 +128,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               <div>
                 <span className="text-slate-500 block mb-0.5">Yard Location</span>
                 <p className="font-medium text-slate-800 leading-relaxed">
-                  {profile?.address || 'Seaport-Airport Road, Kakkanad, Kochi, Kerala'}
+                  {profile?.address || 'No data'}
                 </p>
                 <p className="text-slate-500 font-medium">PIN: {profile?.pincode || '682030'}</p>
               </div>
@@ -140,7 +139,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               <div>
                 <span className="text-slate-500 block mb-0.5">Commercial Phone</span>
                 <span className="font-medium text-slate-800">
-                  {profile?.phone || '+91 98470 12345'}
+                  {profile?.phone || 'No data'}
                 </span>
               </div>
             </div>
@@ -150,7 +149,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               <div>
                 <span className="text-slate-500 block mb-0.5">Contact Email</span>
                 <span className="font-medium text-slate-800">
-                  {profile?.email || 'vendor@materialhub.in'}
+                  {profile?.email || 'No data'}
                 </span>
               </div>
             </div>
@@ -160,7 +159,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               <div>
                 <span className="text-slate-500 block mb-0.5">Loading Bay Hours</span>
                 <span className="font-medium text-slate-800">
-                  Monday – Saturday: 06:00 AM – 08:00 PM
+                  Monday â€“ Saturday: 06:00 AM â€“ 08:00 PM
                 </span>
               </div>
             </div>
@@ -199,12 +198,11 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
 
             <div className="p-3.5 rounded-xl bg-slate-50 flex items-center justify-between">
               <div>
-                <span className="text-slate-500 block mb-0.5">Commercial Delivery Radius</span>
+                <span className="text-slate-500 block mb-0.5">Dispatch Radius</span>
                 <span className="font-medium text-slate-900">
-                  35 km radius from Kakkanad Depot
+                  Drivers within 15 km of your store receive your orders
                 </span>
               </div>
-              <span className="text-slate-500 font-medium">Standard Logistics</span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-slate-50 flex items-center justify-between">
@@ -282,11 +280,11 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
                 required
               />
 
-              <Input
-                label="GSTIN Number"
+                            <Input
+                label="GSTIN Number (admin verified)"
                 value={gstin}
-                onChange={(e) => setGstin(e.target.value)}
-                required
+                disabled
+                readOnly
               />
             </div>
           </div>

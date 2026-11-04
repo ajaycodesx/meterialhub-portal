@@ -1,5 +1,7 @@
 'use client';
 
+import { NoData } from '../common/NoData';
+
 import React from 'react';
 import {
   FaBell,
@@ -11,48 +13,7 @@ import {
 } from 'react-icons/fa6';
 
 export function DriverAlertsTab() {
-  const alerts = [
-    {
-      id: 'alt_1',
-      title: 'New Dispatch Ready: MH-2051',
-      description: 'BuildPro Materials has completed staging for 8 tons 20mm Metal. Ready for vehicle loading.',
-      time: '5 mins ago',
-      type: 'dispatch',
-      isUnread: true,
-      icon: FaBoxesPacking,
-      color: 'text-[#FF6500] bg-slate-50 border border-slate-100',
-    },
-    {
-      id: 'alt_2',
-      title: 'Site Offloading Gate Clearance',
-      description: 'Anjali Traders site supervisor confirmed bay #2 is reserved for your vehicle arrival at Edappally.',
-      time: '18 mins ago',
-      type: 'site',
-      isUnread: true,
-      icon: FaShieldHalved,
-      color: 'text-emerald-600 bg-slate-50 border border-slate-100',
-    },
-    {
-      id: 'alt_3',
-      title: 'Weekly Payout Deposited',
-      description: '₹6,850.00 credited to State Bank of India account ending in 9214 for 12 completed deliveries.',
-      time: 'Yesterday',
-      type: 'payout',
-      isUnread: false,
-      icon: FaMoneyBillWave,
-      color: 'text-emerald-600 bg-slate-50 border border-slate-100',
-    },
-    {
-      id: 'alt_4',
-      title: 'Commercial Traffic Advisory',
-      description: 'Heavy vehicle delay reported on Container Road intersection. Follow NH-544 route guidance.',
-      time: '3 hours ago',
-      type: 'traffic',
-      isUnread: false,
-      icon: FaTriangleExclamation,
-      color: 'text-amber-600 bg-slate-50 border border-slate-100',
-    },
-  ];
+  const alerts: any[] = [];
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8">
@@ -73,6 +34,9 @@ export function DriverAlertsTab() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {alerts.length === 0 && (
+          <NoData title="No alerts" description="Trip requests and operations notices will appear here." />
+        )}
         {alerts.map((alert) => {
           const IconComponent = alert.icon;
           return (

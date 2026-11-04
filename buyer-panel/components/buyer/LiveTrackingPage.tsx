@@ -21,7 +21,8 @@ import {
 import { HardwareMerchant, LocationState } from '../../types/buyer';
 import { VehicleOption } from './CartVehicleSelection';
 import { Button } from '../ui/Button';
-import { buyerApi } from '../../lib/api';
+import { buyerApi, apiClient } from '../../lib/api';
+import { NoData } from '../common/NoData';
 import { PageBanner } from './PageBanner';
 
 interface LiveTrackingPageProps {
@@ -62,7 +63,8 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
     function setupWebSocket() {
       if (typeof window === 'undefined') return;
-      const token = localStorage.getItem('access_token') || 'u_buyer_1';
+      const token = apiClient.getToken();
+      if (!token) return;
       const wsUrl = process.env.NEXT_PUBLIC_WS_URL || `ws://${window.location.hostname}:8000/api/v1/ws/connect?token=${token}`;
 
       try {
@@ -83,8 +85,9 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
           }
         };
 
-        socket.onclose = () => {
+        socket.onclose = (event) => {
           setIsWsConnected(false);
+          if (event.code === 4001) return;
           reconnectTimer = setTimeout(setupWebSocket, 3000);
         };
 
@@ -119,10 +122,18 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
   const isOutForDelivery = ['out_for_delivery', 'delivered'].includes(currentStatus) || trip?.status === 'in_transit' || trip?.status === 'arrived_at_site';
   const isDelivered = currentStatus === 'delivered' || trip?.status === 'unloaded_completed';
 
-  const driverName = driver?.name || 'Manoj K';
-  const driverPhone = driver?.phone || '+919447098765';
-  const vehicleName = driver?.vehicleType || vehicle?.name || 'Mini Commercial Truck (3 Ton)';
-  const vehicleReg = driver?.regNumber || 'KL-07-CD-8921';
+  const driverName = driver?.name || (trip ? 'Searching for a driver' : 'No data');
+  const driverPhone = driver?.phone || '';
+  const vehicleName = driver?.vehicleType || trip?.vehicleType || 'No data';
+  const vehicleReg = driver?.regNumber || 'No data';
+
+  const liveLat = trip?.driverLocation?.lat ?? null;
+  const liveLng = trip?.driverLocation?.lng ?? null;
+  const pinLat = liveLat ?? trip?.pickup?.lat ?? null;
+  const pinLng = liveLng ?? trip?.pickup?.lng ?? null;
+  const mapSrc = pinLat != null && pinLng != null
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${pinLng - 0.01},${pinLat - 0.01},${pinLng + 0.01},${pinLat + 0.01}&layer=mapnik&marker=${pinLat},${pinLng}`
+    : null;
 
   return (
     <div className="flex-1 bg-transparent">
@@ -136,7 +147,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
         title="Real-Time Order & Delivery Tracking"
         subtitle={
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <span>Order ID: <strong className="text-slate-900 font-medium">{orderId || 'MH-839210'}</strong></span>
+            <span>Order ID: <strong className="text-slate-900 font-medium">{orderId || 'No data'}</strong></span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span>Live Telemetry &amp; Site Offloading Verification</span>
           </div>
@@ -167,18 +178,15 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                       <FaMapLocationDot className="h-4.5 w-4.5" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm sm:text-base text-slate-900">Google Maps Live GPS Navigation</h3>
-                      <p className="text-xs text-slate-500 font-normal">Real-time driver location on Seaport-Airport Road</p>
+                      <h3 className="font-medium text-sm sm:text-base text-slate-900">Live driver location</h3>
+                      <p className="text-xs text-slate-500 font-normal">{liveLat != null ? 'Position shared by the driver' : 'Waiting for the driver to share location'}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 text-xs font-medium text-slate-700">
-                    <span className="flex items-center gap-1.5">
-                      <FaCircleCheck className="h-3.5 w-3.5 text-emerald-600" /> Live Traffic: Normal
-                    </span>
                     <span className="h-3 w-px bg-slate-200 inline-block" />
                     <span className="flex items-center gap-1.5 text-[#FF6500]">
-                      <FaClock className="h-3.5 w-3.5 text-[#FF6500]" /> ETA: ~{trip?.distanceKm ? Math.round(trip.distanceKm * 2.5) : 15} Mins
+                      <FaClock className="h-3.5 w-3.5 text-[#FF6500]" /> ETA: {trip?.etaMinutes != null ? `~${trip.etaMinutes} mins` : 'No data'}
                     </span>
                   </div>
                 </div>
@@ -192,19 +200,24 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                   <div className="flex items-center gap-2 sm:justify-end min-w-0">
                     <div className="h-2.5 w-2.5 rounded-xs bg-emerald-500 shrink-0" />
                     <span className="text-slate-500 font-normal">Unloading Site:</span>
-                    <span className="text-slate-900 font-medium truncate">{location.address || 'Site #14, Kakkanad Zone'}</span>
+                    <span className="text-slate-900 font-medium truncate">{trackingData?.deliveryAddress || location.address || 'No data'}</span>
                   </div>
                 </div>
 
                 <div className="relative h-80 sm:h-[460px] w-full rounded-2xl overflow-hidden shadow-xs border border-slate-200 bg-slate-100">
-                  <iframe
-                    src="https://maps.google.com/maps?q=9.9985,76.3475&hl=en&z=14&output=embed"
-                    className="absolute inset-0 w-full h-full border-0"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Real-Time Google Maps GPS Telemetry"
-                  />
+                  {mapSrc ? (
+                    <iframe
+                      src={mapSrc}
+                      className="absolute inset-0 w-full h-full border-0"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Live driver location map"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <NoData title="No location yet" description="The map appears once the driver shares a position." />
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-slate-50/90 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
@@ -218,21 +231,21 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
                         <span className="font-mono text-[11px] text-slate-500">({vehicleReg})</span>
                         <span className="h-3 w-px bg-slate-300 inline-block" />
                         <span className="text-[11px] font-medium text-emerald-600">
-                          {isDelivered ? 'Delivered' : isOutForDelivery ? 'En-Route' : 'Assigned'}
+                          {isDelivered ? 'Delivered' : isOutForDelivery ? 'En-Route' : driver ? 'Assigned' : 'Searching'}
                         </span>
                       </div>
                       <p className="text-slate-500 text-[11px] mt-0.5 flex flex-wrap items-center gap-2">
                         <span>Vehicle: {vehicleName}</span>
                         <span className="h-2.5 w-px bg-slate-200 inline-block" />
-                        <span>Route: {merchant.name} to {location.address || 'Kakkanad Zone'}</span>
+                        <span>Route: {merchant.name} to {trackingData?.deliveryAddress || location.address || 'No data'}</span>
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 sm:text-right shrink-0">
                     <div>
-                      <p className="font-medium text-slate-900">GPS: {trip?.currentGps ? `${trip.currentGps.lat.toFixed(4)}, ${trip.currentGps.lng.toFixed(4)}` : '10.0159, 76.3419'}</p>
-                      <p className="text-[11px] text-slate-500">{trip?.distanceKm || 3.5} km corridor</p>
+                      <p className="font-medium text-slate-900">GPS: {liveLat != null ? `${liveLat.toFixed(4)}, ${liveLng.toFixed(4)}` : 'No data'}</p>
+                      <p className="text-[11px] text-slate-500">{trip?.distanceToTargetKm != null ? `${trip.distanceToTargetKm} km to go` : 'Distance not available'}</p>
                     </div>
                     <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                       <FaCompass className="h-4 w-4" />
@@ -403,7 +416,7 @@ export const LiveTrackingPage: React.FC<LiveTrackingPageProps> = ({
 
                   <button
                     onClick={() => {
-                      setNoticeMsg(`GST Tax Invoice ${trackingData?.invoiceNumber || 'MH-INV-2026-9021'} generated.`);
+                      setNoticeMsg(trackingData?.invoiceNumber ? `GST Tax Invoice ${trackingData.invoiceNumber} generated.` : 'Invoice not available yet.');
                       setTimeout(() => setNoticeMsg(null), 5000);
                     }}
                     className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 text-xs font-medium text-slate-800 transition-all h-10 sm:h-11 cursor-pointer shadow-2xs"

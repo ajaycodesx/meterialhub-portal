@@ -49,7 +49,7 @@ async def get_current_user(
             user = res.scalars().first()
             if user:
                 return user
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials") from None
         
     res = await db.execute(select(User).where(User.id == user_id))
     user = res.scalars().first()
