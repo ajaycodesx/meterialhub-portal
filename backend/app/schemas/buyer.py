@@ -162,3 +162,32 @@ class OrderDetailResponse(BaseModel):
     createdAt: str
     items: List[Dict[str, Any]]
     driverTrip: Optional[Dict[str, Any]] = None
+
+
+class BoqQuoteCreateRequest(BaseModel):
+    projectName: str
+    deliveryPincode: str
+    siteAddress: str
+    rawMaterialsText: Optional[str] = None
+    fileUrl: Optional[str] = None
+
+
+class BoqQuoteResponse(BaseModel):
+    id: str
+    projectName: str
+    deliveryPincode: str
+    siteAddress: str
+    rawMaterialsText: Optional[str] = None
+    fileUrl: Optional[str] = None
+    estimatedTotal: float = 0.0
+    status: str = "under_review"
+    createdAt: str
+
+
+class OrderCancelRequest(BaseModel):
+    reason: Optional[str] = "Cancelled by buyer"
+
+
+class OrderRatingRequest(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    reviewText: Optional[str] = None

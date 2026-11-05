@@ -10,6 +10,7 @@ from app.models.category import MaterialCategory
 from app.models.product import Product
 from app.models.deal import Deal
 from app.models.commodity_rate import CommodityRate
+from app.models.boq_quote import BoqQuote
 
 CATEGORIES_SEED = [
     {
@@ -212,6 +213,34 @@ PRODUCTS_SEED = [
 logger = logging.getLogger(__name__)
 
 
+
+BOQ_QUOTES_SEED = [
+    {
+        "id": "boq_techpark",
+        "user_id": "buyer_1",
+        "project_name": "Prestige Greenfields Commercial Phase 2",
+        "delivery_pincode": "682030",
+        "site_address": "Plot 42, Infopark Expressway, Kakkanad, Kochi",
+        "file_url": "/uploads/boq_schedule_sample.pdf",
+        "raw_materials_text": "500 Bags UltraTech Super OPC 53 Cement, 15 MT Tata Tiscon 550D TMT Rebars 12mm & 16mm, 400 Mtr Astral CPVC 1 inch pipes",
+        "parsed_items": [{"material": "Cement", "qty": "500 bags"}, {"material": "TMT Rebars", "qty": "15 MT"}],
+        "estimated_total": 850000.0,
+        "status": "under_review"
+    },
+    {
+        "id": "boq_waterfront",
+        "user_id": "buyer_1",
+        "project_name": "Kakkanad Waterfront Luxury Villas",
+        "delivery_pincode": "682024",
+        "site_address": "Riverside Enclave, Aluva Road, Kochi",
+        "file_url": None,
+        "raw_materials_text": "300 Bags ACC Suraksha Cement, 8 MT JSW Neosteel TMT 10mm, 20 Buckets Asian Paints Apex Ultima White 20L",
+        "parsed_items": [{"material": "Cement", "qty": "300 bags"}, {"material": "TMT Steel", "qty": "8 MT"}],
+        "estimated_total": 520000.0,
+        "status": "quoted"
+    }
+]
+
 async def seed_demo_data(force: bool = False) -> bool:
     """Safe database seeding function for development and testing.
 
@@ -311,6 +340,12 @@ async def seed_demo_data(force: bool = False) -> bool:
                 db.add(Product(**p))
             elif force or prod.stock_qty <= 10:
                 prod.stock_qty = 500
+
+        
+        for b in BOQ_QUOTES_SEED:
+            existing = await db.execute(select(BoqQuote).where(BoqQuote.id == b["id"]))
+            if not existing.scalars().first():
+                db.add(BoqQuote(**b))
 
         await db.commit()
         logger.info("Demo data seeding completed successfully.")

@@ -13,6 +13,7 @@ class TripStatus(str, enum.Enum):
     IN_TRANSIT = "in_transit"
     ARRIVED_AT_SITE = "arrived_at_site"
     UNLOADED_COMPLETED = "unloaded_completed"
+    CANCELLED = "cancelled"
 
 
 class DeliveryTrip(Base):

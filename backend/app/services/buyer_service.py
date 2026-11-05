@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, Optional
+from typing import Dict, Optional, List, Any
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
@@ -11,6 +11,7 @@ from app.models.deal import Deal
 from app.models.product import Product
 from app.models.order import Order, OrderItem, OrderStatus
 from app.models.delivery import DeliveryTrip, TripStatus
+from app.models.boq_quote import BoqQuote
 from app.services import dispatch_service
 from app.schemas.buyer import (
     BuyerHomeCompositeResponse,
@@ -23,7 +24,9 @@ from app.schemas.buyer import (
     CategorySchema,
     MerchantSchema,
     CommodityRateSchema,
-    ProductSchema
+    ProductSchema,
+    BoqQuoteCreateRequest,
+    BoqQuoteResponse
 )
 
 
@@ -419,3 +422,129 @@ class BuyerService:
                 "driverPhone": None
             }
         )
+
+    @staticmethod
+    async def create_boq_quote(
+        db: AsyncSession,
+        user_id: str,
+        req: BoqQuoteCreateRequest
+    ) -> BoqQuoteResponse:
+        quote_id = f"BOQ-{uuid.uuid4().hex[:8].upper()}"
+        boq = BoqQuote(
+            id=quote_id,
+            user_id=user_id,
+            project_name=req.projectName,
+            delivery_pincode=req.deliveryPincode,
+            site_address=req.siteAddress,
+            file_url=req.fileUrl,
+            raw_materials_text=req.rawMaterialsText,
+            parsed_items=[],
+            estimated_total=0.0,
+            status="under_review",
+            created_at=datetime.now(timezone.utc)
+        )
+        db.add(boq)
+        await db.commit()
+        await db.refresh(boq)
+
+        return BoqQuoteResponse(
+            id=boq.id,
+            projectName=boq.project_name,
+            deliveryPincode=boq.delivery_pincode,
+            siteAddress=boq.site_address,
+            rawMaterialsText=boq.raw_materials_text,
+            fileUrl=boq.file_url,
+            estimatedTotal=boq.estimated_total or 0.0,
+            status=boq.status,
+            createdAt=boq.created_at.isoformat() if boq.created_at else datetime.now(timezone.utc).isoformat()
+        )
+
+    @staticmethod
+    async def list_boq_quotes(
+        db: AsyncSession,
+        user_id: str
+    ) -> List[BoqQuoteResponse]:
+        res = await db.execute(
+            select(BoqQuote).where(BoqQuote.user_id == user_id).order_by(BoqQuote.created_at.desc())
+        )
+        quotes = res.scalars().all()
+        return [
+            BoqQuoteResponse(
+                id=q.id,
+                projectName=q.project_name,
+                deliveryPincode=q.delivery_pincode,
+                siteAddress=q.site_address,
+                rawMaterialsText=q.raw_materials_text,
+                fileUrl=q.file_url,
+                estimatedTotal=q.estimated_total or 0.0,
+                status=q.status,
+                createdAt=q.created_at.isoformat() if q.created_at else ""
+            ) for q in quotes
+        ]
+
+    @staticmethod
+    async def cancel_order(
+        db: AsyncSession,
+        user_id: str,
+        order_id: str,
+        reason: Optional[str] = "Cancelled by buyer"
+    ) -> Dict[str, Any]:
+        res = await db.execute(select(Order).where(Order.id == order_id))
+        order = res.scalars().first()
+        if not order or order.user_id != user_id:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        if order.status not in (OrderStatus.PENDING, OrderStatus.CONFIRMED):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Order cannot be cancelled as it is already {order.status.value}"
+            )
+
+        items_res = await db.execute(select(OrderItem).where(OrderItem.order_id == order.id))
+        items = items_res.scalars().all()
+        for it in items:
+            p_res = await db.execute(select(Product).where(Product.id == it.product_id))
+            prod = p_res.scalars().first()
+            if prod:
+                prod.stock_qty += it.quantity
+
+        order.status = OrderStatus.CANCELLED
+
+        trip_res = await db.execute(select(DeliveryTrip).where(DeliveryTrip.order_id == order.id))
+        trip = trip_res.scalars().first()
+        if trip:
+            trip.status = TripStatus.CANCELLED
+            trip.dispatch_status = "cancelled_by_buyer"
+
+        await db.commit()
+        return {"cancelled": True, "orderId": order.id, "status": order.status.value, "reason": reason}
+
+    @staticmethod
+    async def rate_order(
+        db: AsyncSession,
+        user_id: str,
+        order_id: str,
+        rating: int,
+        review_text: Optional[str] = None
+    ) -> Dict[str, Any]:
+        res = await db.execute(select(Order).where(Order.id == order_id))
+        order = res.scalars().first()
+        if not order or order.user_id != user_id:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        if order.status != OrderStatus.DELIVERED:
+            raise HTTPException(status_code=400, detail="Ratings can only be submitted for delivered orders")
+
+        merch_res = await db.execute(select(HardwareMerchant).where(HardwareMerchant.id == order.merchant_id))
+        merchant = merch_res.scalars().first()
+        new_rating = rating
+        if merchant:
+            curr_rating = merchant.rating or 4.5
+            curr_count = merchant.reviews_count or 1
+            new_count = curr_count + 1
+            new_rating = round(((curr_rating * curr_count) + rating) / new_count, 1)
+            merchant.rating = new_rating
+            merchant.reviews_count = new_count
+
+        await db.commit()
+        return {"rated": True, "orderId": order.id, "rating": rating, "newMerchantRating": new_rating}

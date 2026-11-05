@@ -61,9 +61,12 @@ class ApiClient {
     }
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
     };
+
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
@@ -120,6 +123,15 @@ class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
+
+  async upload<T>(file: File): Promise<T> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.request<T>('/upload', {
+      method: 'POST',
+      body: formData,
+    });
+  }
 }
 
 export const apiClient = new ApiClient();
@@ -160,6 +172,24 @@ export const buyerApi = {
 
   getOrders: () => apiClient.get('/buyer/orders'),
   getOrderTracking: (orderId: string) => apiClient.get(`/buyer/orders/${orderId}/tracking`),
+
+  submitBoqQuote: (data: {
+    projectName: string;
+    deliveryPincode: string;
+    siteAddress: string;
+    rawMaterialsText?: string;
+    fileUrl?: string;
+  }) => apiClient.post('/buyer/boq-quotes', data),
+
+  getBoqQuotes: () => apiClient.get('/buyer/boq-quotes'),
+
+  cancelOrder: (orderId: string, reason?: string) =>
+    apiClient.post(`/buyer/orders/${orderId}/cancel`, { reason }),
+
+  rateOrder: (orderId: string, rating: number, reviewText?: string) =>
+    apiClient.post(`/buyer/orders/${orderId}/rate`, { rating, reviewText }),
+
+  uploadFile: (file: File) => apiClient.upload(file),
 };
 
 export const vendorApi = {

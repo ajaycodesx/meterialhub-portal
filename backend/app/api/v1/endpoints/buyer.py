@@ -17,7 +17,11 @@ from app.schemas.buyer import (
     OrderCalculationRequest,
     OrderCalculationResponse,
     OrderCreateRequest,
-    OrderDetailResponse
+    OrderDetailResponse,
+    BoqQuoteCreateRequest,
+    BoqQuoteResponse,
+    OrderCancelRequest,
+    OrderRatingRequest
 )
 from app.schemas.common import ApiResponse
 
@@ -208,3 +212,64 @@ async def get_buyer_order_tracking(
         },
         message="Tracking telemetry retrieved"
     )
+
+
+@router.post("/boq-quotes", response_model=ApiResponse[BoqQuoteResponse])
+async def submit_buyer_boq_quote(
+    req: BoqQuoteCreateRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    BUYER BOQ QUOTE SUBMISSION:
+    Allows contractors and builders to submit their Bill of Quantities (BOQ),
+    site drawings, and bulk material requests for direct wholesale factory pricing.
+    """
+    data = await BuyerService.create_boq_quote(db, current_user.id, req)
+    return ApiResponse(data=data, message="BOQ quote request submitted successfully")
+
+
+@router.get("/boq-quotes", response_model=ApiResponse)
+async def list_buyer_boq_quotes(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Returns all submitted BOQ quotes and live review status for the authenticated buyer.
+    """
+    quotes = await BuyerService.list_boq_quotes(db, current_user.id)
+    return ApiResponse(data={"quotes": [q.model_dump() for q in quotes], "count": len(quotes)})
+
+
+@router.post("/orders/{order_id}/cancel", response_model=ApiResponse[dict])
+async def cancel_buyer_order(
+    request: Request,
+    order_id: str,
+    req: Optional[OrderCancelRequest] = None,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    BUYER ORDER CANCELLATION:
+    Allows buyers to cancel un-dispatched orders in pending or confirmed status.
+    Automatically restocks inventory and cancels pending delivery dispatches.
+    """
+    reason = req.reason if req else "Cancelled by buyer"
+    result = await BuyerService.cancel_order(db, current_user.id, order_id, reason)
+    await audit_service.log_order_cancelled(db, current_user, order_id, reason, request)
+    return ApiResponse(data=result, message="Order cancelled successfully")
+
+
+@router.post("/orders/{order_id}/rate", response_model=ApiResponse[dict])
+async def rate_buyer_order(
+    order_id: str,
+    req: OrderRatingRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    DELIVERED ORDER & MERCHANT RATING:
+    Enables contractors to rate their material delivery, merchant fulfillment speed, and service quality.
+    """
+    result = await BuyerService.rate_order(db, current_user.id, order_id, req.rating, req.reviewText)
+    return ApiResponse(data=result, message="Thank you for rating your delivery")

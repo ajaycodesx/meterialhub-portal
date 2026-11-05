@@ -318,4 +318,25 @@ context=details,
         return result.scalars().all()
 
 
+
+    async def log_order_cancelled(
+        self,
+        db: AsyncSession,
+        user: User,
+        order_id: str,
+        reason: str,
+        request: Optional[Request] = None
+    ) -> AuditLog:
+        return await self.log_action(
+            db=db,
+            action=AuditAction.ORDER_CANCELLED,
+            actor_id=user.id,
+            actor_role=user.role.value if hasattr(user.role, 'value') else str(user.role),
+            target_type="order",
+            target_id=order_id,
+            changes={"status": "cancelled", "reason": reason},
+            request=request
+        )
+
+
 audit_service = AuditService()

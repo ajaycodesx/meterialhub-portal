@@ -47,6 +47,8 @@ import { Button } from '../ui/Button';
 import { NoData } from '../common/NoData';
 import { Input } from '../ui/Input';
 import { PageBanner } from './PageBanner';
+import { BoqQuoteModal } from './BoqQuoteModal';
+import { OrderRatingModal } from './OrderRatingModal';
 
 interface ProfileSitesPageProps {
   user: UserProfile;
@@ -79,7 +81,11 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
   const [userName, setUserName] = useState(user.name || '');
   const [userPhone, setUserPhone] = useState(user.phone || '');
   const [userEmail, setUserEmail] = useState(user.email || '');
-  const [activeTab, setActiveTab] = useState<'sites' | 'orders' | 'payments' | 'wishlist' | 'settings'>('sites');
+  const [activeTab, setActiveTab] = useState<'sites' | 'orders' | 'boq' | 'payments' | 'wishlist' | 'settings'>('sites');
+  const [isBoqModalOpen, setIsBoqModalOpen] = useState(false);
+  const [ratingOrderId, setRatingOrderId] = useState<string | null>(null);
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [boqQuotes, setBoqQuotes] = useState<any[]>([]);
 
   const handleSaveUser = () => {
     setIsEditingUser(false);
@@ -96,7 +102,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
   };
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
-  useEffect(() => {
+  const loadOrders = () => {
     if (!apiClient.getToken()) return;
     buyerApi
       .getOrders()
@@ -104,16 +110,46 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
         setRecentOrders(
           (data?.orders ?? []).map((o: any) => ({
             id: o.invoiceNumber || o.orderId,
+            rawId: o.orderId,
+            rawStatus: o.status,
             date: o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : 'No data',
             items: o.totalWeightKg ? `${o.totalWeightKg} kg` : 'No data',
             amount: o.grandTotal != null ? `₹${Number(o.grandTotal).toLocaleString('en-IN')}` : 'No data',
             status: String(o.status).replace(/_/g, ' '),
-            statusColor: STATUS_COLORS[o.status] ?? 'text-slate-700 font-medium',
+            statusColor: STATUS_COLORS[o.status] ?? 'text-slate-600 font-medium',
           }))
         )
       )
       .catch(() => setRecentOrders([]));
+  };
+
+  const loadBoqQuotes = () => {
+    if (!apiClient.getToken()) return;
+    buyerApi
+      .getBoqQuotes()
+      .then((data: any) => setBoqQuotes(data?.quotes ?? []))
+      .catch(() => setBoqQuotes([]));
+  };
+
+  useEffect(() => {
+    loadOrders();
+    loadBoqQuotes();
   }, []);
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm('Are you sure you want to cancel this order? Inventory will be released back to the store.')) {
+      return;
+    }
+    try {
+      setCancellingOrderId(orderId);
+      await buyerApi.cancelOrder(orderId, 'Contractor cancelled through portal');
+      loadOrders();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to cancel order.');
+    } finally {
+      setCancellingOrderId(null);
+    }
+  };
 
   return (
     <div className="flex-1 bg-transparent">
@@ -247,6 +283,18 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
             >
               <FaFileLines className={`h-3.5 w-3.5 ${activeTab === 'orders' ? 'text-[#FF6500]' : 'text-slate-500'}`} />
               <span>Order History</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('boq')}
+              className={`flex-1 min-w-[160px] md:min-w-0 justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer text-center ${
+                activeTab === 'boq'
+                  ? 'bg-[#0F172A] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              <FaFileArrowUp className={`h-3.5 w-3.5 ${activeTab === 'boq' ? 'text-[#FF6500]' : 'text-slate-500'}`} />
+              <span>BOQ Quotes ({boqQuotes.length})</span>
             </button>
 
             <button
@@ -486,7 +534,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         </Link>
 
                         <div
-                          onClick={() => router.push('/catalog')}
+                          onClick={() => setIsBoqModalOpen(true)}
                           className="py-2.5 px-1 flex items-center justify-between hover:bg-slate-50/80 rounded-xl transition-colors cursor-pointer group"
                         >
                           <div className="flex items-center gap-3">
@@ -690,8 +738,27 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <p className="text-xs text-slate-600 font-medium">{ord.items}</p>
                       <p className="text-[11px] text-slate-400">Placed on {ord.date} <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /></p>
                     </div>
-                    <div className="flex items-center gap-3 self-end sm:self-center">
-                      <span className="text-sm font-medium text-slate-900">{ord.amount}</span>
+                    <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-center">
+                      <span className="text-sm font-semibold text-slate-900">{ord.amount}</span>
+                      {(ord.rawStatus === 'pending' || ord.rawStatus === 'confirmed') && (
+                        <button
+                          type="button"
+                          onClick={() => handleCancelOrder(ord.rawId || ord.id)}
+                          disabled={cancellingOrderId === (ord.rawId || ord.id)}
+                          className="px-3 py-1.5 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        >
+                          {cancellingOrderId === (ord.rawId || ord.id) ? 'Cancelling...' : 'Cancel'}
+                        </button>
+                      )}
+                      {ord.rawStatus === 'delivered' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setRatingOrderId(ord.rawId || ord.id)}
+                        >
+                          Rate Store
+                        </Button>
+                      )}
                       <Button variant="primary" size="sm" onClick={() => router.push('/tracking')}>
                         Track Delivery
                       </Button>
@@ -699,6 +766,83 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+                    {activeTab === 'boq' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-xl font-medium text-slate-900">Factory Bill of Quantities (BOQ) Quotes</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Bulk procurement schedules submitted for pre-negotiated factory wholesale pricing</p>
+                </div>
+                <Button variant="primary" size="sm" onClick={() => setIsBoqModalOpen(true)}>
+                  Submit New BOQ Request
+                </Button>
+              </div>
+
+              {boqQuotes.length === 0 ? (
+                <div className="py-12 text-center space-y-3">
+                  <div className="h-12 w-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
+                    <FaFileArrowUp className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-slate-900">No BOQ Schedules Submitted</h3>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Upload your construction drawings, material spreadsheets, or paste quantities to receive factory-direct estimates.
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => setIsBoqModalOpen(true)}>
+                    Upload BOQ Schedule
+                  </Button>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {boqQuotes.map((q: any) => (
+                    <div key={q.id} className="py-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 p-3 rounded-2xl transition-colors">
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-semibold text-slate-900 text-sm">{q.projectName || q.project_name}</span>
+                          <span className={`text-xs font-semibold ${
+                            q.status === 'quoted'
+                              ? 'text-emerald-600'
+                              : q.status === 'approved'
+                              ? 'text-blue-600'
+                              : 'text-amber-600'
+                          }`}>
+                            {q.status === 'under_review' ? 'Under Review' : q.status === 'quoted' ? 'Quote Ready' : q.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 font-medium line-clamp-2">
+                          {q.rawMaterialsText || q.raw_materials_text || 'Materials schedule attached via document upload'}
+                        </p>
+                        <p className="text-[11px] text-slate-400 flex items-center gap-2">
+                          <span>Site: {q.siteAddress || q.site_address || q.deliveryPincode || q.delivery_pincode}</span>
+                          <span className="h-2 w-px bg-slate-300 inline-block" />
+                          <span>Submitted: {q.createdAt ? new Date(q.createdAt).toLocaleDateString('en-IN') : 'Recent'}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:items-end gap-1.5 shrink-0">
+                        <span className="text-xs text-slate-400 font-medium">Wholesale Estimate</span>
+                        <span className="text-base font-semibold text-slate-900">
+                          {Number(q.estimatedTotal || q.estimated_total || 0) > 0
+                            ? `₹${Number(q.estimatedTotal || q.estimated_total).toLocaleString('en-IN')}`
+                            : 'Awaiting Pricing'}
+                        </span>
+                        {(q.fileUrl || q.file_url) && (
+                          <a
+                            href={q.fileUrl || q.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] font-semibold text-[#FF6500] hover:underline"
+                          >
+                            View Attached File
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -812,6 +956,18 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
 
         </div>
       </section>
+      <BoqQuoteModal
+        isOpen={isBoqModalOpen}
+        onClose={() => setIsBoqModalOpen(false)}
+        onSuccess={loadBoqQuotes}
+      />
+
+      <OrderRatingModal
+        isOpen={Boolean(ratingOrderId)}
+        onClose={() => setRatingOrderId(null)}
+        orderId={ratingOrderId || ''}
+        onSuccess={loadOrders}
+      />
     </div>
   );
 };
