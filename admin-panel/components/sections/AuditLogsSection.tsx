@@ -103,7 +103,7 @@ export const AuditLogsSection: React.FC = () => {
                       {l.action}
                     </td>
                     <td className="py-3.5">
-                      <p className="font-medium text-slate-900">{l.actorId || 'u_admin_1'}</p>
+                      <p className="font-medium text-slate-900">{l.actorId || 'system'}</p>
                       <span className="text-[10px] font-medium uppercase text-orange-600">
                         {l.actorRole || 'admin'}
                       </span>

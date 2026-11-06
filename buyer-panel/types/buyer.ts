@@ -68,6 +68,9 @@ export interface UserProfile {
   email: string;
   isLoggedIn: boolean;
   savedAddresses: { id: string; label: string; address: string }[];
+  gstin?: string;
+  bankAccount?: string;
+  creditLimit?: number;
 }
 
 export interface Product {

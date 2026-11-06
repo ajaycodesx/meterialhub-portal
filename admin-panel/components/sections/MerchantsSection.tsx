@@ -334,7 +334,7 @@ export const MerchantsSection: React.FC = () => {
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">GSTIN Record</p>
-                <p className="font-medium text-slate-900">{selectedMerchant.gstin || '32AAACH7409R1ZZ'}</p>
+                <p className="font-medium text-slate-900">{selectedMerchant.gstin || 'Not provided'}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-500 font-medium">Bank Account</p>

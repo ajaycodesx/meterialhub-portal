@@ -52,7 +52,7 @@ export function DriverJobsTab({
       loadSpecs: activeTrip.vehicleType || 'No data',
       fareDisplay: activeTrip.tripFare
         ? `₹${Math.round(activeTrip.tripFare).toLocaleString('en-IN')}`
-        : '₹12,400',
+        : 'No data',
     });
   }
 
@@ -62,15 +62,15 @@ export function DriverJobsTab({
       ? t.orderId.startsWith('ord_')
         ? `MH-${t.orderId.slice(4, 8).toUpperCase()}`
         : t.orderId
-      : t.displayId || 'MH-2048',
+      : t.displayId || 'No data',
     status: t.status || 'delivered',
     statusLabel: t.status === 'delivered' ? 'Delivered' : t.statusLabel || 'Delivered',
     vendorName: t.pickupAddress?.split(',')[0] || t.vendorName || '',
     vendorAddress: t.pickupAddress || t.vendorAddress || '',
-    buyerName: t.dropAddress?.split(',')[0] || t.buyerName || 'Royal Builders Site',
-    buyerAddress: t.dropAddress || t.buyerAddress || 'Infopark Expressway, Kakkanad',
+    buyerName: t.dropAddress?.split(',')[0] || t.buyerName || 'No data',
+    buyerAddress: t.dropAddress || t.buyerAddress || 'No data',
     loadSpecs: t.vehicleType || t.loadSpecs || 'Building Materials',
-    fareDisplay: t.tripFare ? `₹${Math.round(t.tripFare).toLocaleString('en-IN')}` : t.fareDisplay || '₹3,200',
+    fareDisplay: t.tripFare ? `₹${Math.round(t.tripFare).toLocaleString('en-IN')}` : t.fareDisplay || 'No data',
   }));
 
   const activeTripId = activeTrip?.tripId || activeTrip?.id;

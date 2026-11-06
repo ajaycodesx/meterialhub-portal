@@ -94,7 +94,7 @@ export const VerificationsSection: React.FC = () => {
       {success && <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">{success}</div>}
 
       {loading ? (
-        <p className="text-xs text-slate-500">Loading applicationsâ€¦</p>
+        <p className="text-xs text-slate-500">Loading applications...</p>
       ) : items.length === 0 ? (
         <NoData
           title={status === 'pending' ? 'Nothing waiting for review' : 'No rejected applications'}

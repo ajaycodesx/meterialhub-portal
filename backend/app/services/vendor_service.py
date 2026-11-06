@@ -926,9 +926,9 @@ class VendorService:
 
         return {
             "merchantId": merchant_id,
-            "bankAccount": merchant.bank_account if merchant else "9876543210123",
-            "gstin": merchant.gstin if merchant else "32AAACH7409R1ZZ",
-            "walletBalance": merchant.wallet_balance if merchant else 145000.0,
+            "bankAccount": merchant.bank_account if merchant and merchant.bank_account else None,
+            "gstin": merchant.gstin if merchant and merchant.gstin else None,
+            "walletBalance": merchant.wallet_balance if merchant and merchant.wallet_balance is not None else 0.0,
             "grossSales": round(gross_sales, 2),
             "platformFees": round(commission, 2),
             "netSettlement": round(net_payable, 2),

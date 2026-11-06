@@ -102,6 +102,11 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
   };
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
+  const totalProcurement = recentOrders.reduce((sum, ord) => {
+    const raw = typeof ord.amount === 'string' ? ord.amount.replace(/[^0-9.]/g, '') : ord.amount;
+    return sum + (parseFloat(raw) || 0);
+  }, 0);
+
   const loadOrders = () => {
     if (!apiClient.getToken()) return;
     buyerApi
@@ -181,7 +186,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <span>Civil Contractor</span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
-            <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">32AABCU9683R1ZM</strong></span>
+            <span>GSTIN: <strong className="font-mono text-slate-800 font-medium">{user.gstin || 'Registered Contractor'}</strong></span>
             <span className="h-2.5 w-px bg-slate-300 inline-block" />
             <span className="flex items-center gap-1">
               <FaPhone className="h-3 w-3 text-[#FF6500]" />
@@ -203,15 +208,15 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
             <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-slate-700">
               <FaIndianRupeeSign className="h-3.5 w-3.5 text-amber-500" />
-              <span>Procurement: <strong className="text-slate-900 font-medium">₹14.80L</strong></span>
+              <span>Procurement: <strong className="text-slate-900 font-medium">₹{totalProcurement > 0 ? totalProcurement.toLocaleString('en-IN') : '0'}</strong></span>
             </div>
             <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-slate-700">
               <FaBuilding className="h-3.5 w-3.5 text-[#FF6500]" />
-              <span>Active Sites: <strong className="text-emerald-600 font-medium">2 Pinned</strong></span>
+              <span>Active Sites: <strong className="text-emerald-600 font-medium">{user.savedAddresses?.length || 0} Pinned</strong></span>
             </div>
             <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl shadow-xs text-xs font-medium text-slate-700">
               <FaCartShopping className="h-3.5 w-3.5 text-blue-500" />
-              <span>Orders: <strong className="text-slate-900 font-medium">18 Placed</strong></span>
+              <span>Orders: <strong className="text-slate-900 font-medium">{recentOrders.length} Placed</strong></span>
             </div>
             <button
               onClick={() => setIsEditingUser(!isEditingUser)}
@@ -571,7 +576,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaCartShopping className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-medium text-slate-900 leading-none">18</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">{recentOrders.length}</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Total Orders</p>
                         <button onClick={() => setActiveTab('orders')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>View Details</span>
@@ -585,7 +590,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaIndianRupeeSign className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-medium text-slate-900 leading-none">₹14.80L</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">₹{totalProcurement > 0 ? totalProcurement.toLocaleString('en-IN') : '0'}</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Total Procurement</p>
                         <button onClick={() => setActiveTab('payments')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>View Details</span>
@@ -599,7 +604,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaBuilding className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-medium text-slate-900 leading-none">2</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">{user.savedAddresses?.length || 0}</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Active Sites</p>
                         <button onClick={() => setActiveTab('sites')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>Manage Sites</span>
@@ -613,7 +618,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                         <FaHeart className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-lg font-medium text-slate-900 leading-none">5</p>
+                        <p className="text-lg font-medium text-slate-900 leading-none">{suppliers.length}</p>
                         <p className="text-[10px] text-slate-400 font-medium mt-0.5">Favorite Merchants</p>
                         <button onClick={() => setActiveTab('wishlist')} className="text-[10px] text-slate-600 hover:text-[#FF6500] transition-colors font-medium mt-1 inline-flex items-center gap-0.5 cursor-pointer">
                           <span>View Merchants</span>
@@ -864,7 +869,7 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <p className="text-xs text-slate-400">Primary settlement account for GST refunds</p>
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-slate-800">A/C: *******8491 (IFSC: HDFC0001824)</p>
+                  <p className="text-sm font-medium text-slate-800">{user.bankAccount ? `A/C: ${user.bankAccount}` : 'A/C Linked via GSTIN Corporate Verification'}</p>
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                     <FaCircleCheck className="h-3 w-3" /> Auto-Debit &amp; Refunds Active
                   </span>
@@ -880,8 +885,8 @@ export const ProfileSitesPage: React.FC<ProfileSitesPageProps> = ({
                       <p className="text-xs text-slate-400">Contractor 30-Day revolving terms</p>
                     </div>
                   </div>
-                  <p className="text-xl font-medium text-slate-900">₹25,00,000 <span className="text-xs text-slate-400 font-normal">Approved</span></p>
-                  <p className="text-xs text-slate-500">Available: <strong className="text-emerald-600">₹10,20,000</strong> <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Used: ₹14,80,000</p>
+                  <p className="text-xl font-medium text-slate-900">{user.creditLimit ? `₹${Number(user.creditLimit).toLocaleString('en-IN')}` : 'Wholesale Net-30'} <span className="text-xs text-slate-400 font-normal">Active Facility</span></p>
+                  <p className="text-xs text-slate-500">Available: <strong className="text-emerald-600">Eligible on Verified BOQ</strong> <span className="h-2 w-px bg-slate-300 inline-block mx-1.5" /> Direct Merchant Invoicing</p>
                 </div>
               </div>
             </div>

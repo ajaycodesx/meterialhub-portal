@@ -396,7 +396,7 @@ export const OrdersSection: React.FC = () => {
                 <p className="font-medium text-slate-900 text-sm">{selectedOrder.merchant?.name}</p>
                 <p className="text-slate-600 font-medium">Owner: {selectedOrder.merchant?.ownerName}</p>
                 <p className="text-slate-500">{selectedOrder.merchant?.address}</p>
-                <p className="text-slate-500">GSTIN: {selectedOrder.merchant?.gstin || '32AAACH7409R1ZZ'}</p>
+                <p className="text-slate-500">GSTIN: {selectedOrder.merchant?.gstin || 'Not provided'}</p>
               </div>
             </div>
 

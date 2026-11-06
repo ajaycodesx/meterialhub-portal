@@ -218,3 +218,4 @@ export const BoqQuoteModal: React.FC<BoqQuoteModalProps> = ({
     </Modal>
   );
 };
+

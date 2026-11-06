@@ -121,3 +121,4 @@ async def test_buyer_delivered_order_rating(async_client: AsyncClient):
     assert rate_res.status_code == 200
     assert rate_res.json()["data"]["rated"] is True
     assert rate_res.json()["data"]["rating"] == 5
+

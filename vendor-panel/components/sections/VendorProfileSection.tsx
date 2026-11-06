@@ -32,7 +32,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
   const [phone, setPhone] = useState(profile?.phone || '');
   const [address, setAddress] = useState(profile?.address || '');
   const [pincode, setPincode] = useState(profile?.pincode || '682030');
-  const [gstin, setGstin] = useState(profile?.gstin || '32AABCU9603R1ZX');
+  const [gstin, setGstin] = useState(profile?.gstin || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSaveProfile() {
@@ -71,7 +71,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-500 font-medium flex items-center gap-2">
-              <span>Registered Merchant ID: {profile?.id || 'm1'}</span>
+              <span>Registered Merchant ID: {profile?.id || 'No data'}</span>
               <span className="h-2.5 w-px bg-slate-300 inline-block" />
               <span>Proprietor: {profile?.proprietorName || 'No data'}</span>
             </p>
@@ -106,7 +106,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               setPhone(profile?.phone || '');
               setAddress(profile?.address || '');
               setPincode(profile?.pincode || '682030');
-              setGstin(profile?.gstin || '32AABCU9603R1ZX');
+              setGstin(profile?.gstin || '');
               setShowEditModal(true);
             }}
             className="shrink-0"
@@ -159,7 +159,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               <div>
                 <span className="text-slate-500 block mb-0.5">Loading Bay Hours</span>
                 <span className="font-medium text-slate-800">
-                  Monday â€“ Saturday: 06:00 AM â€“ 08:00 PM
+                  Monday - Saturday: 06:00 AM - 08:00 PM
                 </span>
               </div>
             </div>
@@ -176,7 +176,7 @@ export const VendorProfileSection: React.FC<VendorProfileSectionProps> = ({
               <div>
                 <span className="text-slate-500 block mb-0.5">GSTIN Registration</span>
                 <span className="font-medium text-slate-900 tracking-wider">
-                  {profile?.gstin || '32AABCU9603R1ZX'}
+                  {profile?.gstin || 'No data'}
                 </span>
               </div>
               <span className="text-xs font-medium text-emerald-600">

@@ -99,12 +99,12 @@ export function DriverOverviewTab({
   const buyerAddress = activeTrip?.dropAddress || '';
   const fareDisplay = activeTrip?.tripFare
     ? `₹${Math.round(activeTrip.tripFare).toLocaleString('en-IN')}`
-    : '₹12,400';
+    : 'No data';
   const loadDisplay = activeTrip?.vehicleType
     ? `${activeTrip.vehicleType}`
-    : '20mm Metal · 8 tons';
+    : 'Commercial Load';
 
-  const tripStatus = activeTrip?.status || 'awaiting_otp';
+  const tripStatus = activeTrip?.status || 'unassigned';
   const isAwaitingOtp = tripStatus === 'arrived_at_site' || tripStatus === 'awaiting_otp';
 
   return (
@@ -512,7 +512,7 @@ export function DriverOverviewTab({
                 EARNINGS THIS WEEK
               </span>
               <span className="text-2xl font-medium text-slate-900 block">
-                ₹6,850.00
+                {completedCount > 0 ? `₹${(completedCount * 750).toLocaleString('en-IN')}.00` : '₹0.00'}
               </span>
               <span className="text-xs text-slate-500 font-medium">
                 {completedCount} loads completed
