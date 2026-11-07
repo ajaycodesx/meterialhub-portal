@@ -17,11 +17,8 @@ from app.models.audit_log import AuditLog
 from app.schemas.vendor import VendorDashboardCompositeResponse, StockUpdateRequest
 from app.core.websocket import manager, EventType
 
-# Orders a merchant may still reject. Unpaid (PENDING) orders can be declined;
-# once out for delivery or delivered they can no longer be cancelled by the vendor.
 VENDOR_REJECTABLE_STATUSES = [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.PACKING]
 
-# The only status name a vendor may set through update-order-status.
 VENDOR_PACK_STATUS_NAMES = ["packing", "ready_for_pickup"]
 
 
@@ -431,16 +428,12 @@ class VendorService:
         if not order:
             return False
 
-        # Once the truck has left the store, cancelling would restock goods that
-        # were delivered or are in transit, so only pre-dispatch orders are rejectable.
         if order.status not in VENDOR_REJECTABLE_STATUSES:
             raise HTTPException(
                 status_code=409,
                 detail=f"Order cannot be rejected in status: {order.status.value}"
             )
 
-        # A paid order cannot be cancelled by the vendor: the money would stay with
-        # the store. Admin cancels and refunds through the finance flow instead.
         if order.payment_id:
             raise HTTPException(
                 status_code=409,
@@ -480,7 +473,6 @@ class VendorService:
         page: int = 1,
         limit: int = 50
     ) -> Dict[str, Any]:
-        # Only this merchant's own catalogue. Never fall back to other merchants' products.
         res = await db.execute(
             select(Product).where(Product.merchant_id == merchant_id).order_by(Product.title)
         )
@@ -744,9 +736,6 @@ class VendorService:
         if not order:
             return False
 
-        # Vendors may only mark an order as packed. Cancellation goes through
-        # reject_order so stock is restored exactly once, and delivery status
-        # is controlled by the driver/OTP flow.
         target_name = status_name.lower()
         if target_name not in VENDOR_PACK_STATUS_NAMES:
             raise HTTPException(status_code=400, detail=f"Unsupported vendor status: {status_name}")
@@ -781,7 +770,6 @@ class VendorService:
             {
                 "id": q.id,
                 "projectName": q.project_name,
-                # Vendors need the delivery pincode to quote, not the buyer's exact site address.
                 "deliveryPincode": q.delivery_pincode,
                 "rawMaterialsText": q.raw_materials_text,
                 "estimatedTotal": q.estimated_total,
@@ -864,7 +852,6 @@ class VendorService:
         data: Dict[str, Any],
         actor_id: str
     ) -> bool:
-        # Vendor deals stay pending until an admin approves them; buyers never see them before that.
         new_deal = Deal(
             id=f"deal_{uuid.uuid4().hex[:8]}",
             material=data["material"],

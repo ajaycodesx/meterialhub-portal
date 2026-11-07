@@ -13,13 +13,10 @@ class HardwareMerchant(Base):
     email = Column(String(100), nullable=True)
     address = Column(String(255), nullable=False)
     pincode = Column(String(10), nullable=False)
-    # Store location; the pickup point for dispatch distance checks.
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
 
-    # Stores start unverified; an admin approves them before buyers can see them.
     verified = Column(Boolean, default=False)
-    # Null until real reviews or dispatch history exist; panels show "No data" for null.
     rating = Column(Float, nullable=True)
     reviews_count = Column(Integer, default=0)
 
@@ -33,6 +30,10 @@ class HardwareMerchant(Base):
     avatar_url = Column(String(255), nullable=True)
 
     gstin = Column(String(50), nullable=True)
+    pan_number = Column(String(50), nullable=True)
+    trade_license = Column(String(100), nullable=True)
+    proof_documents = Column(JSON, default=dict)
+
     bank_account = Column(String(50), nullable=True)
     wallet_balance = Column(Float, default=0.0)
 

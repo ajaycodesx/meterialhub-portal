@@ -13,24 +13,16 @@ interface CommodityTickerProps {
 }
 
 export const CommodityTicker: React.FC<CommodityTickerProps> = ({ rates }) => {
-  const defaultItems = [
-    { name: 'UltraTech Cement', rate: '1.10', change: '0.640%', trend: 'up' },
-    { name: 'TMT Steel', rate: '33.25', change: '0.046%', trend: 'up' },
-    { name: 'PVC Pipes tement', rate: '3.10', change: '0.052%', trend: 'down' },
-    { name: 'PVC Pipes', rate: '22.50', change: '0.232%', trend: 'up' },
-    { name: 'UltraTech Cement', rate: '10', change: '0.335%', trend: 'down' },
-    { name: 'Cement', rate: '27.30', change: '0.87%', trend: 'down' },
-    { name: 'TMT Steel Fe550D', rate: '58.50', change: '0.420%', trend: 'up' },
-  ];
+  if (!rates || rates.length === 0) {
+    return null;
+  }
 
-  const itemsToDisplay = rates && rates.length > 0
-    ? rates.map((r) => ({
-        name: r.materialName,
-        rate: r.wholesaleRate >= 1000 ? (r.wholesaleRate / 1000).toFixed(2) : String(r.wholesaleRate),
-        change: `${r.changePercent}%`,
-        trend: r.trend,
-      }))
-    : defaultItems;
+  const itemsToDisplay = rates.map((r) => ({
+    name: r.materialName,
+    rate: r.wholesaleRate >= 1000 ? (r.wholesaleRate / 1000).toFixed(2) : String(r.wholesaleRate),
+    change: `${r.changePercent}%`,
+    trend: r.trend,
+  }));
 
   const marqueeItems = [...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay];
 

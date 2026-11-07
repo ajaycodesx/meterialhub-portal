@@ -37,21 +37,38 @@ class VendorOnboardingRequest(BaseModel):
     store_name: str
     email: EmailStr
     phone: str
-    password: str
+    password: str = Field(min_length=8, max_length=128)
     address: str
     pincode: str
+    city: Optional[str] = "Kochi"
     main_category: Optional[str] = "All Hardware & Building Materials"
-    gstin: Optional[str] = "32AAACH7409R1ZZ"
+    gstin: str
+    pan_number: Optional[str] = None
+    trade_license: Optional[str] = None
+    min_order_value: Optional[int] = 1000
+    proof_documents: Optional[Dict[str, Any]] = None
 
 
 class DriverOnboardingRequest(BaseModel):
     name: str
     email: EmailStr
     phone: str
-    password: str
+    password: str = Field(min_length=8, max_length=128)
     vehicle_type: str
+    vehicle_reg_number: str
+    payload_capacity_tons: Optional[float] = 2.5
     driver_license: str
-    vehicle_reg_number: Optional[str] = None
+    license_expiry: Optional[str] = None
+    city: Optional[str] = "Kochi"
+    proof_documents: Optional[Dict[str, Any]] = None
+
+
+class OnboardingResponse(BaseModel):
+    user_id: str
+    status: str = "pending_approval"
+    role: UserRole
+    email: str
+    message: str
 
 
 class AddressItem(BaseModel):
@@ -70,5 +87,6 @@ class UserResponse(BaseModel):
     is_verified: bool
     saved_addresses: List[Dict[str, Any]] = []
     merchant_id: Optional[str] = None
+    proof_documents: Optional[Dict[str, Any]] = None
 
     model_config = ConfigDict(from_attributes=True)

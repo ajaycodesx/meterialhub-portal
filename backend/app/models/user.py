@@ -22,24 +22,22 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.BUYER, nullable=False)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=True)
-    
+
     saved_addresses = Column(JSON, default=list)
-    
+
     merchant_id = Column(String(50), nullable=True)
     driver_license = Column(String(50), nullable=True)
     vehicle_type = Column(String(50), nullable=True)
     vehicle_reg_number = Column(String(20), nullable=True)
-    # Payload the driver's vehicle can carry; drives which orders the driver is offered.
     payload_capacity_tons = Column(Float, nullable=True)
 
-    # Set by the admin when a vendor or driver is rejected; shown back to the applicant.
     verification_reason = Column(String(500), nullable=True)
+    proof_documents = Column(JSON, default=dict)
 
-    # Driver availability and live position, updated from the driver panel.
     is_online = Column(Boolean, default=False, nullable=False)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     location_updated_at = Column(DateTime(timezone=True), nullable=True)
-    
+
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

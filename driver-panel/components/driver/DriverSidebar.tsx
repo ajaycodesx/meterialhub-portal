@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -37,7 +37,31 @@ export function DriverSidebar({
   unreadAlertsCount = 4,
 }: DriverSidebarProps) {
   const pathname = usePathname();
+  const navContainerRef = useRef<HTMLDivElement>(null);
   const [toggling, setToggling] = React.useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const savedPos = sessionStorage.getItem('driver_sidebar_scroll');
+    if (savedPos !== null && navContainerRef.current) {
+      navContainerRef.current.scrollTop = Number(savedPos);
+      const raf = requestAnimationFrame(() => {
+        if (navContainerRef.current && savedPos !== null) {
+          navContainerRef.current.scrollTop = Number(savedPos);
+        }
+      });
+      return () => cancelAnimationFrame(raf);
+    } else if (navContainerRef.current) {
+      const activeEl = navContainerRef.current.querySelector<HTMLElement>('[data-active="true"]');
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [pathname]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    sessionStorage.setItem('driver_sidebar_scroll', String(e.currentTarget.scrollTop));
+  };
 
   async function handleToggle() {
     try {
@@ -124,7 +148,11 @@ export function DriverSidebar({
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-5 xl:px-6 py-2 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+      <div
+        ref={navContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 min-h-0 overflow-y-auto px-5 xl:px-6 py-2 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]"
+      >
         <nav className="space-y-1.5">
           <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest px-3 block mb-2">
             MAIN DISPATCH MENU
@@ -138,7 +166,14 @@ export function DriverSidebar({
               <Link
                 key={item.id}
                 href={item.href}
-                onClick={() => onTabChange(item.id)}
+                scroll={false}
+                data-active={active ? 'true' : 'false'}
+                onClick={() => {
+                  if (navContainerRef.current) {
+                    sessionStorage.setItem('driver_sidebar_scroll', String(navContainerRef.current.scrollTop));
+                  }
+                  onTabChange(item.id);
+                }}
                 className={`w-full flex items-center justify-between py-3 px-3.5 rounded-2xl font-medium text-xs transition-all cursor-pointer ${
                   active
                     ? 'bg-[#0F172A] text-white shadow-xs'

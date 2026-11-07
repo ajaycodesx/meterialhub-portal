@@ -11,12 +11,16 @@ FaChevronRight,
 FaTruckFast, FaCircleCheck, FaCheck
 } from 'react-icons/fa6';
 
+import Link from 'next/link';
+import { MaterialCategory } from '../../types/buyer';
+
 interface FooterProps {
   onOpenLanguageModal: () => void;
   currentLanguage: string;
+  categories?: MaterialCategory[];
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLanguage }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLanguage, categories = [] }) => {
   const [appNotice, setAppNotice] = useState<string | null>(null);
 
   const handleAppDownloadClick = (storeName: string) => {
@@ -140,25 +144,24 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLanguageModal, currentLang
             <h4 className="text-xs font-medium text-slate-900 uppercase tracking-wider">
               Wholesale Materials
             </h4>
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 text-xs font-normal">
-              {[
-                'Cement 53 Grade',
-                'Fe550 TMT Steel Rods',
-                'PVC Plumbing Pipes',
-                'Emulsion Wall Putty',
-                'Electrical Wires & Switches',
-                'Hardware & Tools'
-              ].map((item) => (
-                <a 
-                  key={item} 
-                  href="/catalog" 
-                  className="text-slate-600 hover:text-[#FF6500] transition-colors flex items-center gap-1 py-0.5"
-                >
-                  <FaChevronRight className="h-2 w-2 text-slate-400" />
-                  <span>{item}</span>
-                </a>
-              ))}
-            </div>
+            {categories && categories.length > 0 ? (
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 text-xs font-normal">
+                {categories.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/catalog?category=${encodeURIComponent(item.title)}`}
+                    className="text-slate-600 hover:text-[#FF6500] transition-colors flex items-center gap-1.5 py-0.5 group"
+                  >
+                    <FaChevronRight className="h-2 w-2 text-slate-400 group-hover:text-[#FF6500] group-hover:translate-x-0.5 transition-all" />
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 font-normal leading-relaxed">
+                Categories are published by MaterialHub operations.
+              </p>
+            )}
           </div>
 
           <div className="lg:col-span-4 space-y-3">

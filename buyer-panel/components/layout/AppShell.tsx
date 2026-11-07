@@ -12,17 +12,24 @@ import { AuthModal } from '../buyer/AuthModal';
 import { ScrollToTopButton } from '../common/ScrollToTopButton';
 import { useAppContext } from '../../context/AppContext';
 import { buyerApi } from '../../lib/api';
-import { CommodityRate } from '../../types/buyer';
+import { CommodityRate, MaterialCategory } from '../../types/buyer';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [rates, setRates] = useState<CommodityRate[]>([]);
+  const [categories, setCategories] = useState<MaterialCategory[]>([]);
 
   useEffect(() => {
     buyerApi
       .getHome()
-      .then((data: any) => setRates(data?.rateTicker ?? []))
-      .catch(() => setRates([]));
+      .then((data: any) => {
+        setRates(data?.rateTicker ?? []);
+        setCategories(data?.categories ?? []);
+      })
+      .catch(() => {
+        setRates([]);
+        setCategories([]);
+      });
   }, []);
   const {
     location,
@@ -72,7 +79,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <CommodityTicker rates={rates} />
         </div>
 
-        <main className="flex-1 pt-[130px] sm:pt-[152px] lg:pt-[104px]">
+        <main className={`flex-1 ${rates && rates.length > 0 ? 'pt-[130px] sm:pt-[152px] lg:pt-[104px]' : 'pt-[76px] sm:pt-[88px] lg:pt-[76px]'}`}>
           {children}
         </main>
       </div>
@@ -80,6 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Footer
         onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
         currentLanguage={currentLanguage}
+        categories={categories}
       />
 
       <MobileBottomNav

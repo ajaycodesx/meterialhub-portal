@@ -143,6 +143,22 @@ export const authApi = {
   register: (data: { name: string; email: string; phone: string; password: string; role: string }) =>
     apiClient.post('/auth/register', data),
 
+  onboardVendor: (data: any) => apiClient.post('/auth/onboard/vendor', data),
+
+  uploadProof: async (file: File): Promise<{ url: string; filename: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_BASE_URL}/auth/upload-proof`, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new ApiError(res.status, data?.detail || data?.message || 'Proof upload failed');
+    }
+    return data.data;
+  },
+
   getProfile: () => apiClient.get('/auth/me'),
 };
 

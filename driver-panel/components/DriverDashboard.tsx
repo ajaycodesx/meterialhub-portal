@@ -50,7 +50,7 @@ export function DriverDashboard({ initialSlug }: { initialSlug?: DriverNavTab } 
   const handleTabChange = (tab: DriverNavTab) => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
-      router.push(`/${tab}`);
+      router.push(`/${tab}`, { scroll: false });
     }
   };
 

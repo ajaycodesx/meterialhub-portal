@@ -16,6 +16,7 @@ from app.models.commodity_rate import CommodityRate
 from app.models.audit_log import AuditLog
 from app.schemas.admin import AdminOverviewCompositeResponse
 from app.services.payment_service import payment_service
+from app.services.notification_service import notification_service
 
 PLATFORM_SETTINGS_STORE = {
     "platformCommissionPercent": 5.0,
@@ -60,7 +61,6 @@ COMMUNICATION_TEMPLATES_STORE = [
     }
 ]
 
-# No disputes table exists yet, so there is no real data to list.
 DISPUTES_STORE = []
 
 
@@ -621,7 +621,6 @@ class AdminService:
         merchant.verified = verified
         merchant.is_online = is_online
 
-        # The store's vendor accounts gate operations on user.is_verified, so keep them in step.
         vendor_res = await db.execute(select(User).where(User.merchant_id == merchant.id, User.role == UserRole.VENDOR))
         for vendor_user in vendor_res.scalars().all():
             vendor_user.is_verified = verified
@@ -1067,6 +1066,7 @@ class AdminService:
                 "phone": user.phone,
                 "submittedAt": user.created_at.isoformat() if user.created_at else None,
                 "reason": user.verification_reason,
+                "proofDocuments": user.proof_documents or {},
             }
             if user_role == UserRole.VENDOR:
                 store = (await db.execute(select(HardwareMerchant).where(HardwareMerchant.id == user.merchant_id))).scalars().first()
@@ -1075,6 +1075,11 @@ class AdminService:
                     "address": store.address if store else None,
                     "pincode": store.pincode if store else None,
                     "gstin": store.gstin if store else None,
+                    "panNumber": store.pan_number if store else None,
+                    "tradeLicense": store.trade_license if store else None,
+                    "minOrderValue": store.min_order_value if store else None,
+                    "mainCategory": store.main_category if store else None,
+                    "proofDocuments": (store.proof_documents if store and store.proof_documents else user.proof_documents) or {},
                 })
             else:
                 item.update({
@@ -1118,6 +1123,51 @@ class AdminService:
             status="success"
         ))
         await db.commit()
+
+        if approve and user.email:
+            role_label = "Merchant Partner Store" if user.role == UserRole.VENDOR else "Commercial Carrier Driver"
+            email_subject = "MaterialHub Account Approved - Welcome to the Platform"
+            email_body = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
+<h2 style="color: #FF6500; margin-bottom: 8px;">Congratulations, {user.name}!</h2>
+<p style="color: #334155; font-size: 15px; line-height: 1.6;">Your application to partner with MaterialHub as a <strong>{role_label}</strong> has been thoroughly verified and <strong>approved</strong> by our Operations team.</p>
+<div style="background-color: #f8fafc; padding: 16px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+<p style="margin: 0; color: #475569; font-size: 14px;"><strong>Account Name:</strong> {user.name}</p>
+<p style="margin: 4px 0 0; color: #475569; font-size: 14px;"><strong>Registered Email:</strong> {user.email}</p>
+<p style="margin: 4px 0 0; color: #475569; font-size: 14px;"><strong>Account Status:</strong> Active & Verified</p>
+</div>
+<p style="color: #334155; font-size: 14px; line-height: 1.6;">You can now log in to your dedicated panel and access all platform features immediately.</p>
+<p style="color: #64748b; font-size: 13px; margin-top: 24px;">Thank you for partnering with MaterialHub.</p>
+</div>"""
+            try:
+                await notification_service.send_email(
+                    to_email=user.email,
+                    subject=email_subject,
+                    html_content=email_body,
+                    plain_text_content=f"Congratulations {user.name}! Your MaterialHub {role_label} account has been approved. You can now log in."
+                )
+            except Exception:
+                pass
+        elif not approve and user.email:
+            role_label = "Merchant Partner Store" if user.role == UserRole.VENDOR else "Commercial Carrier Driver"
+            email_subject = "MaterialHub Application Status Update"
+            email_body = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
+<h2 style="color: #dc2626; margin-bottom: 8px;">Application Status Update</h2>
+<p style="color: #334155; font-size: 15px; line-height: 1.6;">Thank you for applying to partner with MaterialHub as a <strong>{role_label}</strong>.</p>
+<p style="color: #334155; font-size: 14px; line-height: 1.6;">Our Operations team reviewed your submitted credentials and documents. Unfortunately, we cannot approve your application at this stage for the following reason:</p>
+<div style="background-color: #fef2f2; padding: 16px; border-radius: 12px; margin: 20px 0; border: 1px solid #fecaca;">
+<p style="margin: 0; color: #991b1b; font-size: 14px;"><strong>Reviewer Feedback:</strong> {reason or 'Incomplete or unverified documentation.'}</p>
+</div>
+<p style="color: #334155; font-size: 14px; line-height: 1.6;">Please contact MaterialHub operations support if you would like to resubmit updated documents.</p>
+</div>"""
+            try:
+                await notification_service.send_email(
+                    to_email=user.email,
+                    subject=email_subject,
+                    html_content=email_body,
+                    plain_text_content=f"Hello {user.name}, your MaterialHub {role_label} application was not approved. Reason: {reason}."
+                )
+            except Exception:
+                pass
 
     @staticmethod
     async def toggle_user_status(
@@ -1399,8 +1449,6 @@ class AdminService:
         if not order:
             return False
 
-        # Only a captured Razorpay payment can be refunded. Marking an unpaid or
-        # already-refunded order as refunded would record money that never moved.
         if not order.payment_id:
             raise ValueError("Order has no captured payment to refund")
         if order.status == OrderStatus.REFUNDED:
@@ -1412,7 +1460,6 @@ class AdminService:
             raise ValueError(f"Refund amount must be between 0.01 and {paid_rupees}")
 
         is_full_refund = refund_rupees == paid_rupees
-        # Razorpay takes amounts in paise; the admin panel works in rupees.
         refund = await payment_service.refund_payment(
             razorpay_payment_id=order.payment_id,
             amount=int(round(refund_rupees * 100)),

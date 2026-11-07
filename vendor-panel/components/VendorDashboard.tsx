@@ -57,7 +57,7 @@ export function VendorDashboard({ initialSlug }: { initialSlug?: VendorTab } = {
   const handleTabChange = (tab: VendorTab) => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
-      router.push(`/${tab}`);
+      router.push(`/${tab}`, { scroll: false });
     }
   };
 

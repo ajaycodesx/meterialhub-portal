@@ -108,7 +108,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           </div>
           <div>
             <span className="text-2xl lg:text-3xl font-medium text-slate-900 block leading-tight">
-              {(data.todaysTonnageDispatched || 18.5).toFixed(1)} MT
+              {(data.todaysTonnageDispatched ?? 0).toFixed(1)} MT
             </span>
             <span className="text-xs font-medium text-slate-500 block">
               Tonnage dispatched
@@ -125,7 +125,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           </div>
           <div>
             <span className="text-2xl lg:text-3xl font-medium text-slate-900 block leading-tight">
-              {data.lowStockCount || 3}
+              {data.lowStockCount ?? 0}
             </span>
             <span className="text-xs font-medium text-slate-500 block">
               Inventory alerts
@@ -303,7 +303,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
 
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-10 h-10 rounded-2xl bg-[#FF6500] text-white flex items-center justify-center shadow-lg">
-                  <FaCompass className="h-5 w-5 animate-pulse" />
+                  <FaCompass className="h-5 w-5" />
                 </div>
               </div>
 

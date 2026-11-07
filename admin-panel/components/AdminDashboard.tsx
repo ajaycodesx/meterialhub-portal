@@ -206,7 +206,7 @@ export function AdminDashboard({ initialSlug }: AdminDashboardProps = {}) {
 
   function handleNavigateTab(tab: AdminTab) {
     const slug = TAB_TO_SLUG[tab] || tab;
-    router.push(`/${slug}`);
+    router.push(`/${slug}`, { scroll: false });
   }
 
   if (needsSignIn) {

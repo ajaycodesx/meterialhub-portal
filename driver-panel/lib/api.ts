@@ -53,7 +53,6 @@ class ApiClient {
   ): Promise<T> {
     const token = this.getToken();
 
-
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -125,15 +124,21 @@ export const authApi = {
   register: (data: { name: string; email: string; phone: string; password: string; role: string }) =>
     apiClient.post('/auth/register', data),
 
-  onboardDriver: (data: {
-    name: string;
-    email: string;
-    phone: string;
-    password: string;
-    vehicle_type: string;
-    driver_license: string;
-    vehicle_reg_number?: string;
-  }) => apiClient.post('/auth/onboard/driver', data),
+  onboardDriver: (data: any) => apiClient.post('/auth/onboard/driver', data),
+
+  uploadProof: async (file: File): Promise<{ url: string; filename: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_BASE_URL}/auth/upload-proof`, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new ApiError(res.status, data?.detail || data?.message || 'Proof upload failed');
+    }
+    return data.data;
+  },
 
   getProfile: () => apiClient.get('/auth/me'),
 };
@@ -160,7 +165,6 @@ export const driverApi = {
     speedKmh?: number | null;
     heading?: number | null;
   }) => apiClient.post<any>('/driver/location', data),
-
 
   getOffers: () => apiClient.get<any[]>('/driver/offers'),
 

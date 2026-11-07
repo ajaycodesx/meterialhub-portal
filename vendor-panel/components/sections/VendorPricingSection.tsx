@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FaCoins,
   FaTag,
@@ -9,6 +9,7 @@ import {
   FaCalendarDays,
   FaBoxesStacked
 } from 'react-icons/fa6';
+import { vendorApi } from '../../lib/api';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -33,6 +34,24 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
   const [dealPrice, setDealPrice] = useState<number>(399);
   const [dealEndDate, setDealEndDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const res = await vendorApi.getCategories();
+        if (isMounted && res && res.length > 0) {
+          setCategories(res);
+          setDealCategory(res[0].id || res[0].title);
+        }
+      } catch {
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   async function handleDealSubmit() {
     if (!dealTitle.trim() || dealPrice <= 0) return;
@@ -174,10 +193,10 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
                   <div>
                     <span className="text-slate-400 line-through mr-1.5">
-                      ₹{(deal.originalPrice || 420).toLocaleString('en-IN')}
+                      ₹{(deal.originalPrice ?? 0).toLocaleString('en-IN')}
                     </span>
                     <span className="font-medium text-slate-900 text-sm">
-                      ₹{(deal.dealPrice || 399).toLocaleString('en-IN')}
+                      ₹{(deal.dealPrice ?? 0).toLocaleString('en-IN')}
                     </span>
                   </div>
                   <div className="text-right text-[11px] text-slate-500 flex items-center gap-1">
@@ -240,10 +259,15 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
                   onChange={(e) => setDealCategory(e.target.value)}
                   className="w-full px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-[#FF6500]"
                 >
-                  <option value="cement">Cement</option>
-                  <option value="steel">TMT Steel</option>
-                  <option value="aggregates">Aggregates</option>
-                  <option value="bricks">Bricks</option>
+                  {categories.length > 0 ? (
+                    categories.map((c) => (
+                      <option key={c.id || c.title} value={c.id || c.title}>
+                        {c.title}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="general">General Building Materials</option>
+                  )}
                 </select>
               </div>
             </div>

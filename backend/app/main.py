@@ -65,8 +65,8 @@ app = FastAPI(
     version=settings.VERSION,
     description="MaterialHub B2B Construction Materials Aggregator & Logistics Backend API",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    docs_url=f"{settings.API_V1_STR}/docs" if settings.DEBUG else None,
-    redoc_url=f"{settings.API_V1_STR}/redoc" if settings.DEBUG else None,
+    docs_url=f"{settings.API_V1_STR}/docs" if (settings.DEBUG or settings.DOCS_ENABLED) else None,
+    redoc_url=f"{settings.API_V1_STR}/redoc" if (settings.DEBUG or settings.DOCS_ENABLED) else None,
     lifespan=lifespan,
 )
 

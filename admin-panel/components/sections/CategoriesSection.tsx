@@ -10,7 +10,8 @@ import {
   FaSpinner,
   FaArrowUpFromBracket,
   FaTriangleExclamation,
-  FaArrowLeft
+  FaArrowLeft,
+  FaBoxesStacked
 } from 'react-icons/fa6';
 import { adminApi } from '../../lib/api';
 import { Modal } from '../ui/Modal';
@@ -188,6 +189,19 @@ export const CategoriesSection: React.FC = () => {
             <div className="py-12 text-center text-slate-400">
               <FaSpinner className="h-6 w-6 animate-spin mx-auto mb-2 text-[#FF6500]" />
               <p className="text-xs font-medium">Loading categories...</p>
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="py-16 px-4 bg-white rounded-2xl shadow-xs text-center flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#FF6500] flex items-center justify-center text-xl mb-3">
+                <FaBoxesStacked className="h-6 w-6" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 mb-1">No Material Categories Created</h3>
+              <p className="text-xs text-slate-500 font-medium max-w-md mb-4">
+                Add wholesale categories so merchants can organize catalog products and buyers can browse verified suppliers.
+              </p>
+              <Button size="sm" variant="primary" onClick={openCreateView} icon={<FaPlus />}>
+                Add First Category
+              </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

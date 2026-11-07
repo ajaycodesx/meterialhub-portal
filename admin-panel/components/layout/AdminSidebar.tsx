@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -124,6 +124,30 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onLogout
 }) => {
   const pathname = usePathname();
+  const navContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const savedPos = sessionStorage.getItem('admin_sidebar_scroll');
+    if (savedPos !== null && navContainerRef.current) {
+      navContainerRef.current.scrollTop = Number(savedPos);
+      const raf = requestAnimationFrame(() => {
+        if (navContainerRef.current && savedPos !== null) {
+          navContainerRef.current.scrollTop = Number(savedPos);
+        }
+      });
+      return () => cancelAnimationFrame(raf);
+    } else if (navContainerRef.current) {
+      const activeEl = navContainerRef.current.querySelector<HTMLElement>('[data-active="true"]');
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [pathname]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    sessionStorage.setItem('admin_sidebar_scroll', String(e.currentTarget.scrollTop));
+  };
 
   function isItemActive(item: NavItem): boolean {
     if (activeTab) {
@@ -204,7 +228,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 xl:px-6 py-2 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+        <div
+          ref={navContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 min-h-0 overflow-y-auto px-5 xl:px-6 py-2 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]"
+        >
           <nav className="space-y-4">
             {NAV_GROUPS.map((group) => (
               <div key={group.group} className="space-y-1">
@@ -221,7 +249,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                       <Link
                         key={item.id}
                         href={item.href}
+                        scroll={false}
+                        data-active={active ? 'true' : 'false'}
                         onClick={() => {
+                          if (navContainerRef.current) {
+                            sessionStorage.setItem('admin_sidebar_scroll', String(navContainerRef.current.scrollTop));
+                          }
                           if (onTabChange) onTabChange(item.id);
                           onCloseMobile();
                         }}
