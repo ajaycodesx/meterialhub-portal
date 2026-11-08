@@ -76,6 +76,6 @@
     - Strictly enforce compact, elegant spacing between any section header and the content below it.
     - Avoid oversized bottom margins or padding (prohibit `mb-8`, `mb-6`, `pb-4`, or `space-y-6` directly under section headings).
     - Standard header-to-content gap: Use `mb-3 sm:mb-4` on section header containers, `space-y-3 sm:space-y-4` on section wrapper containers, and `pb-2 mb-2` on filter/tab strips. Ensure grid cards and category lists align closely and proportionally to their section headers without awkward empty whitespace.
-26. **Full-Width Desktop Dashboard Layout (`w-full` Instead of `max-w-7xl`)**:
-    - Strictly prohibit artificial maximum widths (such as `max-w-7xl`, `max-w-6xl`, or centered fixed-width content containers with large empty horizontal margins) on desktop dashboard views.
-    - Always enforce full fluid width layouts (`w-full lg:max-w-none`) so dashboard grids, metric cards, telemetry displays, order feeds, and dispatch boards expand to utilize the full available canvas next to the navigation sidebar.
+26. **Strict Full-Width Desktop Dashboard Layouts (`w-full` Instead of `max-w-*`)**:
+    - Strictly prohibit artificial maximum widths (`max-w-7xl`, `max-w-6xl`, `max-w-5xl`, `max-w-4xl`, `max-w-3xl`, `max-w-2xl`, or centered fixed-width content containers with large empty horizontal margins) on all desktop dashboard views, sections, forms, and cards across Admin, Vendor, and Driver panels.
+    - All dashboard containers, creation forms (e.g. Create/Edit Material SKU, Add/Edit Category, Add/Edit Product, Pricing forms), editors, telemetry displays, data tables, and dispatch boards MUST be strictly full-width (`w-full` / `w-full lg:max-w-none`). Never constrain dashboard forms, cards, or page sections to narrow centered boxes that leave empty horizontal space on the right.

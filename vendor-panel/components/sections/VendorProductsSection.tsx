@@ -567,7 +567,7 @@ export const VendorProductsSection: React.FC<VendorProductsSectionProps> = ({
             </div>
           </div>
 
-          <div className="p-6 bg-white rounded-2xl shadow-xs space-y-5 max-w-4xl">
+          <div className="p-6 bg-white rounded-2xl shadow-xs space-y-5 w-full">
             {viewMode === 'add' && (
               <div className="p-3 bg-amber-50 rounded-2xl text-amber-900 font-medium flex items-center gap-2 text-xs">
                 <FaCircleInfo className="h-4 w-4 text-amber-600 shrink-0" />

@@ -299,7 +299,7 @@ export const DealsSection: React.FC = () => {
           </div>
         }
       >
-        <div className="space-y-3 text-xs">
+        <div className="space-y-3 text-xs [&_label]:!text-[#e6f7ff]">
           <Input
             label="Material Title"
             value={form.material}

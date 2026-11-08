@@ -1832,7 +1832,10 @@ class AdminService:
                 "targetId": log.target_id,
                 "status": log.status,
                 "changes": log.changes,
+                "context": log.context,
                 "ipAddress": log.ip_address,
+                "userAgent": log.user_agent,
+                "errorMessage": log.error_message,
                 "createdAt": log.created_at.isoformat() if log.created_at else None
             } for log in logs
         ]

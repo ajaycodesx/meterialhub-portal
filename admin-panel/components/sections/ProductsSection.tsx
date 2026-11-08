@@ -628,7 +628,7 @@ export const ProductsSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-6 bg-white rounded-2xl shadow-xs max-w-4xl space-y-5">
+          <div className="p-6 bg-white rounded-2xl shadow-xs w-full space-y-5">
             <Input
               label="Material Title"
               value={productForm.title}

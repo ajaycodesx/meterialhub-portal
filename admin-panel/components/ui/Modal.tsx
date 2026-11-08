@@ -77,7 +77,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative z-10 bg-[#0d1527] border border-slate-800/90 text-white rounded-3xl shadow-2xl shadow-black/50 flex flex-col w-full max-h-[90vh] overflow-hidden transition-all duration-300 ${getMaxWidthClass(
+        className={`relative z-10 bg-[#0d1527] border border-slate-800/90 text-white rounded-3xl shadow-2xl shadow-black/50 flex flex-col w-full max-h-[90vh] overflow-hidden transition-all duration-300 [&_label]:!text-[#e6f7ff] ${getMaxWidthClass(
           maxWidth
         )} ${className}`}
       >

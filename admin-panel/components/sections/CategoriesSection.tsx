@@ -280,7 +280,7 @@ export const CategoriesSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-6 bg-white rounded-2xl shadow-xs max-w-2xl space-y-5">
+          <div className="p-6 bg-white rounded-2xl shadow-xs w-full space-y-5">
             <Input
               label="Category Name"
               value={formTitle}

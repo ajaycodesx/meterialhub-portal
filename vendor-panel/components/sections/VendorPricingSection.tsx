@@ -234,7 +234,7 @@ export const VendorPricingSection: React.FC<VendorPricingSectionProps> = ({
             </div>
           }
         >
-          <div className="space-y-4 text-xs">
+          <div className="space-y-4 text-xs [&_label]:!text-[#e6f7ff]">
             <Input
               label="Promotion Title"
               placeholder="e.g., Heavy Project Foundation Cement Bulk Offer"
